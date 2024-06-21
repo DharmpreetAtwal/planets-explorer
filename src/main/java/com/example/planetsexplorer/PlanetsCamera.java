@@ -2,8 +2,8 @@ package com.example.planetsexplorer;
 
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
 public class PlanetsCamera {
@@ -12,29 +12,38 @@ public class PlanetsCamera {
     private final Rotate rotateZ;
     private final Translate translate;
     private final PerspectiveCamera camera;
-    private Scene scene;
+    private boolean isShiftToggle = false;
+    private final Scene scene;
 
     public PlanetsCamera(Scene scene) {
-        this.rotateX = new Rotate(-20.0, Rotate.X_AXIS);
-        this.rotateY = new Rotate(-20.0, Rotate.Y_AXIS);
-        this.rotateZ = new Rotate(-20.0, Rotate.Z_AXIS);
-        this.translate = new Translate(0.0, 0.0, -20.0);
+        this.rotateX = new Rotate(0, Rotate.X_AXIS);
+        this.rotateY = new Rotate(0, Rotate.Y_AXIS);
+        this.rotateZ = new Rotate(0, Rotate.Z_AXIS);
+        this.translate = new Translate(0.0, 0.0, -200.0);
         this.camera = new PerspectiveCamera(true);
-        this.scene = null;
         this.scene = scene;
         this.initializeKeyEvents();
         this.camera.setFarClip(500.0);
-        this.camera.getTransforms().addAll(new Transform[]{this.rotateX, this.rotateY, this.rotateZ, this.translate});
+        this.camera.getTransforms().addAll(this.rotateX, this.rotateY, this.rotateZ, this.translate);
     }
 
     private void initializeKeyEvents() {
         this.scene.setOnKeyPressed((e) -> {
-            switch (e.getCode()) {
-                case W -> this.setTranslateZ(this.getTranslateZ() + 10.0);
-                case S -> this.setTranslateZ(this.getTranslateZ() - 10.0);
-                case A -> this.setRotateZ(this.getRotateZ() + 10.0);
-                case D -> this.setRotateZ(this.getRotateZ() - 10.0);
+            if(e.getCode() == KeyCode.SHIFT) {
+                this.isShiftToggle = !this.isShiftToggle;
             }
+
+                switch (e.getCode()) {
+                    case W -> this.setTranslateY(this.getTranslateY() - 10.0);
+                    case A -> this.setTranslateX(this.getTranslateX() - 10.0);
+                    case S -> this.setTranslateY(this.getTranslateY() + 10.0);
+                    case D -> this.setTranslateX(this.getTranslateX() + 10.0);
+                    case Q -> this.setTranslateZ(this.getTranslateZ() + 10);
+                    case E -> this.setTranslateZ(this.getTranslateZ() - 10);
+                    case UP -> this.setRotateX(this.getRotateX() + 10);
+                    case DOWN -> this.setRotateX(this.getRotateX() - 10);
+                }
+//            }
 
         });
     }
