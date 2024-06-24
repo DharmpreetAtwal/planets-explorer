@@ -1,15 +1,15 @@
 package com.example.planetsexplorer;
 
-import java.io.IOException;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.json.JSONObject;
 
 public class Main extends Application {
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws Exception {
         Group root = new Group();
 
         SubScene subScene = new SubScene(root, 300, 300, true, null);
@@ -22,16 +22,23 @@ public class Main extends Application {
         PlanetsCamera camera = new PlanetsCamera(mainScene);
         subScene.setCamera(camera.getCamera());
 
-        Planet sun = new Planet(10.0F, 0.0F, 0.0F);
-        Planet earth = new Planet(5.0F, 0.0F, 0.0F);
-        earth.setOrbitDistance(50.0F);
-        earth.setPrimaryBody(sun);
-
-        Planet mars = new Planet(2, 0, 0);
-        mars.setOrbitDistance(30);
-        mars.setPrimaryBody(sun);
-
         root.getChildren().addAll(camera.getCamera());
+
+        JSONObject sunInfo = HorizonSystem.executeGet("https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='10'&OBJ_DATA='YES'&MAKE_EPHEM='NO'");
+        assert sunInfo != null;
+        Planet sun = new Planet(sunInfo.getFloat("meanRadKM") / 600000,0, 0.0F, 0.0F);
+
+        for(int i=1; i<=9; i++) {
+            JSONObject planetJSON = HorizonSystem.executeGet("https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='"+ i + "99'&OBJ_DATA='YES'&MAKE_EPHEM='NO'");
+            assert planetJSON != null;
+
+            Planet newPlanet = new Planet(
+                    planetJSON.getFloat("meanRadKM") / 1000,
+                                planetJSON.getFloat("siderealPeriod"),
+                    0, 0);
+            newPlanet.setOrbitDistance(i*150);
+            newPlanet.setPrimaryBody(sun);
+        }
 
         Planet.planetArrayList.forEach((planet) -> {
             root.getChildren().add(planet.getShape());
@@ -41,7 +48,6 @@ public class Main extends Application {
         });
 
         sun.animateSecondaryBodies();
-
         stage.setResizable(false);
         stage.setTitle("DHARM!");
         stage.setScene(mainScene);

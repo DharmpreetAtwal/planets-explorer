@@ -20,10 +20,12 @@ public class Planet {
     private float orbitDistance = 0.0F;
     private final Rotate orbitRotation = new Rotate();
     private final ArrayList<Planet> secondaryBodies = new ArrayList<>();
+    private float orbitPeriodY = 1.0f;
     private MeshView orbitRing = null;
 
-    public Planet(float shapeRadius, float translateX, float translateY) {
+    public Planet(float shapeRadius, float orbitPeriodY, float translateX, float translateY) {
         this.shape = new Sphere(shapeRadius, 5);
+        this.orbitPeriodY = orbitPeriodY;
         this.shape.setMaterial(new PhongMaterial(Color.ORANGE));
         this.shape.setTranslateX(translateX);
         this.shape.setTranslateY(translateY);
@@ -52,10 +54,6 @@ public class Planet {
         secondaryBody.shape.setTranslateZ(this.shape.getTranslateZ() + (double)secondaryBody.orbitDistance);
     }
 
-    public MeshView getOrbitRing() {
-        return orbitRing;
-    }
-
     public void animateSecondaryBodies() {
         this.secondaryBodies.forEach(body ->{
             body.getOrbitRotation().pivotXProperty().bind(
@@ -67,7 +65,7 @@ public class Planet {
 
             Timeline timeline = new Timeline(
                     new KeyFrame(Duration.ZERO, new KeyValue(body.getOrbitRotation().angleProperty(), 0)),
-                    new KeyFrame(Duration.seconds(5), new KeyValue(body.getOrbitRotation().angleProperty(), 360)));
+                    new KeyFrame(Duration.seconds(body.orbitPeriodY), new KeyValue(body.getOrbitRotation().angleProperty(), 360)));
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
         });
@@ -79,6 +77,10 @@ public class Planet {
 
     public Sphere getShape() {
         return this.shape;
+    }
+
+    public MeshView getOrbitRing() {
+        return orbitRing;
     }
 
     private MeshView createRing(float innerRadius, float outerRadius, int sides, int rings) {
