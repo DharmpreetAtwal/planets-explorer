@@ -7,23 +7,18 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
 public class PlanetsCamera {
-    private final Rotate rotateX;
-    private final Rotate rotateY;
-    private final Rotate rotateZ;
-    private final Translate translate;
-    private final PerspectiveCamera camera;
+    private final PerspectiveCamera camera = new PerspectiveCamera(true);
+    private final Rotate rotateX= new Rotate(0, Rotate.X_AXIS);
+    private final Rotate rotateY= new Rotate(0, Rotate.Y_AXIS);
+    private final Rotate rotateZ= new Rotate(0, Rotate.Z_AXIS);
+    private final Translate translate = new Translate(0.0, 0.0, -400.0);
     private boolean isShiftToggle = false;
     private final Scene scene;
 
     public PlanetsCamera(Scene scene) {
-        this.rotateX = new Rotate(0, Rotate.X_AXIS);
-        this.rotateY = new Rotate(0, Rotate.Y_AXIS);
-        this.rotateZ = new Rotate(0, Rotate.Z_AXIS);
-        this.translate = new Translate(0.0, 0.0, -4000.0);
-        this.camera = new PerspectiveCamera(true);
         this.scene = scene;
         this.initializeKeyEvents();
-        this.camera.setFarClip(50000);
+        this.camera.setFarClip(500);
         this.camera.getTransforms().addAll(this.rotateX, this.rotateY, this.rotateZ, this.translate);
     }
 
@@ -33,17 +28,24 @@ public class PlanetsCamera {
                 this.isShiftToggle = !this.isShiftToggle;
             }
 
-                switch (e.getCode()) {
-                    case W -> this.setTranslateY(this.getTranslateY() - 150.0);
-                    case A -> this.setTranslateX(this.getTranslateX() - 150.0);
-                    case S -> this.setTranslateY(this.getTranslateY() + 150.0);
-                    case D -> this.setTranslateX(this.getTranslateX() + 150.0);
-                    case Q -> this.setTranslateZ(this.getTranslateZ() + 500);
-                    case E -> this.setTranslateZ(this.getTranslateZ() - 500);
-                    case UP -> this.setRotateX(this.getRotateX() + 10);
-                    case DOWN -> this.setRotateX(this.getRotateX() - 10);
+            switch (e.getCode()) {
+                case W -> this.setTranslateY(this.getTranslateY() - 15.0);
+                case A -> this.setTranslateX(this.getTranslateX() - 15.0);
+                case S -> this.setTranslateY(this.getTranslateY() + 15.0);
+                case D -> this.setTranslateX(this.getTranslateX() + 15.0);
+                case Q -> this.setTranslateZ(this.getTranslateZ() + 10);
+                case E -> this.setTranslateZ(this.getTranslateZ() - 50);
+                case UP -> this.setRotateX(this.getRotateX() + 10);
+                case DOWN -> this.setRotateX(this.getRotateX() - 10);
+                case LEFT -> {
+                    this.setRotateY(this.getRotateY() - 10);
+                    this.setRotateZ(this.getRotateZ() - 10);
                 }
-//            }
+                case RIGHT -> {
+                    this.setRotateY(this.getRotateY() + 10);
+                    this.setRotateZ(this.getRotateZ() + 10);
+                }
+            }
 
         });
     }
@@ -97,6 +99,6 @@ public class PlanetsCamera {
     }
 
     public PerspectiveCamera getCamera() {
-        return this.camera;
+        return camera;
     }
 }

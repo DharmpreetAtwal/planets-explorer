@@ -2,9 +2,8 @@ package com.example.planetsexplorer;
 
 import java.util.ArrayList;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import javafx.animation.*;
+import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
@@ -20,17 +19,52 @@ public class Planet {
     private float orbitDistance = 0.0F;
     private final Rotate orbitRotation = new Rotate();
     private final ArrayList<Planet> secondaryBodies = new ArrayList<>();
-    private float orbitPeriodY = 1.0f;
+    private final float orbitPeriodYear;
+    private final float siderealDayHr;
+    private final float obliquityToOrbitDeg;
     private MeshView orbitRing = null;
+    private RotateTransition planetSpin;
 
-    public Planet(float shapeRadius, float orbitPeriodY, float translateX, float translateY) {
-        this.shape = new Sphere(shapeRadius, 5);
-        this.orbitPeriodY = orbitPeriodY;
+    public Planet(float shapeRadius, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg, float translateX, float translateY) {
+        this.shape = new Sphere(shapeRadius, 2);
+        this.orbitPeriodYear = orbitPeriodYear;
+        this.siderealDayHr = siderealDayHr;
+        this.obliquityToOrbitDeg = obliquityToOrbitDeg;
+
         this.shape.setMaterial(new PhongMaterial(Color.ORANGE));
         this.shape.setTranslateX(translateX);
         this.shape.setTranslateY(translateY);
         this.shape.getTransforms().add(orbitRotation);
+//        this.initializeSpinAnimation();
         planetArrayList.add(this);
+    }
+
+    private void initializeSpinAnimation() {
+        this.planetSpin = new RotateTransition(Duration.seconds(Math.abs(this.siderealDayHr)), this.shape);
+//        this.planetSpin.setInterpolator(Interpolator.LINEAR);
+
+        Rotate rot = new Rotate(-this.obliquityToOrbitDeg, Rotate.Y_AXIS);
+        this.shape.getTransforms().add(rot);
+
+        Point3D titledAxis = new Point3D(
+                Math.sin(Math.toRadians(this.obliquityToOrbitDeg)),
+                0,
+                -Math.cos(Math.toRadians(this.obliquityToOrbitDeg)));
+        this.planetSpin.setAxis(titledAxis);
+
+        if(this.siderealDayHr > 0) {
+            this.planetSpin.setFromAngle(0);
+            this.planetSpin.setToAngle(360);
+            planetSpin.setByAngle(1);
+        }
+        else {
+            this.planetSpin.setFromAngle(0);
+            this.planetSpin.setToAngle(-360);
+            planetSpin.setByAngle(-1);
+        }
+
+        planetSpin.setCycleCount(-1);
+        planetSpin.play();
     }
 
     public void setOrbitDistance(float distance) {
@@ -65,7 +99,7 @@ public class Planet {
 
             Timeline timeline = new Timeline(
                     new KeyFrame(Duration.ZERO, new KeyValue(body.getOrbitRotation().angleProperty(), 0)),
-                    new KeyFrame(Duration.seconds(body.orbitPeriodY), new KeyValue(body.getOrbitRotation().angleProperty(), 360)));
+                    new KeyFrame(Duration.seconds(body.orbitPeriodYear), new KeyValue(body.getOrbitRotation().angleProperty(), 360)));
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
         });
