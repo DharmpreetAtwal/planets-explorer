@@ -1,8 +1,12 @@
 package com.example.planetsexplorer;
 
+import java.sql.Time;
 import java.util.ArrayList;
 
 import javafx.animation.*;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -10,6 +14,7 @@ import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Sphere;
 import javafx.scene.shape.TriangleMesh;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Transform;
 import javafx.util.Duration;
 
 public class Planet {
@@ -23,48 +28,77 @@ public class Planet {
     private final float siderealDayHr;
     private final float obliquityToOrbitDeg;
     private MeshView orbitRing = null;
-    private RotateTransition planetSpin;
+    private Point3D rotationAxis;
 
-    public Planet(float shapeRadius, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg, float translateX, float translateY) {
+    public Planet(float shapeRadius, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg, float translateX, float translateY, Planet primaryBody) {
         this.shape = new Sphere(shapeRadius, 2);
         this.orbitPeriodYear = orbitPeriodYear;
         this.siderealDayHr = siderealDayHr;
         this.obliquityToOrbitDeg = obliquityToOrbitDeg;
+        this.primaryBody = primaryBody;
 
         this.shape.setMaterial(new PhongMaterial(Color.ORANGE));
         this.shape.setTranslateX(translateX);
         this.shape.setTranslateY(translateY);
         this.shape.getTransforms().add(orbitRotation);
-//        this.initializeSpinAnimation();
+
+        this.initializeAnimationProperties();
+        this.initializeSpinAnimation();
+
         planetArrayList.add(this);
     }
 
-    private void initializeSpinAnimation() {
-        this.planetSpin = new RotateTransition(Duration.seconds(Math.abs(this.siderealDayHr)), this.shape);
-//        this.planetSpin.setInterpolator(Interpolator.LINEAR);
+    // IMPORTANT: This method MUST be called after this.shape.setTranslateX/Y have been called
+    private void initializeAnimationProperties() {
+        if(this.primaryBody != null) {
+            // Set the pivot point of the orbit to be the center of primaryBody
+            // Distance from primary body = secondaryBody's X - primaryBody's X
+            this.orbitRotation.pivotXProperty().bind(
+                    this.primaryBody.shape.translateXProperty().subtract(this.shape.translateXProperty()));
+            this.orbitRotation.pivotYProperty().bind(
+                    this.primaryBody.shape.translateYProperty().subtract(this.shape.translateYProperty()));
+            this.orbitRotation.pivotZProperty().bind(
+                    this.primaryBody.shape.translateZProperty().subtract(this.shape.translateZProperty()));
+        }
 
-        Rotate rot = new Rotate(-this.obliquityToOrbitDeg, Rotate.Y_AXIS);
-        this.shape.getTransforms().add(rot);
-
-        Point3D titledAxis = new Point3D(
+        this.rotationAxis = new Point3D(
                 Math.sin(Math.toRadians(this.obliquityToOrbitDeg)),
                 0,
                 -Math.cos(Math.toRadians(this.obliquityToOrbitDeg)));
-        this.planetSpin.setAxis(titledAxis);
 
-        if(this.siderealDayHr > 0) {
-            this.planetSpin.setFromAngle(0);
-            this.planetSpin.setToAngle(360);
-            planetSpin.setByAngle(1);
-        }
-        else {
-            this.planetSpin.setFromAngle(0);
-            this.planetSpin.setToAngle(-360);
-            planetSpin.setByAngle(-1);
-        }
+        Rotate first = new Rotate(-this.obliquityToOrbitDeg, Rotate.Y_AXIS);
+        this.shape.getTransforms().addAll(first);
+        this.shape.setRotationAxis(this.rotationAxis);
+    }
 
-        planetSpin.setCycleCount(-1);
-        planetSpin.play();
+    private void initializeSpinAnimation() {
+        // Rotate shape to align with tilted axis
+        Timeline spinTimeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(this.shape.rotateProperty(), 0)),
+                new KeyFrame(Duration.seconds(  Math.abs(this.siderealDayHr)/10), new KeyValue(this.shape.rotateProperty(), 360)),
+                new KeyFrame(Duration.seconds( Math.abs(this.siderealDayHr)/10 + 1), new KeyValue(this.shape.rotateProperty(), 360))
+        );
+
+        if(this.siderealDayHr < 0) spinTimeline.setRate(-1);
+        spinTimeline.setCycleCount(Timeline.INDEFINITE);
+        spinTimeline.play();
+    }
+
+    public void animateSecondaryBodies() {
+        this.secondaryBodies.forEach(body ->{
+            Timeline timeline = new Timeline(
+                    new KeyFrame(Duration.ZERO, new KeyValue(body.orbitRotation.angleProperty(), 0)),
+                    new KeyFrame(Duration.seconds(body.orbitPeriodYear), new KeyValue(body.orbitRotation.angleProperty(), 360)));
+//            timeline.setCycleCount(Timeline.INDEFINITE);
+            timeline.setDelay(Duration.seconds(8));
+            timeline.play();
+
+            // Update the position of the Planet's spin (rotation) axis
+            body.orbitRotation.angleProperty().addListener((observable, oldValue, newValue) -> {
+                Point3D newAxis = body.orbitRotation.transform(body.rotationAxis);
+                body.shape.setRotationAxis(newAxis);
+            });
+        });
     }
 
     public void setOrbitDistance(float distance) {
@@ -86,23 +120,6 @@ public class Planet {
         secondaryBody.shape.setTranslateX(this.shape.getTranslateX());
         secondaryBody.shape.setTranslateY(this.shape.getTranslateY());
         secondaryBody.shape.setTranslateZ(this.shape.getTranslateZ() + (double)secondaryBody.orbitDistance);
-    }
-
-    public void animateSecondaryBodies() {
-        this.secondaryBodies.forEach(body ->{
-            body.getOrbitRotation().pivotXProperty().bind(
-                    this.shape.translateXProperty().subtract(body.getShape().translateXProperty()));
-            body.getOrbitRotation().pivotYProperty().bind(
-                    this.shape.translateYProperty().subtract(body.getShape().translateYProperty()));
-            body.getOrbitRotation().pivotZProperty().bind(
-                    this.shape.translateZProperty().subtract(body.getShape().translateZProperty()));
-
-            Timeline timeline = new Timeline(
-                    new KeyFrame(Duration.ZERO, new KeyValue(body.getOrbitRotation().angleProperty(), 0)),
-                    new KeyFrame(Duration.seconds(body.orbitPeriodYear), new KeyValue(body.getOrbitRotation().angleProperty(), 360)));
-            timeline.setCycleCount(Timeline.INDEFINITE);
-            timeline.play();
-        });
     }
 
     public Rotate getOrbitRotation() {

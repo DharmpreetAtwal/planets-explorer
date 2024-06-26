@@ -23,9 +23,12 @@ public class Main extends Application {
 
         JSONObject sunInfo = HorizonSystem.getBody("10", true, false);
         assert sunInfo != null;
-        Planet sun = new Planet(sunInfo.getFloat("meanRadKM") / 600000,0,0,0, 0.0F, 0.0F);
+        Planet sun = new Planet(sunInfo.getFloat("meanRadKM") / 600000,
+                0,0,0,
+                0.0F, 0.0F,
+                null);
 
-        for(int i=1; i<=9; i++) {
+        for(int i=6; i<=6; i++) {
             JSONObject planetJSON = HorizonSystem.getBody(i+"99", true, false);
             assert planetJSON != null;
 
@@ -34,7 +37,8 @@ public class Main extends Application {
                                 planetJSON.getFloat("siderealOrbitDays"),
                                 planetJSON.getFloat("siderealDayHr"),
                                 planetJSON.getFloat("obliquityToOrbitDeg"),
-                    0, 0);
+                    0, 0,
+                    sun);
             newPlanet.setOrbitDistance(i*15);
             newPlanet.setPrimaryBody(sun);
         }

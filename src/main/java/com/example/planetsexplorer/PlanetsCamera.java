@@ -11,7 +11,7 @@ public class PlanetsCamera {
     private final Rotate rotateX= new Rotate(0, Rotate.X_AXIS);
     private final Rotate rotateY= new Rotate(0, Rotate.Y_AXIS);
     private final Rotate rotateZ= new Rotate(0, Rotate.Z_AXIS);
-    private final Translate translate = new Translate(0.0, 0.0, -400.0);
+    private final Translate translate = new Translate(15.0*6, 0.0, -50);
     private boolean isShiftToggle = false;
     private final Scene scene;
 
