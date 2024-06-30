@@ -2,6 +2,7 @@ package com.example.planetsexplorer;
 
 import javafx.application.Application;
 import javafx.scene.Group;
+import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
 import javafx.scene.paint.Color;
@@ -9,6 +10,8 @@ import javafx.stage.Stage;
 import org.json.JSONObject;
 
 public class Main extends Application {
+    public static PlanetsCamera camera = null;
+
     public void start(Stage stage) throws Exception {
         Group root = new Group();
         SubScene subScene = new SubScene(root, 300, 300, true, null);
@@ -18,7 +21,7 @@ public class Main extends Application {
         sceneRoot.getChildren().add(subScene);
         Scene mainScene = new Scene(sceneRoot,300, 300);
 
-        PlanetsCamera camera = new PlanetsCamera(mainScene);
+        camera = new PlanetsCamera(mainScene);
         subScene.setCamera(camera.getCamera());
 
         JSONObject sunInfo = HorizonSystem.getBody("10", true, false);
@@ -28,7 +31,7 @@ public class Main extends Application {
                 0.0F, 0.0F,
                 null);
 
-        for(int i=6; i<=6; i++) {
+        for(int i=1; i<=9; i++) {
             JSONObject planetJSON = HorizonSystem.getBody(i+"99", true, false);
             assert planetJSON != null;
 

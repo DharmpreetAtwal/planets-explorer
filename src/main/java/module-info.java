@@ -7,6 +7,7 @@ module com.example.planetsexplorer {
     requires org.kordamp.bootstrapfx.core;
     requires java.sql;
     requires org.json;
+    requires java.desktop;
 
     opens com.example.planetsexplorer to javafx.fxml;
     exports com.example.planetsexplorer;
