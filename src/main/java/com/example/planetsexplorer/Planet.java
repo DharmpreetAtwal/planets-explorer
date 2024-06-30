@@ -15,31 +15,46 @@ import javafx.beans.value.ChangeListener;
 
 public class Planet {
     public static ArrayList<Planet> planetArrayList = new ArrayList<>();
+
     private final Sphere shape;
-    private Planet primaryBody = null;
-    private float orbitDistance = 0.0F;
+    private final Planet primaryBody;
     private final ArrayList<Planet> secondaryBodies = new ArrayList<>();
+
+    private final float orbitDistance;
     private final float orbitPeriodYear;
     private final float siderealDayHr;
     private final float obliquityToOrbitDeg;
-    private final Rotate orbitRotation = new Rotate();
+
     private ChangeListener<Number> orbitRotationAngleListener = null;
+    private final Rotate orbitRotation = new Rotate();
     private final Rotate tiltCorrectionZ = new Rotate(0, Rotate.Z_AXIS);
     private final Rotate spinRotation = new Rotate();
+    private final Rotate tiltRotation = new Rotate(0, Rotate.Y_AXIS);
+
     private MeshView orbitRing = null;
     private Point3D rotationAxis;
 
-    public Planet(float shapeRadius, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg, float translateX, float translateY, Planet primaryBody) {
+    public Planet(float shapeRadius, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg, float orbitDistance, Planet primaryBody) {
         this.shape = new Sphere(shapeRadius, 2);
+
+        this.orbitDistance = orbitDistance;
         this.orbitPeriodYear = orbitPeriodYear;
         this.siderealDayHr = siderealDayHr;
         this.obliquityToOrbitDeg = obliquityToOrbitDeg;
+        this.tiltRotation.setAngle(-obliquityToOrbitDeg);
         this.primaryBody = primaryBody;
 
+        if(this.primaryBody != null) {
+            this.primaryBody.addSecondaryBody(this);
+            this.orbitRing = createRing(this.orbitDistance, this.orbitDistance + 1, 5, 30);
+
+            this.shape.setTranslateX(this.primaryBody.shape.getTranslateX() + (double)this.orbitDistance);
+            this.shape.setTranslateY(this.primaryBody.shape.getTranslateY());
+            this.shape.setTranslateZ(this.primaryBody.shape.getTranslateZ());
+        }
+
         this.shape.setMaterial(new PhongMaterial(Color.ORANGE));
-        this.shape.setTranslateX(translateX);
-        this.shape.setTranslateY(translateY);
-        this.shape.getTransforms().addAll(orbitRotation, tiltCorrectionZ, spinRotation);
+        this.shape.getTransforms().addAll(orbitRotation, tiltRotation, tiltCorrectionZ, spinRotation);
 
         this.initializeMouseEvents();
         this.initializeAnimationProperties();
@@ -101,21 +116,16 @@ public class Planet {
             this.orbitRotation.pivotZProperty().bind(
                     this.primaryBody.shape.translateZProperty().subtract(this.shape.translateZProperty()));
         }
-        this.tiltCorrectionZ.angleProperty().bind(this.orbitRotation.angleProperty().multiply(-1));
 
         this.rotationAxis = new Point3D(
                 Math.sin(Math.toRadians(this.obliquityToOrbitDeg)),
                 0,
                 -Math.cos(Math.toRadians(this.obliquityToOrbitDeg)));
-
-        Rotate first = new Rotate(-this.obliquityToOrbitDeg, Rotate.Y_AXIS);
-        this.shape.getTransforms().addAll(first);
-        this.shape.setRotationAxis(this.rotationAxis);
+        this.spinRotation.setAxis(this.rotationAxis);
+        this.tiltCorrectionZ.angleProperty().bind(this.orbitRotation.angleProperty().multiply(-1));
     }
 
     private void initializeSpinAnimation() {
-        this.spinRotation.setAxis(this.rotationAxis);
-
         // Rotate shape to align with tilted axis
         Timeline spinTimeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(this.spinRotation.angleProperty(), 0)),
@@ -135,20 +145,6 @@ public class Planet {
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
         });
-    }
-
-    public void setOrbitDistance(float distance) {
-        this.orbitDistance = distance;
-    }
-
-    public void setPrimaryBody(Planet planet) {
-        this.primaryBody = planet;
-        planet.addSecondaryBody(this);
-
-        this.orbitRing = createRing(this.orbitDistance, this.orbitDistance + 1, 5, 30);
-        this.shape.setTranslateX(this.primaryBody.shape.getTranslateX() + (double)this.orbitDistance);
-        this.shape.setTranslateY(this.primaryBody.shape.getTranslateY());
-        this.shape.setTranslateZ(this.primaryBody.shape.getTranslateZ());
     }
 
     private void addSecondaryBody(Planet secondaryBody) {

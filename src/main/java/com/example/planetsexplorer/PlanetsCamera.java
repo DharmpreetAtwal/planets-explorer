@@ -1,6 +1,5 @@
 package com.example.planetsexplorer;
 
-import javafx.geometry.Point3D;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;

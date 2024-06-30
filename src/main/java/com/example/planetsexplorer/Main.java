@@ -2,7 +2,6 @@ package com.example.planetsexplorer;
 
 import javafx.application.Application;
 import javafx.scene.Group;
-import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
 import javafx.scene.paint.Color;
@@ -28,8 +27,7 @@ public class Main extends Application {
         assert sunInfo != null;
         Planet sun = new Planet(sunInfo.getFloat("meanRadKM") / 600000,
                 0,0,0,
-                0.0F, 0.0F,
-                null);
+                0.0F, null);
 
         for(int i=1; i<=9; i++) {
             JSONObject planetJSON = HorizonSystem.getBody(i+"99", true, false);
@@ -37,22 +35,16 @@ public class Main extends Application {
 
             Planet newPlanet = new Planet(
                     planetJSON.getFloat("meanRadKM") / 10000,
-                                planetJSON.getFloat("siderealOrbitDays"),
-                                planetJSON.getFloat("siderealDayHr"),
-                                planetJSON.getFloat("obliquityToOrbitDeg"),
-                    0, 0,
+                    planetJSON.getFloat("siderealOrbitDays"),
+                    planetJSON.getFloat("siderealDayHr"),
+                    planetJSON.getFloat("obliquityToOrbitDeg"),
+                    i*15,
                     sun);
-            newPlanet.setOrbitDistance(i*15);
-            newPlanet.setPrimaryBody(sun);
+
+            root.getChildren().addAll(newPlanet.getShape(), newPlanet.getOrbitRing());
         }
 
         root.getChildren().add(camera.getCamera());
-        Planet.planetArrayList.forEach((planet) -> {
-            root.getChildren().add(planet.getShape());
-            if(planet.getOrbitRing() != null) {
-                root.getChildren().add(planet.getOrbitRing());
-            }
-        });
 
         sun.animateSecondaryBodies();
         stage.setResizable(false);
