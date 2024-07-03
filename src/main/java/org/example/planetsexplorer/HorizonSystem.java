@@ -34,9 +34,6 @@ public class HorizonSystem {
             String siderealPeriod = extractSiderealOrbPeriod(resultStr);
             planetInfo.put("siderealOrbitDays", Float.parseFloat(siderealPeriod));
 
-            String meanRadKM = extractVolMeanRadiusKM(resultStr);
-            planetInfo.put("meanRadKM", Float.parseFloat(meanRadKM));
-
             String siderealDayPeriod = extractSiderealDayPeriod(resultStr);
             if(!siderealDayPeriod.equals("0")) {
                 float siderealDayRadSec = Float.parseFloat(siderealDayPeriod);
@@ -47,6 +44,9 @@ public class HorizonSystem {
 
             String obliquityToOrbit = extractObliquityToOrbit(resultStr);
             planetInfo.put("obliquityToOrbitDeg", Float.parseFloat(obliquityToOrbit));
+
+            String meanRadKM = extractVolMeanRadiusKM(resultStr);
+            planetInfo.put("meanRadKM", Float.parseFloat(meanRadKM));
 
 //            System.out.println(planetInfo);
             return planetInfo;

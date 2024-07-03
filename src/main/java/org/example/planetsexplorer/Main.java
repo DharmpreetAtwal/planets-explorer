@@ -6,9 +6,8 @@ import javafx.scene.Scene;
 import javafx.scene.SubScene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.example.planetsexplorer.celestial.Planet;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 public class Main extends Application {
     public static PlanetsCamera camera = null;
@@ -31,11 +30,19 @@ public class Main extends Application {
                 0,0,0,
                 0.0F, null);
 
-        for(int i=3; i <= 3; i++) {
-            ArrayList<JSONObject> ephem = HorizonSystem.getEphemeris(i+"99", "10", "2024-01-01", "2024-12-31", "1 mo");
-            JSONObject planetJSON = HorizonSystem.getBody(i+"99");
-            float orbitDistance = ephem.get(0).getFloat("qr") / 10000000;
 
+
+
+
+
+
+
+
+
+
+        for(int i=1; i <= 9; i++) {
+            JSONObject planetJSON = HorizonSystem.getBody(i+"99");
+            float orbitDistance = i * 15;
             Planet newPlanet = new Planet(
                     HorizonSystem.idToName(i+"99"),
                     planetJSON.getFloat("meanRadKM") / 10000,
@@ -45,16 +52,33 @@ public class Main extends Application {
                     orbitDistance,
                     sun);
 
-
-            newPlanet.setEphemData(ephem);
-            newPlanet.setEphemIndex(HorizonSystem.empherisIndex);
-
+//            newPlanet.getShape().setTranslateX(orbitDistance);
             root.getChildren().addAll(newPlanet.getShape(), newPlanet.getOrbitRing());
         }
 
+//        for(int i=1; i <= 9; i++) {
+//            ArrayList<JSONObject> ephem = HorizonSystem.getEphemeris(i+"99", "10", "2024-01-01", "2024-12-31", "1 mo");
+//            JSONObject planetJSON = HorizonSystem.getBody(i+"99");
+//            float orbitDistance = ephem.get(0).getFloat("qr") / 10000000;
+//
+//            Planet newPlanet = new Planet(
+//                    HorizonSystem.idToName(i+"99"),
+//                    planetJSON.getFloat("meanRadKM") / 10000,
+//                    planetJSON.getFloat("siderealOrbitDays"),
+//                    planetJSON.getFloat("siderealDayHr"),
+//                    planetJSON.getFloat("obliquityToOrbitDeg"),
+//                    orbitDistance,
+//                    sun);
+//
+//            newPlanet.setEphemData(ephem);
+//            newPlanet.setEphemIndex(HorizonSystem.empherisIndex);
+//
+//            root.getChildren().addAll(newPlanet.getShape(), newPlanet.getOrbitRing());
+//        }
+
         root.getChildren().add(camera.getCamera());
 
-//        sun.animateSecondaryBodies();
+        sun.animateSecondaryBodies();
         stage.setResizable(false);
         stage.setTitle("DHARM!");
         stage.setScene(mainScene);

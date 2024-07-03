@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
+import org.example.planetsexplorer.celestial.Planet;
 
 public class PlanetsCamera {
     private final PerspectiveCamera camera = new PerspectiveCamera(true);

@@ -10,4 +10,6 @@ module org.example.planetsexplorer {
 
     opens org.example.planetsexplorer to javafx.fxml;
     exports org.example.planetsexplorer;
+    exports org.example.planetsexplorer.celestial;
+    opens org.example.planetsexplorer.celestial to javafx.fxml;
 }
