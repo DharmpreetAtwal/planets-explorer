@@ -5,6 +5,8 @@ module org.example.planetsexplorer {
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
     requires org.kordamp.bootstrapfx.core;
+    requires org.json;
+    requires com.opencsv;
 
     opens org.example.planetsexplorer to javafx.fxml;
     exports org.example.planetsexplorer;
