@@ -6,11 +6,16 @@ import javafx.scene.Scene;
 import javafx.scene.SubScene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.example.planetsexplorer.celestial.Moon;
 import org.example.planetsexplorer.celestial.Planet;
+import org.example.planetsexplorer.celestial.Sun;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class Main extends Application {
     public static PlanetsCamera camera = null;
+    private final float orbitDistance = 3;
 
     public void start(Stage stage) throws Exception {
         Group root = new Group();
@@ -26,64 +31,82 @@ public class Main extends Application {
 
         JSONObject sunInfo = HorizonSystem.getBody("10");
         assert sunInfo != null;
-        Planet sun = new Planet("Sun", sunInfo.getFloat("meanRadKM") / 600000,
-                0,0,0,
-                0.0F, null);
+        Sun sun = new Sun(sunInfo.getFloat("meanRadKM") / 600000);
 
+        for(int i=1; i <= 9; i++) createPlanet(root, sun, i+"99", "10", i);
 
+        createMoon(root, "301", "399");
+        for(int i=401; i<=402; i++) createMoon(root, ""+i, "499");
+//        for(int i=501; i<=572; i++) createMoon(root, ""+i, "599");
+//        for(int i=601; i<= 618; i++) createMoon(root, i +"", "699");
+//        for(int i=701; i<=717; i++) createMoon(root, i+"", "799");
+//        for(int i=801; i<=814; i++) createMoon(root, i+"", "899");
 
+        root.getChildren().add(camera.getCamera());
 
+//        sun.animateSecondaryBodies();
+        stage.setResizable(false);
+        stage.setTitle("DHARM!");
+        stage.setScene(mainScene);
+        stage.show();
+    }
 
+    private void createPlanet(Group root, Sun sun, String planetID, String centerID, int i) throws Exception {
+        ArrayList<JSONObject> ephem = HorizonSystem.getEphemeris(planetID, centerID, "2024-01-01", "2024-12-31", "1d");
+        JSONObject planetJSON = HorizonSystem.getBody(planetID);
+//            float orbitDistance = ephem.get(0).getFloat("qr") / 10000000;
 
+        Planet newPlanet = new Planet(
+                HorizonSystem.idToName(planetID),
+                planetJSON.getFloat("meanRadKM") / 10000,
+                sun,
+                orbitDistance * i,
+                planetJSON.getFloat("siderealOrbitDays"),
+                planetJSON.getFloat("siderealDayHr"),
+                planetJSON.getFloat("obliquityToOrbitDeg"));
 
+        newPlanet.setEphemData(ephem);
+        newPlanet.setEphemIndex(HorizonSystem.empherisIndex);
 
+        root.getChildren().addAll(newPlanet.getShape(), newPlanet.getOrbitRing());
+    }
 
+    private void createMoon(Group root, String moonID, String planetID) throws Exception {
+        Planet planet = Planet.getPlanetByName(HorizonSystem.idToName(planetID));
+        JSONObject moonJSON = HorizonSystem.getBody(moonID);
+        ArrayList<JSONObject> ephemMoon = HorizonSystem.getEphemeris(moonID, planetID, "2024-01-01", "2024-12-31", "1d");
+        //        float orbitDistance = ephemMoon.get(0).getFloat("qr") / 10000;
 
+        Moon moon = new Moon(HorizonSystem.idToName(moonID),
+                moonJSON.getFloat("meanRadKM") / 10000,
+                planet,
+                orbitDistance,
+                moonJSON.getFloat("siderealOrbitDays"),
+                moonJSON.getFloat("siderealDayHr"),
+                moonJSON.getFloat("obliquityToOrbitDeg"));
 
+        moon.setEphemData(ephemMoon);
+        moon.setEphemIndex(HorizonSystem.empherisIndex);
+        root.getChildren().addAll(moon.getShape(), moon.getOrbitRing());
+    }
+
+    private void testAnimations(Group root, Sun sun) throws Exception {
         for(int i=1; i <= 9; i++) {
             JSONObject planetJSON = HorizonSystem.getBody(i+"99");
             float orbitDistance = i * 15;
             Planet newPlanet = new Planet(
                     HorizonSystem.idToName(i+"99"),
                     planetJSON.getFloat("meanRadKM") / 10000,
+                    sun,
+                    orbitDistance * i,
                     planetJSON.getFloat("siderealOrbitDays"),
                     planetJSON.getFloat("siderealDayHr"),
-                    planetJSON.getFloat("obliquityToOrbitDeg"),
-                    orbitDistance,
-                    sun);
+                    planetJSON.getFloat("obliquityToOrbitDeg"));
 
-//            newPlanet.getShape().setTranslateX(orbitDistance);
             root.getChildren().addAll(newPlanet.getShape(), newPlanet.getOrbitRing());
         }
-
-//        for(int i=1; i <= 9; i++) {
-//            ArrayList<JSONObject> ephem = HorizonSystem.getEphemeris(i+"99", "10", "2024-01-01", "2024-12-31", "1 mo");
-//            JSONObject planetJSON = HorizonSystem.getBody(i+"99");
-//            float orbitDistance = ephem.get(0).getFloat("qr") / 10000000;
-//
-//            Planet newPlanet = new Planet(
-//                    HorizonSystem.idToName(i+"99"),
-//                    planetJSON.getFloat("meanRadKM") / 10000,
-//                    planetJSON.getFloat("siderealOrbitDays"),
-//                    planetJSON.getFloat("siderealDayHr"),
-//                    planetJSON.getFloat("obliquityToOrbitDeg"),
-//                    orbitDistance,
-//                    sun);
-//
-//            newPlanet.setEphemData(ephem);
-//            newPlanet.setEphemIndex(HorizonSystem.empherisIndex);
-//
-//            root.getChildren().addAll(newPlanet.getShape(), newPlanet.getOrbitRing());
-//        }
-
-        root.getChildren().add(camera.getCamera());
-
-        sun.animateSecondaryBodies();
-        stage.setResizable(false);
-        stage.setTitle("DHARM!");
-        stage.setScene(mainScene);
-        stage.show();
     }
+
 
     public static void main(String[] args) {
         launch();

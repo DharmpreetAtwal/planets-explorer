@@ -31,4 +31,8 @@ public class PrimaryBody extends Celestial {
         secondaryBody.getShape().setTranslateY(this.getShape().getTranslateY());
         secondaryBody.getShape().setTranslateZ(this.getShape().getTranslateZ() + (double)secondaryBody.getOrbitDistance());
     }
+
+    public ArrayList<SecondaryBody> getSecondaryBodies() {
+        return secondaryBodies;
+    }
 }

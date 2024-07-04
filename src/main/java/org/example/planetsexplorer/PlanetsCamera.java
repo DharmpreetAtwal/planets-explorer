@@ -6,6 +6,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import org.example.planetsexplorer.celestial.Planet;
+import org.example.planetsexplorer.celestial.SecondaryBody;
 
 public class PlanetsCamera {
     private final PerspectiveCamera camera = new PerspectiveCamera(true);
@@ -42,8 +43,12 @@ public class PlanetsCamera {
                 case P -> {
                     HorizonSystem.empherisIndex = HorizonSystem.empherisIndex + 1;
                     for(Planet planet: Planet.planetArrayList) {
-                        if(!planet.getEphemData().isEmpty())
+                        if(!planet.getEphemData().isEmpty()) {
                             planet.setEphemIndex(HorizonSystem.empherisIndex % planet.getEphemData().size());
+                        }
+                        for(SecondaryBody secondaryBody: planet.getSecondaryBodies()) {
+                            secondaryBody.setEphemIndex(HorizonSystem.empherisIndex % secondaryBody.getEphemData().size());
+                        }
                     }
                 }
 
@@ -51,8 +56,12 @@ public class PlanetsCamera {
                     if(HorizonSystem.empherisIndex > 0) {
                         HorizonSystem.empherisIndex = HorizonSystem.empherisIndex - 1;
                         for(Planet planet: Planet.planetArrayList) {
-                            if(!planet.getEphemData().isEmpty())
+                            if(!planet.getEphemData().isEmpty()) {
                                 planet.setEphemIndex(HorizonSystem.empherisIndex % planet.getEphemData().size());
+                            }
+                            for(SecondaryBody secondaryBody: planet.getSecondaryBodies()) {
+                                secondaryBody.setEphemIndex(HorizonSystem.empherisIndex % secondaryBody.getEphemData().size());
+                            }
                         }
                     }
                 }

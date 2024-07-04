@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
+import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 import org.example.planetsexplorer.Main;
@@ -17,7 +18,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class SecondaryBody extends PrimaryBody {
-    private final Planet primaryBody;
+    private final PrimaryBody primaryBody;
 
     private final float orbitDistance;
     private final float orbitPeriodYear;
@@ -32,14 +33,17 @@ public class SecondaryBody extends PrimaryBody {
     private final Rotate spinRotation = new Rotate();
     private final Rotate tiltRotation = new Rotate(0, Rotate.Y_AXIS);
 
+//    private final Rotate ephemRotation = new Rotate(0, Rotate.Z_AXIS);
+//    private Point3D ephemPivot;
+
     private MeshView orbitRing = null;
 
-    public SecondaryBody(String name, float sphereRadius, Planet primaryBody, float distance, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
+    public SecondaryBody(String name, float sphereRadius, PrimaryBody primaryBody, float distance, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
         super(name, sphereRadius);
         this.orbitDistance = distance;
         this.orbitPeriodYear = orbitPeriodYear;
         this.siderealDayHr = siderealDayHr;
-        this.obliquityToOrbitDeg = obliquityToOrbitDeg;
+        this.obliquityToOrbitDeg = 45;
         this.tiltRotation.setAngle(-this.obliquityToOrbitDeg);
 
         this.primaryBody = primaryBody;
@@ -58,7 +62,7 @@ public class SecondaryBody extends PrimaryBody {
 
         this.initializeMouseEvents();
         this.initializeAnimationProperties();
-        this.initializeSpinAnimation();
+//        this.initializeSpinAnimation();
     }
 
     private void initializeMouseEvents() {
@@ -107,12 +111,12 @@ public class SecondaryBody extends PrimaryBody {
         if(this.primaryBody != null) {
             // Set the pivot point of the orbit to be the center of primaryBody
             // Distance from primary body = secondaryBody's X - primaryBody's X
-            this.orbitRotation.pivotXProperty().bind(
-                    this.primaryBody.getShape().translateXProperty().subtract(this.getShape().translateXProperty()));
-            this.orbitRotation.pivotYProperty().bind(
-                    this.primaryBody.getShape().translateYProperty().subtract(this.getShape().translateYProperty()));
-            this.orbitRotation.pivotZProperty().bind(
-                    this.primaryBody.getShape().translateZProperty().subtract(this.getShape().translateZProperty()));
+//            this.orbitRotation.pivotXProperty().bind(
+//                    this.primaryBody.getShape().translateXProperty().subtract(this.getShape().translateXProperty()));
+//            this.orbitRotation.pivotYProperty().bind(
+//                    this.primaryBody.getShape().translateYProperty().subtract(this.getShape().translateYProperty()));
+//            this.orbitRotation.pivotZProperty().bind(
+//                    this.primaryBody.getShape().translateZProperty().subtract(this.getShape().translateZProperty()));
         }
 
         Point3D shapePoint = this.getShape().localToScene(Point3D.ZERO).add(0, 0, 1);
@@ -129,6 +133,35 @@ public class SecondaryBody extends PrimaryBody {
         if(this.siderealDayHr < 0) spinTimeline.setRate(-1);
         spinTimeline.setCycleCount(Timeline.INDEFINITE);
         spinTimeline.play();
+    }
+
+    public void setEphemIndex(int index) {
+        if(!this.getEphemData().isEmpty()) {
+            JSONObject data = this.getEphemData().get(index);
+            this.setEphemerisPosition(this.orbitDistance, data.getFloat("ma"), data.getFloat("in"));
+        }
+    }
+
+    private void setEphemerisPosition(float orbitDistance, float meanAnon, float inclin) {
+        inclin = inclin * 4;
+        if(this.primaryBody != null) {
+            float x = (float) (orbitDistance * Math.cos(Math.toRadians(inclin)));
+            float z  = (float) (orbitDistance * Math.sin(Math.toRadians(inclin)));
+
+            Point3D parentPoint = this.primaryBody.getShape().localToScene(Point3D.ZERO);
+            this.getShape().setTranslateX(x + parentPoint.getX());
+            this.getShape().setTranslateY(parentPoint.getY());
+            this.getShape().setTranslateZ(z  + parentPoint.getZ());
+
+            this.orbitRotation.setPivotX(-x);
+            this.orbitRotation.setPivotZ(-z);
+            this.orbitRotation.setAngle(meanAnon);
+            Point3D newAxis = new Point3D(
+                    -Math.sin(Math.toRadians(inclin)),
+                    0,
+                    Math.cos(Math.toRadians(inclin)));
+            this.orbitRotation.setAxis(newAxis);
+        }
     }
 
     public float getOrbitDistance() {
@@ -204,7 +237,10 @@ public class SecondaryBody extends PrimaryBody {
         material.setDiffuseColor(Color.rgb(0, 0, 255, 0.33));
         meshView.setMaterial(material);
 
-
         return meshView;
+    }
+
+    public PrimaryBody getPrimaryBody() {
+        return primaryBody;
     }
 }

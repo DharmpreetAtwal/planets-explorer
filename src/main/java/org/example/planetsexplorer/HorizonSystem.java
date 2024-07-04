@@ -118,10 +118,12 @@ public class HorizonSystem {
         for (String[] row : rows) {
             String qr = "";
             String ma = "";
+            String in = "";
 
             int i =0;
             for (String cell : row) {
                 if(i==3) qr = cell;
+                if(i==4) in = cell;
                 if(i==9) ma = cell;
                 i++;
             }
@@ -130,7 +132,7 @@ public class HorizonSystem {
                 JSONObject data = new JSONObject();
                 data.put("qr", Float.parseFloat(qr));
                 data.put("ma", Float.parseFloat(ma));
-
+                data.put("in", Float.parseFloat(in));
                 ephemData.add(data);
             }
         }
@@ -163,7 +165,7 @@ public class HorizonSystem {
         Matcher matcher = radiusPattern.matcher(result);
 
         if(matcher.find()) {
-//            System.out.println(matcher.group());
+            System.out.println(matcher.group());
             return extractLastNumber(matcher.group());
         } else {
             System.err.println("Could not find 'mean radius'");
@@ -179,7 +181,7 @@ public class HorizonSystem {
         Matcher matcher = sideOrbPattern.matcher(result);
 
         if(matcher.find()) {
-//            System.out.println(matcher.group());
+            System.out.println(matcher.group());
             return extractLastNumber(matcher.group());
         } else {
             System.err.println("Could not find 'Sidereal Orb Period'");
@@ -193,7 +195,7 @@ public class HorizonSystem {
         Matcher matcher = sideDayPattern.matcher(result);
 
         if(matcher.find()) {
-//            System.out.println(matcher.group());
+            System.out.println(matcher.group());
             return extractLastNumber(matcher.group());
         } else {
             System.err.println("Could not find sidereal day");
@@ -206,8 +208,8 @@ public class HorizonSystem {
         Matcher matcher = obliquityOrbitPattern.matcher(result);
 
         if(matcher.find()) {
-//            System.out.println(matcher.group());
-//            System.out.println(extractLastNumber(matcher.group()));
+            System.out.println(matcher.group());
+            System.out.println(extractLastNumber(matcher.group()));
             return extractLastNumber(matcher.group());
         } else {
             System.err.println("Could not find Obliquity to orbit");
