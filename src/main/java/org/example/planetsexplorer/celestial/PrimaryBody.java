@@ -10,8 +10,8 @@ import java.util.ArrayList;
 public class PrimaryBody extends Celestial {
     private final ArrayList<SecondaryBody> secondaryBodies = new ArrayList<>();
 
-    public PrimaryBody(String name, float sphereRadius) {
-        super(name, sphereRadius);
+    public PrimaryBody(String name, String dbID, float sphereRadius) {
+        super(name, dbID, sphereRadius);
     }
 
     public void animateSecondaryBodies() {

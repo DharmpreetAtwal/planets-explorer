@@ -56,13 +56,13 @@ public class HorizonSystem {
         }
     }
 
-    public static ArrayList<JSONObject> getEphemeris(String id, String centerId, String startTime, String stopTime, String stepSize) throws Exception {
+    public static ArrayList<JSONObject> getEphemeris(String id, String centerId, String startTime, String stopTime, StepSize stepSize) throws Exception {
         String urlQuery = "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='" + id +
                 "'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='"+  centerId +
                 "'&CSV_FORMAT='YES'" +
                 "&START_TIME='" + startTime +
                 "'&STOP_TIME='" + stopTime +
-                "'&STEP_SIZE='" + stepSize + "'";
+                "'&STEP_SIZE='" + stepSize.toString() + "'";
         String ephemStrJSON = executeGet(urlQuery).toString();
 
         try {

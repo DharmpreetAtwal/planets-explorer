@@ -36,8 +36,8 @@ public class SecondaryBody extends PrimaryBody {
 
     private MeshView orbitRing = null;
 
-    public SecondaryBody(String name, float sphereRadius, PrimaryBody primaryBody, float distance, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
-        super(name, sphereRadius);
+    public SecondaryBody(String name, String dbID, float sphereRadius, PrimaryBody primaryBody, float distance, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
+        super(name, dbID, sphereRadius);
         this.orbitDistance = distance;
         this.orbitPeriodYear = orbitPeriodYear;
         this.siderealDayHr = siderealDayHr;

@@ -37,7 +37,7 @@ public class Main extends Application {
 
         JSONObject sunInfo = HorizonSystem.getBody("10");
         assert sunInfo != null;
-        Sun sun = new Sun(sunInfo.getFloat("meanRadKM") / 600000);
+        Sun sun = new Sun(sunInfo.getFloat("meanRadKM") / 600000, "10");
 
         for(int i=1; i <= 9; i++) createPlanet(root, sceneRoot, sun, i+"99", "10", i);
 
@@ -81,12 +81,13 @@ public class Main extends Application {
 
 
     private void createPlanet(Group root, Group sceneRoot, Sun sun, String planetID, String centerID, int i) throws Exception {
-        ArrayList<JSONObject> ephem = HorizonSystem.getEphemeris(planetID, centerID, "2024-01-01", "2024-12-31", "1 mo");
+        ArrayList<JSONObject> ephem = HorizonSystem.getEphemeris(planetID, centerID, "2024-01-01", "2024-12-31", StepSize.MONTHS);
         JSONObject planetJSON = HorizonSystem.getBody(planetID);
         float orbitDistance = ephem.get(0).getFloat("qr") / pixelKmScale;
 
         Planet newPlanet = new Planet(
                 HorizonSystem.idToName(planetID),
+                planetID,
                 planetJSON.getFloat("meanRadKM") / pixelKmScale,
                 sun,
                 orbitDistance,
@@ -104,10 +105,11 @@ public class Main extends Application {
     private void createMoon(Group root, Group sceneRoot, String moonID, String planetID) throws Exception {
         Planet planet = Planet.getPlanetByName(HorizonSystem.idToName(planetID));
         JSONObject moonJSON = HorizonSystem.getBody(moonID);
-        ArrayList<JSONObject> ephemMoon = HorizonSystem.getEphemeris(moonID, planetID, "2024-01-01", "2024-12-31", "1 mo");
+        ArrayList<JSONObject> ephemMoon = HorizonSystem.getEphemeris(moonID, planetID, "2024-01-01", "2024-12-31", StepSize.MONTHS);
         float orbitDistance = ephemMoon.get(0).getFloat("qr") / pixelKmScale;
 
         Moon moon = new Moon(HorizonSystem.idToName(moonID),
+                moonID,
                 moonJSON.getFloat("meanRadKM") / pixelKmScale,
                 planet,
                 orbitDistance,
@@ -127,6 +129,7 @@ public class Main extends Application {
             float orbitDistance = i * 15;
             Planet newPlanet = new Planet(
                     HorizonSystem.idToName(i+"99"),
+                    i+"99",
                     planetJSON.getFloat("meanRadKM") / 10000,
                     sun,
                     orbitDistance * i,

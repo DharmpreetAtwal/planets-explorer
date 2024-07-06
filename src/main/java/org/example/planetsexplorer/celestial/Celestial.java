@@ -12,17 +12,19 @@ import java.util.ArrayList;
 public class Celestial {
     public static ArrayList<Celestial> celestialArrayList = new ArrayList<>();
     private final String name;
+    private final String dbID;
     private final float shapeRadius;
     private Sphere shape;
     private final Group groupUI = new Group();
     private final Label labelName = new Label();
 
-    public Celestial(String name, float shapeRadius) {
+    public Celestial(String name, String dbID, float shapeRadius) {
         this.name = name;
+        this.dbID = dbID;
         this.shapeRadius = shapeRadius;
         this.shape = new Sphere(shapeRadius, 2);
 
-        this.labelName.setText(name);
+        this.labelName.setText(name + " " + dbID);
         this.labelName.setStyle("-fx-background-color: white; -fx-border-color: black;");
         this.groupUI.getChildren().add(this.labelName);
         initializeUIMouseEvents();

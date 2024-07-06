@@ -1,9 +1,7 @@
 package org.example.planetsexplorer.celestial;
 
-import javafx.scene.shape.Sphere;
-
 public class Sun extends PrimaryBody {
-    public Sun(float shapeRadius) {
-        super("Sun", shapeRadius);
+    public Sun(float shapeRadius, String dbID) {
+        super("Sun", dbID, shapeRadius);
     }
 }

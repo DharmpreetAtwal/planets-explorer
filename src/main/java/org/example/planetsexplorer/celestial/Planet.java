@@ -5,8 +5,8 @@ import java.util.ArrayList;
 public class Planet extends SecondaryBody {
     public static ArrayList<Planet> planetArrayList = new ArrayList<>();
 
-    public Planet(String name, float shapeRadius, PrimaryBody primaryBody, float orbitDistance, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
-        super(name, shapeRadius, primaryBody, orbitDistance, orbitPeriodYear, siderealDayHr, obliquityToOrbitDeg);
+    public Planet(String name, String dbID, float shapeRadius, PrimaryBody primaryBody, float orbitDistance, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
+        super(name, dbID, shapeRadius, primaryBody, orbitDistance, orbitPeriodYear, siderealDayHr, obliquityToOrbitDeg);
         planetArrayList.add(this);
     }
 
