@@ -142,6 +142,7 @@ public class HorizonSystem {
 
 
     private static StringBuilder executeGet(String urlDatabase) throws Exception {
+        System.out.println(urlDatabase);
         StringBuilder results = new StringBuilder();
         URL url = new URL(urlDatabase);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -165,7 +166,7 @@ public class HorizonSystem {
         Matcher matcher = radiusPattern.matcher(result);
 
         if(matcher.find()) {
-            System.out.println(matcher.group());
+//            System.out.println(matcher.group());
             return extractLastNumber(matcher.group());
         } else {
             System.err.println("Could not find 'mean radius'");
@@ -181,7 +182,7 @@ public class HorizonSystem {
         Matcher matcher = sideOrbPattern.matcher(result);
 
         if(matcher.find()) {
-            System.out.println(matcher.group());
+//            System.out.println(matcher.group());
             return extractLastNumber(matcher.group());
         } else {
             System.err.println("Could not find 'Sidereal Orb Period'");
@@ -195,7 +196,7 @@ public class HorizonSystem {
         Matcher matcher = sideDayPattern.matcher(result);
 
         if(matcher.find()) {
-            System.out.println(matcher.group());
+//            System.out.println(matcher.group());
             return extractLastNumber(matcher.group());
         } else {
             System.err.println("Could not find sidereal day");
@@ -208,8 +209,8 @@ public class HorizonSystem {
         Matcher matcher = obliquityOrbitPattern.matcher(result);
 
         if(matcher.find()) {
-            System.out.println(matcher.group());
-            System.out.println(extractLastNumber(matcher.group()));
+//            System.out.println(matcher.group());
+//            System.out.println(extractLastNumber(matcher.group()));
             return extractLastNumber(matcher.group());
         } else {
             System.err.println("Could not find Obliquity to orbit");

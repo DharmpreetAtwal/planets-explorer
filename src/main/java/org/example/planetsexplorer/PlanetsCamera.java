@@ -1,10 +1,12 @@
 package org.example.planetsexplorer;
 
+import javafx.geometry.Point3D;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
+import org.example.planetsexplorer.celestial.Celestial;
 import org.example.planetsexplorer.celestial.Planet;
 import org.example.planetsexplorer.celestial.SecondaryBody;
 
@@ -42,27 +44,13 @@ public class PlanetsCamera {
 
                 case P -> {
                     HorizonSystem.empherisIndex = HorizonSystem.empherisIndex + 1;
-                    for(Planet planet: Planet.planetArrayList) {
-                        if(!planet.getEphemData().isEmpty()) {
-                            planet.setEphemIndex(HorizonSystem.empherisIndex % planet.getEphemData().size());
-                        }
-                        for(SecondaryBody secondaryBody: planet.getSecondaryBodies()) {
-                            secondaryBody.setEphemIndex(HorizonSystem.empherisIndex % secondaryBody.getEphemData().size());
-                        }
-                    }
+                    updateEphemeris();
                 }
 
                 case O -> {
                     if(HorizonSystem.empherisIndex > 0) {
                         HorizonSystem.empherisIndex = HorizonSystem.empherisIndex - 1;
-                        for(Planet planet: Planet.planetArrayList) {
-                            if(!planet.getEphemData().isEmpty()) {
-                                planet.setEphemIndex(HorizonSystem.empherisIndex % planet.getEphemData().size());
-                            }
-                            for(SecondaryBody secondaryBody: planet.getSecondaryBodies()) {
-                                secondaryBody.setEphemIndex(HorizonSystem.empherisIndex % secondaryBody.getEphemData().size());
-                            }
-                        }
+                        updateEphemeris();
                     }
                 }
 
@@ -70,7 +58,32 @@ public class PlanetsCamera {
                 case RIGHT -> this.translate.setX(this.translate.getX() + 15);
             }
 
+            updateUIPosition();
         });
+    }
+
+    private void updateEphemeris() {
+        for(Planet planet: Planet.planetArrayList) {
+            if(!planet.getEphemData().isEmpty()) {
+                planet.setEphemIndex(HorizonSystem.empherisIndex % planet.getEphemData().size());
+            }
+            for(SecondaryBody secondaryBody: planet.getSecondaryBodies()) {
+                secondaryBody.setEphemIndex(HorizonSystem.empherisIndex % secondaryBody.getEphemData().size());
+            }
+        }
+        if(Main.selectedCelestial != null) {
+            Point3D pos = Main.selectedCelestial.getShape().localToScene(Point3D.ZERO);
+            Main.updateCameraTranslate(pos.getX(),pos.getY());
+            Main.updateCameraPivot(Main.selectedCelestial.getShape().localToScene(Point3D.ZERO));
+        }
+    }
+
+    public static void updateUIPosition() {
+        for(Celestial celestial: Celestial.celestialArrayList) {
+            Point3D point = celestial.getShape().localToScene(Point3D.ZERO, true);
+            celestial.getGroupUI().setTranslateX(point.getX());
+            celestial.getGroupUI().setTranslateY(point.getY());
+        }
     }
 
     public Translate getTranslate() {

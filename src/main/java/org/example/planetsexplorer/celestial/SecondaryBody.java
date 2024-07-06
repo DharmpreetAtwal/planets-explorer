@@ -9,10 +9,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
-import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
-import org.example.planetsexplorer.Main;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -43,7 +41,7 @@ public class SecondaryBody extends PrimaryBody {
         this.orbitDistance = distance;
         this.orbitPeriodYear = orbitPeriodYear;
         this.siderealDayHr = siderealDayHr;
-        this.obliquityToOrbitDeg = 45;
+        this.obliquityToOrbitDeg = obliquityToOrbitDeg;
         this.tiltRotation.setAngle(-this.obliquityToOrbitDeg);
 
         this.primaryBody = primaryBody;
@@ -82,22 +80,22 @@ public class SecondaryBody extends PrimaryBody {
                     double parentTranslateX = parentScene.getX();
                     double shapeSceneX = shapeScene.getX();
                     double relX = shapeSceneX - parentTranslateX;
-                    Main.camera.getTranslate().setX(relX);
-                    Main.camera.getRotateX().setPivotX(newPivotScene.getX());
-                    Main.camera.getRotateX().setPivotY(newPivotScene.getY());
-                    Main.camera.getRotateX().setPivotZ(newPivotScene.getZ());
+//                    Main.camera.getTranslate().setX(relX);
+//                    Main.camera.getRotateX().setPivotX(newPivotScene.getX());
+//                    Main.camera.getRotateX().setPivotY(newPivotScene.getY());
+//                    Main.camera.getRotateX().setPivotZ(newPivotScene.getZ());
 
                     double parentTranslateY = parentScene.getY();
                     double shapeSceneY = shapeScene.getY();
                     double relY = shapeSceneY - parentTranslateY;
-                    Main.camera.getTranslate().setY(relY);
-                    Main.camera.getRotateY().setPivotX(newPivotScene.getX());
-                    Main.camera.getRotateY().setPivotY(newPivotScene.getY());
-                    Main.camera.getRotateY().setPivotZ(newPivotScene.getZ());
-
-                    Main.camera.getRotateZ().setPivotX(newPivotScene.getX());
-                    Main.camera.getRotateZ().setPivotY(newPivotScene.getY());
-                    Main.camera.getRotateZ().setPivotZ(newPivotScene.getZ());
+//                    Main.camera.getTranslate().setY(relY);
+//                    Main.camera.getRotateY().setPivotX(newPivotScene.getX());
+//                    Main.camera.getRotateY().setPivotY(newPivotScene.getY());
+//                    Main.camera.getRotateY().setPivotZ(newPivotScene.getZ());
+//
+//                    Main.camera.getRotateZ().setPivotX(newPivotScene.getX());
+//                    Main.camera.getRotateZ().setPivotY(newPivotScene.getY());
+//                    Main.camera.getRotateZ().setPivotZ(newPivotScene.getZ());
                 };
 
                 this.orbitRotation.angleProperty().addListener(this.orbitRotationAngleListener);
@@ -143,7 +141,7 @@ public class SecondaryBody extends PrimaryBody {
     }
 
     private void setEphemerisPosition(float orbitDistance, float meanAnon, float inclin) {
-        inclin = inclin * 4;
+//        System.out.println(this.getName() + ": "+inclin);
         if(this.primaryBody != null) {
             float x = (float) (orbitDistance * Math.cos(Math.toRadians(inclin)));
             float z  = (float) (orbitDistance * Math.sin(Math.toRadians(inclin)));
