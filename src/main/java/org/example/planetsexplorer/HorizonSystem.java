@@ -142,7 +142,7 @@ public class HorizonSystem {
 
 
     private static StringBuilder executeGet(String urlDatabase) throws Exception {
-        System.out.println(urlDatabase);
+//        System.out.println(urlDatabase);
         StringBuilder results = new StringBuilder();
         URL url = new URL(urlDatabase);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();

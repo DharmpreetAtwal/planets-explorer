@@ -22,7 +22,7 @@ public class PlanetsCamera {
     public PlanetsCamera(Scene scene) {
         this.scene = scene;
         this.initializeKeyEvents();
-        this.camera.setFarClip(5000);
+        this.camera.setFarClip(1000);
         this.camera.getTransforms().addAll(this.rotateX, this.rotateY, this.rotateZ, this.translate);
     }
 
@@ -39,8 +39,11 @@ public class PlanetsCamera {
                 case A -> this.rotateY.setAngle(this.rotateY.getAngle() + 10);
                 case D -> this.rotateY.setAngle(this.rotateY.getAngle() - 10);
 
-                case Q -> this.translate.setZ(this.translate.getZ() + 10);
-                case E -> this.translate.setZ(this.translate.getZ() - 50);
+                case Q -> this.translate.setZ(this.translate.getZ() + 10000000);
+                case E -> this.translate.setZ(this.translate.getZ() - 10000000);
+
+                case Z -> this.translate.setZ(this.translate.getZ() + 10);
+                case X -> this.translate.setZ(this.translate.getZ() - 10);
 
                 case P -> {
                     HorizonSystem.empherisIndex = HorizonSystem.empherisIndex + 1;
@@ -54,8 +57,12 @@ public class PlanetsCamera {
                     }
                 }
 
-                case LEFT -> this.translate.setX(this.translate.getX() - 15);
-                case RIGHT -> this.translate.setX(this.translate.getX() + 15);
+                case SPACE -> {
+                    if(Main.selectedCelestial != null) {
+                        Point3D point = Main.selectedCelestial.getShape().localToScene(Point3D.ZERO);
+                        this.translate.setZ(-Main.selectedCelestial.getShape().getRadius()*5 + point.getZ());
+                    }
+                }
             }
 
             updateUIPosition();

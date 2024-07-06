@@ -19,6 +19,7 @@ public class Main extends Application {
     public static PlanetsCamera camera = null;
     private final float orbitDistance = 3;
     public static Celestial selectedCelestial = null;
+    public static int pixelKmScale = 1000;
 
     public void start(Stage stage) throws Exception {
         Group root = new Group();
@@ -38,7 +39,7 @@ public class Main extends Application {
         assert sunInfo != null;
         Sun sun = new Sun(sunInfo.getFloat("meanRadKM") / 600000);
 
-        for(int i=3; i <= 3; i++) createPlanet(root, sceneRoot, sun, i+"99", "10", i);
+        for(int i=1; i <= 9; i++) createPlanet(root, sceneRoot, sun, i+"99", "10", i);
 
         createMoon(root, sceneRoot, "301", "399");
 //        for(int i=401; i<=402; i++) createMoon(root, ""+i, "499");
@@ -82,13 +83,13 @@ public class Main extends Application {
     private void createPlanet(Group root, Group sceneRoot, Sun sun, String planetID, String centerID, int i) throws Exception {
         ArrayList<JSONObject> ephem = HorizonSystem.getEphemeris(planetID, centerID, "2024-01-01", "2024-12-31", "1 mo");
         JSONObject planetJSON = HorizonSystem.getBody(planetID);
-//            float orbitDistance = ephem.get(0).getFloat("qr") / 10000000;
+        float orbitDistance = ephem.get(0).getFloat("qr") / pixelKmScale;
 
         Planet newPlanet = new Planet(
                 HorizonSystem.idToName(planetID),
-                planetJSON.getFloat("meanRadKM") / 10000,
+                planetJSON.getFloat("meanRadKM") / pixelKmScale,
                 sun,
-                orbitDistance * i,
+                orbitDistance,
                 planetJSON.getFloat("siderealOrbitDays"),
                 planetJSON.getFloat("siderealDayHr"),
                 planetJSON.getFloat("obliquityToOrbitDeg"));
@@ -104,10 +105,10 @@ public class Main extends Application {
         Planet planet = Planet.getPlanetByName(HorizonSystem.idToName(planetID));
         JSONObject moonJSON = HorizonSystem.getBody(moonID);
         ArrayList<JSONObject> ephemMoon = HorizonSystem.getEphemeris(moonID, planetID, "2024-01-01", "2024-12-31", "1 mo");
-        //        float orbitDistance = ephemMoon.get(0).getFloat("qr") / 10000;
+        float orbitDistance = ephemMoon.get(0).getFloat("qr") / pixelKmScale;
 
         Moon moon = new Moon(HorizonSystem.idToName(moonID),
-                moonJSON.getFloat("meanRadKM") / 10000,
+                moonJSON.getFloat("meanRadKM") / pixelKmScale,
                 planet,
                 orbitDistance,
                 moonJSON.getFloat("siderealOrbitDays"),
@@ -136,7 +137,6 @@ public class Main extends Application {
             root.getChildren().addAll(newPlanet.getShape(), newPlanet.getOrbitRing());
         }
     }
-
 
     public static void main(String[] args) {
         launch();

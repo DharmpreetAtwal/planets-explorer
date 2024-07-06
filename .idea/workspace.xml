@@ -4,13 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="">
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Celestial objects now have a UI label that follows them around&#10;- Clicking on the label will fix the camera onto the object and follow it around while cycling through ephem data &#10;- Created camera update methods in Main">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Celestial.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Celestial.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +106,7 @@
       <updated>1720023933753</updated>
       <workItem from="1720023936223" duration="15770000" />
       <workItem from="1720101633714" duration="23659000" />
-      <workItem from="1720209960746" duration="7415000" />
+      <workItem from="1720209960746" duration="12395000" />
     </task>
     <task id="LOCAL-00001" summary="- Removed unneeded files">
       <option name="closed" value="true" />
@@ -132,7 +132,15 @@
       <option name="project" value="LOCAL" />
       <updated>1720134822065</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="- Celestial objects now have a UI label that follows them around&#10;- Clicking on the label will fix the camera onto the object and follow it around while cycling through ephem data &#10;- Created camera update methods in Main">
+      <option name="closed" value="true" />
+      <created>1720285570031</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1720285570031</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -142,6 +150,7 @@
     <MESSAGE value="- Removed unneeded files" />
     <MESSAGE value="- Refractored Planet into PrimaryBody, SecondaryBody, Celestial&#10;- Created Sun, Moon, Orbital classes&#10;- Updated SecondaryBody's axis positioning to account for changes in coordinate system caused by refactoring" />
     <MESSAGE value="- HorizonSystem now fetches orbit inclination as part of ephem&#10;- Created methods createPlanet/Moon in Main&#10;- Added constructor to Moon&#10;- Moved setEphemIndex/Position to SecondaryBody&#10;- setEphemIndex/Position now use orbitRotation to calculate ephem position&#10;- O/P now moves the SecondaryBodies of a Planet" />
-    <option name="LAST_COMMIT_MESSAGE" value="" />
+    <MESSAGE value="- Celestial objects now have a UI label that follows them around&#10;- Clicking on the label will fix the camera onto the object and follow it around while cycling through ephem data &#10;- Created camera update methods in Main" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Celestial objects now have a UI label that follows them around&#10;- Clicking on the label will fix the camera onto the object and follow it around while cycling through ephem data &#10;- Created camera update methods in Main" />
   </component>
 </project>
