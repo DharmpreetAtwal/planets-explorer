@@ -43,7 +43,6 @@ public class Celestial {
         });
     }
 
-
     public String getName() {
         return name;
     }

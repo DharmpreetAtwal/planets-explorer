@@ -30,7 +30,6 @@ public class Main extends Application {
         sceneRoot.getChildren().add(subScene);
 
         Scene mainScene = new Scene(sceneRoot,300, 300);
-
         camera = new PlanetsCamera(mainScene);
         subScene.setCamera(camera.getCamera());
         root.getChildren().add(camera.getCamera());
@@ -39,19 +38,14 @@ public class Main extends Application {
         assert sunInfo != null;
         Sun sun = new Sun(sunInfo.getFloat("meanRadKM") / 600000, "10");
 
-        for(int i=1; i <= 9; i++) createPlanet(root, sceneRoot, sun, i+"99", "10", i);
+        for(int i=399; i <= 399; i=i+100) createPlanet(root, sceneRoot, sun, i + "", "10", i);
 
         createMoon(root, sceneRoot, "301", "399");
 //        for(int i=401; i<=402; i++) createMoon(root, ""+i, "499");
-//        for(int i=501; i<=572; i++) createMoon(root, ""+i, "599");
+//        for(int i=501; i<=572; i++) createMoon(root, sceneRoot, ""+i, "599");
 //        for(int i=601; i<= 618; i++) createMoon(root, i +"", "699");
 //        for(int i=701; i<=717; i++) createMoon(root, i+"", "799");
 //        for(int i=801; i<=814; i++) createMoon(root, i+"", "899");
-
-//        Label label = new Label("Hello");
-//        label.setTranslateX(50);
-//        label.setTranslateY(50);
-
 
 //        sun.animateSecondaryBodies();
         stage.setResizable(false);
@@ -79,7 +73,6 @@ public class Main extends Application {
         Main.camera.getRotateZ().setPivotZ(pivot.getZ());
     }
 
-
     private void createPlanet(Group root, Group sceneRoot, Sun sun, String planetID, String centerID, int i) throws Exception {
         ArrayList<JSONObject> ephem = HorizonSystem.getEphemeris(planetID, centerID, "2024-01-01", "2024-12-31", StepSize.MONTHS);
         JSONObject planetJSON = HorizonSystem.getBody(planetID);
@@ -90,7 +83,7 @@ public class Main extends Application {
                 planetID,
                 planetJSON.getFloat("meanRadKM") / pixelKmScale,
                 sun,
-                orbitDistance,
+                orbitDistance,// * i / 10,
                 planetJSON.getFloat("siderealOrbitDays"),
                 planetJSON.getFloat("siderealDayHr"),
                 planetJSON.getFloat("obliquityToOrbitDeg"));
@@ -98,8 +91,10 @@ public class Main extends Application {
         newPlanet.setEphemData(ephem);
         newPlanet.setEphemIndex(HorizonSystem.empherisIndex);
 
-        root.getChildren().addAll(newPlanet.getShape(), newPlanet.getOrbitRing());
+        root.getChildren().addAll(newPlanet.getShape());
+        sceneRoot.getChildren().add(newPlanet.getOrbitRing());
         sceneRoot.getChildren().add(newPlanet.getGroupUI());
+        newPlanet.getGroupUI().toFront();
     }
 
     private void createMoon(Group root, Group sceneRoot, String moonID, String planetID) throws Exception {
@@ -119,8 +114,11 @@ public class Main extends Application {
 
         moon.setEphemData(ephemMoon);
         moon.setEphemIndex(HorizonSystem.empherisIndex);
-        root.getChildren().addAll(moon.getShape(), moon.getOrbitRing());
+
+        root.getChildren().addAll(moon.getShape());
+        sceneRoot.getChildren().add(moon.getOrbitRing());
         sceneRoot.getChildren().add(moon.getGroupUI());
+        moon.getGroupUI().toFront();
     }
 
     private void testAnimations(Group root, Sun sun) throws Exception {

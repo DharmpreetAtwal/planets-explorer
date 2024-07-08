@@ -4,17 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Orbit distance, and radius are now to scale&#10;- Fixed visual bug where planets would disapear&#10;- Pressing space with celestial selected will dynamically zoom the camera into it">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/StepSize.java" afterDir="false" />
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Added dbID to Celestial&#10;- All Ceslestial constructors take dbID as arg&#10;- Created StepSize enum&#10;- getEphemeris now takes StepSize as arg">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Celestial.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Celestial.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/PrimaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/PrimaryBody.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Sun.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Sun.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,7 +107,8 @@
       <workItem from="1720023936223" duration="15770000" />
       <workItem from="1720101633714" duration="23659000" />
       <workItem from="1720209960746" duration="12696000" />
-      <workItem from="1720298371261" duration="1632000" />
+      <workItem from="1720298371261" duration="1964000" />
+      <workItem from="1720445626495" duration="11739000" />
     </task>
     <task id="LOCAL-00001" summary="- Removed unneeded files">
       <option name="closed" value="true" />
@@ -154,7 +150,15 @@
       <option name="project" value="LOCAL" />
       <updated>1720291823886</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="- Added dbID to Celestial&#10;- All Ceslestial constructors take dbID as arg&#10;- Created StepSize enum&#10;- getEphemeris now takes StepSize as arg">
+      <option name="closed" value="true" />
+      <created>1720300516719</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1720300516719</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -166,6 +170,7 @@
     <MESSAGE value="- HorizonSystem now fetches orbit inclination as part of ephem&#10;- Created methods createPlanet/Moon in Main&#10;- Added constructor to Moon&#10;- Moved setEphemIndex/Position to SecondaryBody&#10;- setEphemIndex/Position now use orbitRotation to calculate ephem position&#10;- O/P now moves the SecondaryBodies of a Planet" />
     <MESSAGE value="- Celestial objects now have a UI label that follows them around&#10;- Clicking on the label will fix the camera onto the object and follow it around while cycling through ephem data &#10;- Created camera update methods in Main" />
     <MESSAGE value="- Orbit distance, and radius are now to scale&#10;- Fixed visual bug where planets would disapear&#10;- Pressing space with celestial selected will dynamically zoom the camera into it" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Orbit distance, and radius are now to scale&#10;- Fixed visual bug where planets would disapear&#10;- Pressing space with celestial selected will dynamically zoom the camera into it" />
+    <MESSAGE value="- Added dbID to Celestial&#10;- All Ceslestial constructors take dbID as arg&#10;- Created StepSize enum&#10;- getEphemeris now takes StepSize as arg" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Added dbID to Celestial&#10;- All Ceslestial constructors take dbID as arg&#10;- Created StepSize enum&#10;- getEphemeris now takes StepSize as arg" />
   </component>
 </project>

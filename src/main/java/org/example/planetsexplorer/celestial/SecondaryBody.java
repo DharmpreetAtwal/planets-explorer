@@ -7,6 +7,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 import javafx.scene.transform.Rotate;
@@ -31,10 +32,7 @@ public class SecondaryBody extends PrimaryBody {
     private final Rotate spinRotation = new Rotate();
     private final Rotate tiltRotation = new Rotate(0, Rotate.Y_AXIS);
 
-//    private final Rotate ephemRotation = new Rotate(0, Rotate.Z_AXIS);
-//    private Point3D ephemPivot;
-
-    private MeshView orbitRing = null;
+    private final Ellipse orbitRing = new Ellipse();
 
     public SecondaryBody(String name, String dbID, float sphereRadius, PrimaryBody primaryBody, float distance, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
         super(name, dbID, sphereRadius);
@@ -48,9 +46,17 @@ public class SecondaryBody extends PrimaryBody {
 
         if(this.primaryBody != null) {
             this.primaryBody.addSecondaryBody(this);
-            this.orbitRing = createRing(this.orbitDistance, this.orbitDistance + 1, 5, 30);
 
-            this.getShape().setTranslateX(this.primaryBody.getShape().getTranslateX() + (double)this.orbitDistance);
+            this.orbitRing.setStyle(
+                    "-fx-stroke: blue;\n" +
+                    "    -fx-stroke-width: 2;\n" +
+                    "    -fx-stroke-dash-array: 4 4; /* 4 units filled, 4 units empty */\n" +
+                    "    -fx-fill: transparent;");
+            this.orbitRing.setRadiusX(10);
+            this.orbitRing.setRadiusY(10);
+            this.orbitRing.setMouseTransparent(true);
+
+            this.getShape().setTranslateX(this.primaryBody.getShape().getTranslateX() + this.orbitDistance);
             this.getShape().setTranslateY(this.primaryBody.getShape().getTranslateY());
             this.getShape().setTranslateZ(this.primaryBody.getShape().getTranslateZ());
         }
@@ -136,12 +142,13 @@ public class SecondaryBody extends PrimaryBody {
     public void setEphemIndex(int index) {
         if(!this.getEphemData().isEmpty()) {
             JSONObject data = this.getEphemData().get(index);
-            this.setEphemerisPosition(this.orbitDistance, data.getFloat("ma"), data.getFloat("in"));
+            this.setEphemerisPosition(this.orbitDistance, //data.getFloat("qr") / Main.pixelKmScale,
+                    data.getFloat("ma"),
+                    data.getFloat("in"));
         }
     }
 
     private void setEphemerisPosition(float orbitDistance, float meanAnon, float inclin) {
-//        System.out.println(this.getName() + ": "+inclin);
         if(this.primaryBody != null) {
             float x = (float) (orbitDistance * Math.cos(Math.toRadians(inclin)));
             float z  = (float) (orbitDistance * Math.sin(Math.toRadians(inclin)));
@@ -186,7 +193,7 @@ public class SecondaryBody extends PrimaryBody {
         return orbitRotation;
     }
 
-    public MeshView getOrbitRing() {
+    public Ellipse getOrbitRing() {
         return orbitRing;
     }
 

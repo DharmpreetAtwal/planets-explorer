@@ -22,7 +22,7 @@ public class PlanetsCamera {
     public PlanetsCamera(Scene scene) {
         this.scene = scene;
         this.initializeKeyEvents();
-        this.camera.setFarClip(1000);
+        this.camera.setFarClip(20000);
         this.camera.getTransforms().addAll(this.rotateX, this.rotateY, this.rotateZ, this.translate);
     }
 
@@ -39,8 +39,8 @@ public class PlanetsCamera {
                 case A -> this.rotateY.setAngle(this.rotateY.getAngle() + 10);
                 case D -> this.rotateY.setAngle(this.rotateY.getAngle() - 10);
 
-                case Q -> this.translate.setZ(this.translate.getZ() + 10000000);
-                case E -> this.translate.setZ(this.translate.getZ() - 10000000);
+                case Q -> this.translate.setZ(this.translate.getZ() + 1000000);
+                case E -> this.translate.setZ(this.translate.getZ() - 1000000);
 
                 case Z -> this.translate.setZ(this.translate.getZ() + 10);
                 case X -> this.translate.setZ(this.translate.getZ() - 10);
@@ -87,9 +87,31 @@ public class PlanetsCamera {
 
     public static void updateUIPosition() {
         for(Celestial celestial: Celestial.celestialArrayList) {
-            Point3D point = celestial.getShape().localToScene(Point3D.ZERO, true);
-            celestial.getGroupUI().setTranslateX(point.getX());
-            celestial.getGroupUI().setTranslateY(point.getY());
+            Point3D celestialPoint = celestial.getShape().localToScene(Point3D.ZERO, true);
+            celestial.getGroupUI().setTranslateX(celestialPoint.getX());
+            celestial.getGroupUI().setTranslateY(celestialPoint.getY());
+
+            if(celestial instanceof SecondaryBody) {
+                SecondaryBody body = (SecondaryBody)celestial;
+                Point3D primaryBodyPoint = body.getPrimaryBody().getShape().localToScene(Point3D.ZERO, true);
+                Point3D primaryBodyPointSec = celestial.getShape().sceneToLocal(primaryBodyPoint);
+                Point3D finalPoint = celestial.getShape().localToScene(primaryBodyPointSec, true);
+
+                body.getOrbitRing().setCenterX(finalPoint.getX());
+                body.getOrbitRing().setCenterY(finalPoint.getY());
+
+                double angle = body.getOrbitRotation().getAngle();
+                body.getOrbitRotation().setAngle(0);
+
+                Point3D diffVec =  celestial.getShape().localToScene(Point3D.ZERO, true).subtract(finalPoint);
+                body.getOrbitRing().setRadiusX(Math.abs(diffVec.getX()));
+
+                body.getOrbitRotation().setAngle(90);
+                diffVec =  celestial.getShape().localToScene(Point3D.ZERO, true).subtract(finalPoint);
+                body.getOrbitRing().setRadiusY(Math.abs(diffVec.getY()));
+
+                body.getOrbitRotation().setAngle(angle);
+            }
         }
     }
 
