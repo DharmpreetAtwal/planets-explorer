@@ -4,6 +4,8 @@ import javafx.geometry.Point3D;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import org.example.planetsexplorer.celestial.Celestial;
@@ -42,8 +44,8 @@ public class PlanetsCamera {
                 case Q -> this.translate.setZ(this.translate.getZ() + 1000000);
                 case E -> this.translate.setZ(this.translate.getZ() - 1000000);
 
-                case Z -> this.translate.setZ(this.translate.getZ() + 10);
-                case X -> this.translate.setZ(this.translate.getZ() - 10);
+                case Z -> this.translate.setZ(this.translate.getZ() + 10000);
+                case X -> this.translate.setZ(this.translate.getZ() - 10000);
 
                 case P -> {
                     HorizonSystem.empherisIndex = HorizonSystem.empherisIndex + 1;
@@ -72,7 +74,7 @@ public class PlanetsCamera {
     private void updateEphemeris() {
         for(Planet planet: Planet.planetArrayList) {
             if(!planet.getEphemData().isEmpty()) {
-                planet.setEphemIndex(HorizonSystem.empherisIndex % planet.getEphemData().size());
+//                planet.setEphemIndex(HorizonSystem.empherisIndex % planet.getEphemData().size());
             }
             for(SecondaryBody secondaryBody: planet.getSecondaryBodies()) {
                 secondaryBody.setEphemIndex(HorizonSystem.empherisIndex % secondaryBody.getEphemData().size());
@@ -93,24 +95,16 @@ public class PlanetsCamera {
 
             if(celestial instanceof SecondaryBody) {
                 SecondaryBody body = (SecondaryBody)celestial;
-                Point3D primaryBodyPoint = body.getPrimaryBody().getShape().localToScene(Point3D.ZERO, true);
-                Point3D primaryBodyPointSec = celestial.getShape().sceneToLocal(primaryBodyPoint);
-                Point3D finalPoint = celestial.getShape().localToScene(primaryBodyPointSec, true);
+                body.getOrbitRing().getElements().clear();
+                body.getOrbitRotation().setAngle(body.getEphemData().get(0).getFloat("ma"));
+                Point3D lastPoint = body.getShape().localToScene(Point3D.ZERO, true);
+                body.getOrbitRing().getElements().add(new MoveTo(lastPoint.getX(), lastPoint.getY()));
 
-                body.getOrbitRing().setCenterX(finalPoint.getX());
-                body.getOrbitRing().setCenterY(finalPoint.getY());
-
-                double angle = body.getOrbitRotation().getAngle();
-                body.getOrbitRotation().setAngle(0);
-
-                Point3D diffVec =  celestial.getShape().localToScene(Point3D.ZERO, true).subtract(finalPoint);
-                body.getOrbitRing().setRadiusX(Math.abs(diffVec.getX()));
-
-                body.getOrbitRotation().setAngle(90);
-                diffVec =  celestial.getShape().localToScene(Point3D.ZERO, true).subtract(finalPoint);
-                body.getOrbitRing().setRadiusY(Math.abs(diffVec.getY()));
-
-                body.getOrbitRotation().setAngle(angle);
+                for(int i=1; i < body.getEphemData().size(); i++) {
+                    body.getOrbitRotation().setAngle(body.getEphemData().get(i).getFloat("ma"));
+                    Point3D nextPoint = body.getShape().localToScene(Point3D.ZERO, true);
+                    body.getOrbitRing().getElements().add(new LineTo(nextPoint.getX(), nextPoint.getY()));
+                }
             }
         }
     }

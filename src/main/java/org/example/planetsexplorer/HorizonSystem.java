@@ -30,6 +30,8 @@ public class HorizonSystem {
             JSONObject planetJSON = new JSONObject(planetStrJSON);
             String resultStr = (String) planetJSON.get("result");
 
+            System.out.println("Getting :" + id);
+
             JSONObject planetInfo = new JSONObject();
             String siderealPeriod = extractSiderealOrbPeriod(resultStr);
             planetInfo.put("siderealOrbitDays", Float.parseFloat(siderealPeriod));
@@ -162,7 +164,7 @@ public class HorizonSystem {
     private static String extractVolMeanRadiusKM(String result) {
         // This pattern is meant to match 'mean radius, km   =  1.11'
         // or 'Mean Radius (km) =  1.11'
-        Pattern radiusPattern = Pattern.compile(Pattern.quote("mean radius") + ",? \\(?km\\)?\\s+=\\s+\\d*\\.?\\d+", Pattern.CASE_INSENSITIVE);
+        Pattern radiusPattern = Pattern.compile("(mean )?radius,? \\(?km\\)?\\s+=\\s+\\d*\\.?\\d+", Pattern.CASE_INSENSITIVE);
         Matcher matcher = radiusPattern.matcher(result);
 
         if(matcher.find()) {

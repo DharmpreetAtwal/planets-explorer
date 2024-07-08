@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Added dbID to Celestial&#10;- All Ceslestial constructors take dbID as arg&#10;- Created StepSize enum&#10;- getEphemeris now takes StepSize as arg">
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Changed orbitRing so that it is now a Path of lines, instead of an Ellipse">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Celestial.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Celestial.java" afterDir="false" />
@@ -108,7 +109,7 @@
       <workItem from="1720101633714" duration="23659000" />
       <workItem from="1720209960746" duration="12696000" />
       <workItem from="1720298371261" duration="1964000" />
-      <workItem from="1720445626495" duration="11739000" />
+      <workItem from="1720445626495" duration="18022000" />
     </task>
     <task id="LOCAL-00001" summary="- Removed unneeded files">
       <option name="closed" value="true" />
@@ -158,7 +159,15 @@
       <option name="project" value="LOCAL" />
       <updated>1720300516719</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="- Removed Mesh based orbitRing, now a 2D ellipse">
+      <option name="closed" value="true" />
+      <created>1720458487945</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1720458487945</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -171,6 +180,8 @@
     <MESSAGE value="- Celestial objects now have a UI label that follows them around&#10;- Clicking on the label will fix the camera onto the object and follow it around while cycling through ephem data &#10;- Created camera update methods in Main" />
     <MESSAGE value="- Orbit distance, and radius are now to scale&#10;- Fixed visual bug where planets would disapear&#10;- Pressing space with celestial selected will dynamically zoom the camera into it" />
     <MESSAGE value="- Added dbID to Celestial&#10;- All Ceslestial constructors take dbID as arg&#10;- Created StepSize enum&#10;- getEphemeris now takes StepSize as arg" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Added dbID to Celestial&#10;- All Ceslestial constructors take dbID as arg&#10;- Created StepSize enum&#10;- getEphemeris now takes StepSize as arg" />
+    <MESSAGE value="- Removed Mesh based orbitRing, now a 2D ellipse" />
+    <MESSAGE value="- Changed orbitRing so that it is now a Path of lines, instead of an Ellipse" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Changed orbitRing so that it is now a Path of lines, instead of an Ellipse" />
   </component>
 </project>

@@ -27,6 +27,7 @@ public class Celestial {
         this.labelName.setText(name + " " + dbID);
         this.labelName.setStyle("-fx-background-color: white; -fx-border-color: black;");
         this.groupUI.getChildren().add(this.labelName);
+        this.groupUI.setOpacity(0.5);
         initializeUIMouseEvents();
 
         celestialArrayList.add(this);
