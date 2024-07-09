@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Changed orbitRing so that it is now a Path of lines, instead of an Ellipse">
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Changed orbitRing to be a Group of Line, instead of a Path of LineTo">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -109,6 +108,7 @@
       <workItem from="1720298371261" duration="1964000" />
       <workItem from="1720445626495" duration="18405000" />
       <workItem from="1720480298808" duration="4104000" />
+      <workItem from="1720540729254" duration="5374000" />
     </task>
     <task id="LOCAL-00001" summary="- Removed unneeded files">
       <option name="closed" value="true" />
@@ -174,7 +174,15 @@
       <option name="project" value="LOCAL" />
       <updated>1720473221064</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="- Changed orbitRing to be a Group of Line, instead of a Path of LineTo">
+      <option name="closed" value="true" />
+      <created>1720540901299</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1720540901300</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -189,6 +197,19 @@
     <MESSAGE value="- Added dbID to Celestial&#10;- All Ceslestial constructors take dbID as arg&#10;- Created StepSize enum&#10;- getEphemeris now takes StepSize as arg" />
     <MESSAGE value="- Removed Mesh based orbitRing, now a 2D ellipse" />
     <MESSAGE value="- Changed orbitRing so that it is now a Path of lines, instead of an Ellipse" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Changed orbitRing so that it is now a Path of lines, instead of an Ellipse" />
+    <MESSAGE value="- Changed orbitRing to be a Group of Line, instead of a Path of LineTo" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Changed orbitRing to be a Group of Line, instead of a Path of LineTo" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-field">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java</url>
+          <line>21</line>
+          <properties field="orbitDistance" class="org.example.planetsexplorer.celestial.SecondaryBody" />
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
