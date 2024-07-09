@@ -5,10 +5,10 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point3D;
+import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
-import javafx.scene.shape.Path;
 import javafx.scene.shape.TriangleMesh;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
@@ -32,7 +32,7 @@ public class SecondaryBody extends PrimaryBody {
     private final Rotate spinRotation = new Rotate();
     private final Rotate tiltRotation = new Rotate(0, Rotate.Y_AXIS);
 
-    private final Path orbitRing = new Path();
+    private final Group orbitRing = new Group();
 
     public SecondaryBody(String name, String dbID, float sphereRadius, PrimaryBody primaryBody, float distance, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
         super(name, dbID, sphereRadius);
@@ -48,12 +48,9 @@ public class SecondaryBody extends PrimaryBody {
             this.primaryBody.addSecondaryBody(this);
 
             this.orbitRing.setStyle(
-                    "-fx-stroke: blue;\n" +
                     "    -fx-stroke-width: 2;\n" +
                     "    -fx-stroke-dash-array: 4 4; /* 4 units filled, 4 units empty */\n" +
                     "    -fx-fill: transparent;");
-//            this.orbitRing.setRadiusX(10);
-//            this.orbitRing.setRadiusY(10);
             this.orbitRing.setMouseTransparent(true);
 
             this.getShape().setTranslateX(this.primaryBody.getShape().getTranslateX() + this.orbitDistance);
@@ -193,7 +190,7 @@ public class SecondaryBody extends PrimaryBody {
         return orbitRotation;
     }
 
-    public Path getOrbitRing() {
+    public Group getOrbitRing() {
         return orbitRing;
     }
 

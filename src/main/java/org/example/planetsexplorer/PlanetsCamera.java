@@ -1,11 +1,12 @@
 package org.example.planetsexplorer;
 
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import org.example.planetsexplorer.celestial.Celestial;
@@ -44,8 +45,8 @@ public class PlanetsCamera {
                 case Q -> this.translate.setZ(this.translate.getZ() + 1000000);
                 case E -> this.translate.setZ(this.translate.getZ() - 1000000);
 
-                case Z -> this.translate.setZ(this.translate.getZ() + 10000);
-                case X -> this.translate.setZ(this.translate.getZ() - 10000);
+                case Z -> this.translate.setZ(this.translate.getZ() + 1000);
+                case X -> this.translate.setZ(this.translate.getZ() - 1000);
 
                 case P -> {
                     HorizonSystem.empherisIndex = HorizonSystem.empherisIndex + 1;
@@ -93,20 +94,53 @@ public class PlanetsCamera {
             celestial.getGroupUI().setTranslateX(celestialPoint.getX());
             celestial.getGroupUI().setTranslateY(celestialPoint.getY());
 
-            if(celestial instanceof SecondaryBody) {
-                SecondaryBody body = (SecondaryBody)celestial;
-                body.getOrbitRing().getElements().clear();
+            if(celestial instanceof SecondaryBody body) {
+                body.getOrbitRing().getChildren().clear();
+
+                Color startColor = Color.BLUE;
+                Color midColor = Color.YELLOW;
+                Color endColor = Color.RED;
+
+                int totalSegments = body.getEphemData().size();
+                int midSegment = totalSegments / 2;
+
                 body.getOrbitRotation().setAngle(body.getEphemData().get(0).getFloat("ma"));
                 Point3D lastPoint = body.getShape().localToScene(Point3D.ZERO, true);
-                body.getOrbitRing().getElements().add(new MoveTo(lastPoint.getX(), lastPoint.getY()));
 
-                for(int i=1; i < body.getEphemData().size(); i++) {
+                for(int i=1; i < totalSegments; i++) {
                     body.getOrbitRotation().setAngle(body.getEphemData().get(i).getFloat("ma"));
                     Point3D nextPoint = body.getShape().localToScene(Point3D.ZERO, true);
-                    body.getOrbitRing().getElements().add(new LineTo(nextPoint.getX(), nextPoint.getY()));
+
+//                    Bounds shapeBounds = body.getShape().localToScene(body.getShape().getBoundsInLocal(),true);
+//                    if(shapeBounds.contains(nextPoint)) {
+//                        System.out.println(nextPoint);
+//                        lastPoint = nextPoint;
+//                        continue;
+//                    }
+
+                    Line segment = new Line(lastPoint.getX(), lastPoint.getY(), nextPoint.getX(), nextPoint.getY());
+                    double ratio;
+                    if (i <= midSegment) {
+                        ratio = (double) i / midSegment;
+                        segment.setStroke(mixColours(startColor, midColor, ratio));
+                    } else {
+                        ratio = (double) (i - midSegment) / (totalSegments - midSegment);
+                        segment.setStroke(mixColours(midColor, endColor, ratio));
+                    }
+                    segment.setOpacity(1 - ratio);
+
+                    body.getOrbitRing().getChildren().add(segment);
+                    lastPoint = nextPoint;
                 }
             }
         }
+    }
+
+    private static Color mixColours(Color start, Color end, double ratio) {
+        double r = start.getRed() + (end.getRed() - start.getRed()) * ratio;
+        double g = start.getGreen() + (end.getGreen() - start.getGreen()) * ratio;
+        double b = start.getBlue() + (end.getBlue() - start.getBlue()) * ratio;
+        return new Color(r, g, b, 1.0);
     }
 
     public Translate getTranslate() {

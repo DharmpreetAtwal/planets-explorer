@@ -100,7 +100,7 @@ public class Main extends Application {
     private void createMoon(Group root, Group sceneRoot, String moonID, String planetID) throws Exception {
         Planet planet = Planet.getPlanetByName(HorizonSystem.idToName(planetID));
         JSONObject moonJSON = HorizonSystem.getBody(moonID);
-        ArrayList<JSONObject> ephemMoon = HorizonSystem.getEphemeris(moonID, planetID, "2024-01-01", "2024-12-31", StepSize.DAYS);
+        ArrayList<JSONObject> ephemMoon = HorizonSystem.getEphemeris(moonID, planetID, "2024-01-01", "2024-12-31", StepSize.MONTHS);
         float orbitDistance = ephemMoon.get(0).getFloat("qr") / pixelKmScale;
 
         Moon moon = new Moon(HorizonSystem.idToName(moonID),
