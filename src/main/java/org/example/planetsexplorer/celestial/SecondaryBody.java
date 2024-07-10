@@ -12,6 +12,7 @@ import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
+import org.example.planetsexplorer.Main;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -61,85 +62,15 @@ public class SecondaryBody extends PrimaryBody {
         this.getShape().setMaterial(new PhongMaterial(Color.ORANGE));
         this.getShape().getTransforms().addAll(this.orbitRotation, this.tiltRotation, this.tiltCorrectionZ, this.spinRotation);
 
-        this.initializeMouseEvents();
-        this.initializeAnimationProperties();
-//        this.initializeSpinAnimation();
-    }
-
-    private void initializeMouseEvents() {
-        this.getShape().setOnMouseClicked(e-> {
-            if(this.orbitRotationAngleListener == null) {
-                Planet.planetArrayList.forEach(planet -> {
-                    if(planet.getOrbitRotationAngleListener() != null) {
-                        planet.getOrbitRotation().angleProperty().removeListener(planet.getOrbitRotationAngleListener());
-                    }
-                });
-
-                this.orbitRotationAngleListener = (observable, oldValue, newValue) -> {
-                    Point3D newPivotScene = this.getShape().localToScene(Point3D.ZERO);
-                    Point3D parentScene = this.getShape().getParent().localToScene(0, 0, 0);
-                    Point3D shapeScene = this.getShape().localToScene(0, 0, 0);
-
-                    double parentTranslateX = parentScene.getX();
-                    double shapeSceneX = shapeScene.getX();
-                    double relX = shapeSceneX - parentTranslateX;
-//                    Main.camera.getTranslate().setX(relX);
-//                    Main.camera.getRotateX().setPivotX(newPivotScene.getX());
-//                    Main.camera.getRotateX().setPivotY(newPivotScene.getY());
-//                    Main.camera.getRotateX().setPivotZ(newPivotScene.getZ());
-
-                    double parentTranslateY = parentScene.getY();
-                    double shapeSceneY = shapeScene.getY();
-                    double relY = shapeSceneY - parentTranslateY;
-//                    Main.camera.getTranslate().setY(relY);
-//                    Main.camera.getRotateY().setPivotX(newPivotScene.getX());
-//                    Main.camera.getRotateY().setPivotY(newPivotScene.getY());
-//                    Main.camera.getRotateY().setPivotZ(newPivotScene.getZ());
-//
-//                    Main.camera.getRotateZ().setPivotX(newPivotScene.getX());
-//                    Main.camera.getRotateZ().setPivotY(newPivotScene.getY());
-//                    Main.camera.getRotateZ().setPivotZ(newPivotScene.getZ());
-                };
-
-                this.orbitRotation.angleProperty().addListener(this.orbitRotationAngleListener);
-            }
-        });
-    }
-
-    // IMPORTANT: This method MUST be called after this.shape.setTranslateX/Y have been called
-    // IMPORTANT: Bindings must be set before transformations
-    private void initializeAnimationProperties() {
-        if(this.primaryBody != null) {
-            // Set the pivot point of the orbit to be the center of primaryBody
-            // Distance from primary body = secondaryBody's X - primaryBody's X
-//            this.orbitRotation.pivotXProperty().bind(
-//                    this.primaryBody.getShape().translateXProperty().subtract(this.getShape().translateXProperty()));
-//            this.orbitRotation.pivotYProperty().bind(
-//                    this.primaryBody.getShape().translateYProperty().subtract(this.getShape().translateYProperty()));
-//            this.orbitRotation.pivotZProperty().bind(
-//                    this.primaryBody.getShape().translateZProperty().subtract(this.getShape().translateZProperty()));
-        }
-
         Point3D shapePoint = this.getShape().localToScene(Point3D.ZERO).add(0, 0, 1);
         this.tiltCorrectionZ.setAxis(this.getShape().sceneToLocal(shapePoint));
         this.tiltCorrectionZ.angleProperty().bind(this.orbitRotation.angleProperty().multiply(-1));
     }
 
-    private void initializeSpinAnimation() {
-        // Rotate shape to align with tilted axis
-        Timeline spinTimeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(this.spinRotation.angleProperty(), 0)),
-                new KeyFrame(Duration.seconds(Math.abs(this.siderealDayHr)/10), new KeyValue(this.spinRotation.angleProperty(), 360)));
-
-        if(this.siderealDayHr < 0) spinTimeline.setRate(-1);
-        spinTimeline.setCycleCount(Timeline.INDEFINITE);
-        spinTimeline.play();
-    }
-
     public void setEphemIndex(int index) {
         if(!this.getEphemData().isEmpty()) {
             JSONObject data = this.getEphemData().get(index);
-            this.setEphemerisPosition(this.orbitDistance, //data.getFloat("qr") / Main.pixelKmScale,
+            this.setEphemerisPosition(data.getFloat("qr") / Main.pixelKmScale,
                     data.getFloat("ma"),
                     data.getFloat("in"));
         }

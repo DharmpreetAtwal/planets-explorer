@@ -5,6 +5,8 @@ import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.example.planetsexplorer.celestial.Celestial;
@@ -22,37 +24,46 @@ public class Main extends Application {
     public static int pixelKmScale = 100;
 
     public void start(Stage stage) throws Exception {
-        Group root = new Group();
-        SubScene subScene = new SubScene(root, 300, 300, true, null);
-        subScene.setFill(Color.ALICEBLUE);
+        Group rootScene3D = new Group();
+        SubScene scene3D = new SubScene(rootScene3D, 600, 600, true, null);
+        scene3D.setFill(Color.ALICEBLUE);
 
-        Group sceneRoot = new Group();
-        sceneRoot.getChildren().add(subScene);
+        Group uiGroup = new Group();
+        Group mainSceneRoot = new Group();
+        mainSceneRoot.getChildren().addAll(scene3D, uiGroup);
 
-        Scene mainScene = new Scene(sceneRoot,300, 300);
+        // Main scene is what record keyboard input. must be passed into PlanetsCamera
+        Scene mainScene = new Scene(mainSceneRoot,600, 600);
         camera = new PlanetsCamera(mainScene);
-        subScene.setCamera(camera.getCamera());
-        root.getChildren().add(camera.getCamera());
+        scene3D.setCamera(camera.getCamera());
+        rootScene3D.getChildren().add(camera.getCamera());
 
         JSONObject sunInfo = HorizonSystem.getBody("10");
         assert sunInfo != null;
         Sun sun = new Sun(sunInfo.getFloat("meanRadKM") / 600000, "10");
 
-        for(int i=499; i <= 499; i=i+100) createPlanet(root, sceneRoot, sun, i + "", "10", i);
+        for(int i=499; i <= 499; i=i+100) createPlanet(rootScene3D, uiGroup, sun, i + "", "10", i);
 
-//        createMoon(root, sceneRoot, "301", "399");
-        for(int i=401; i<=402; i++) createMoon(root, sceneRoot, ""+i, "499");
-//        for(int i=501; i<=572; i++) createMoon(root, sceneRoot, ""+i, "599");
-//        for(int i=501; i<=532; i++) createMoon(root, sceneRoot, ""+i, "599");
-//        for(int i=601; i<= 618; i++) createMoon(root, sceneRoot, i +"", "699");
-//        for(int i=701; i<=717; i++) createMoon(root,sceneRoot, i+"", "799");
-//        for(int i=801; i<=814; i++) createMoon(root,sceneRoot, i+"", "899");
+//        createMoon(rootScene3D, uiGroup, "301", "399");
+        for(int i=401; i<=402; i++) createMoon(rootScene3D, uiGroup, ""+i, "499");
+//        for(int i=501; i<=572; i++) createMoon(rootScene3D, uiGroup, ""+i, "599");
+//        for(int i=501; i<=532; i++) createMoon(rootScene3D, uiGroup, ""+i, "599");
+//        for(int i=601; i<= 609; i++) createMoon(rootScene3D, uiGroup, i +"", "699");
+//        for(int i=701; i<=717; i++) createMoon(rootScene3D, uiGroup, i+"", "799");
+//        for(int i=801; i<=814; i++) createMoon(rootScene3D, uiGroup, i+"", "899");
 
-//        sun.animateSecondaryBodies();
         stage.setResizable(false);
         stage.setTitle("DHARM!");
         stage.setScene(mainScene);
         stage.show();
+
+        Stage viewerStage = new Stage();
+        viewerStage.setTitle("Planet Viewer");
+        HBox viewerRoot = new HBox();
+        viewerRoot.getChildren().add(new Label("Testing"));
+        Scene viewerScene = new Scene(viewerRoot, 300, 200);
+        viewerStage.setScene(viewerScene);
+        viewerStage.show();
     }
 
     public static void updateCameraTranslate(double x, double y) {
@@ -74,7 +85,7 @@ public class Main extends Application {
         Main.camera.getRotateZ().setPivotZ(pivot.getZ());
     }
 
-    private void createPlanet(Group root, Group sceneRoot, Sun sun, String planetID, String centerID, int i) throws Exception {
+    private void createPlanet(Group rootScene3D, Group mainSceneRoot, Sun sun, String planetID, String centerID, int i) throws Exception {
         ArrayList<JSONObject> ephem = HorizonSystem.getEphemeris(planetID, centerID, "2024-01-01", "2024-12-31", StepSize.DAYS);
         JSONObject planetJSON = HorizonSystem.getBody(planetID);
         float orbitDistance = ephem.get(0).getFloat("qr") / pixelKmScale;
@@ -92,9 +103,9 @@ public class Main extends Application {
         newPlanet.setEphemData(ephem);
         newPlanet.setEphemIndex(HorizonSystem.empherisIndex);
 
-        root.getChildren().addAll(newPlanet.getShape());
-        sceneRoot.getChildren().add(newPlanet.getOrbitRing());
-        sceneRoot.getChildren().add(newPlanet.getGroupUI());
+        rootScene3D.getChildren().addAll(newPlanet.getShape());
+        mainSceneRoot.getChildren().add(newPlanet.getOrbitRing());
+        mainSceneRoot.getChildren().add(newPlanet.getGroupUI());
         newPlanet.getGroupUI().toFront();
     }
 

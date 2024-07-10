@@ -1,14 +1,12 @@
 package org.example.planetsexplorer;
 
-import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
+import javafx.scene.SubScene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import org.example.planetsexplorer.celestial.Celestial;
@@ -79,6 +77,7 @@ public class PlanetsCamera {
             if(!planet.getEphemData().isEmpty()) {
 //                planet.setEphemIndex(HorizonSystem.empherisIndex % planet.getEphemData().size());
             }
+
             for(SecondaryBody secondaryBody: planet.getSecondaryBodies()) {
                 secondaryBody.setEphemIndex(HorizonSystem.empherisIndex % secondaryBody.getEphemData().size());
             }
@@ -119,16 +118,14 @@ public class PlanetsCamera {
                     Point3D nextPointGlobal = body.getShape().localToScene(Point3D.ZERO);
 
                     // If segment is further away from the camera than the celestialObject it's modelling
-                    if(cameraPosGlobal.distance(nextPointGlobal) > cameraPosGlobal.distance(celestialPrimaryPointGlobal) ||
-                            cameraPosGlobal.distance(lastPointGlobal) > cameraPosGlobal.distance(celestialPrimaryPointGlobal)) {
+                    if(cameraPosGlobal.distance(nextPointGlobal) > cameraPosGlobal.distance(celestialPrimaryPointGlobal) + (body.getOrbitDistance() / 2) ||
+                            cameraPosGlobal.distance(lastPointGlobal) > cameraPosGlobal.distance(celestialPrimaryPointGlobal) + (body.getOrbitDistance() / 2)) {
                         lastPointScreen = nextPointScreen;
                         lastPointGlobal = nextPointGlobal;
                         continue;
                     }
 
                     Line segment = new Line(lastPointScreen.getX(), lastPointScreen.getY(), nextPointScreen.getX(), nextPointScreen.getY());
-                    body.getOrbitRing().getChildren().add(segment);
-
                     double ratio;
                     if (i <= midSegment) {
                         ratio = (double) i / midSegment;
@@ -138,17 +135,14 @@ public class PlanetsCamera {
                         segment.setStroke(mixColours(midColor, endColor, ratio));
                     }
                     segment.setOpacity(1 - ((double) i / totalSegments));
+                    segment.setStrokeWidth(5);
+                    body.getOrbitRing().getChildren().add(segment);
 
                     lastPointScreen = nextPointScreen;
                     lastPointGlobal = nextPointGlobal;
                 }
             }
         }
-    }
-
-    private static Point2D sceneToScreen(Scene scene, Point3D point3D) {
-        Point2D point2D = scene.getCamera().localToScreen(point3D);
-        return new Point2D(point2D.getX(), point2D.getY());
     }
 
     private static Color mixColours(Color start, Color end, double ratio) {
