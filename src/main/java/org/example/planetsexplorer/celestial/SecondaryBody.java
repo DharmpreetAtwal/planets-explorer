@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class SecondaryBody extends PrimaryBody {
     private final PrimaryBody primaryBody;
 
-    private final float orbitDistance;
+    private float orbitDistance;
     private final float orbitPeriodYear;
     private final float siderealDayHr;
     private final float obliquityToOrbitDeg;
@@ -94,6 +94,8 @@ public class SecondaryBody extends PrimaryBody {
                     0,
                     Math.cos(Math.toRadians(inclin)));
             this.orbitRotation.setAxis(newAxis);
+
+            this.orbitDistance = orbitDistance;
         }
     }
 
@@ -175,5 +177,13 @@ public class SecondaryBody extends PrimaryBody {
 
     public PrimaryBody getPrimaryBody() {
         return primaryBody;
+    }
+
+    public float getSiderealDayHr() {
+        return siderealDayHr;
+    }
+
+    public float getObliquityToOrbitDeg() {
+        return obliquityToOrbitDeg;
     }
 }

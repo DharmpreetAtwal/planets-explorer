@@ -6,6 +6,7 @@ import javafx.scene.*;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Sphere;
 import org.example.planetsexplorer.Main;
+import org.example.planetsexplorer.PlanetViewer;
 import org.example.planetsexplorer.PlanetsCamera;
 
 import java.util.ArrayList;
@@ -39,8 +40,18 @@ public class Celestial {
             Main.updateCameraTranslate(shapePos.getX(), shapePos.getY());
             Main.updateCameraPivot(shapePos);
             PlanetsCamera.updateUIPosition();
-            Main.selectedCelestial = this;
+            PlanetViewer.setSelectedCelestial(this);
+//            Main.selectedCelestial = this;
         });
+    }
+
+    public Point2D getScreenCoordinates() {
+        Point3D screenPoint = this.shape.localToScene(Point3D.ZERO, true);
+        return new Point2D(screenPoint.getX(), screenPoint.getY());
+    }
+
+    public Point3D getSceneCoordinates() {
+        return this.shape.localToScene(Point3D.ZERO);
     }
 
     public String getName() {
@@ -53,5 +64,9 @@ public class Celestial {
 
     public Group getGroupUI() {
         return groupUI;
+    }
+
+    public String getDbID() {
+        return dbID;
     }
 }

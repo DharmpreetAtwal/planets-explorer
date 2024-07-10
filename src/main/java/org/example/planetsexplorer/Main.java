@@ -5,11 +5,8 @@ import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import org.example.planetsexplorer.celestial.Celestial;
 import org.example.planetsexplorer.celestial.Moon;
 import org.example.planetsexplorer.celestial.Planet;
 import org.example.planetsexplorer.celestial.Sun;
@@ -20,7 +17,7 @@ import java.util.ArrayList;
 public class Main extends Application {
     public static PlanetsCamera camera = null;
     private final float orbitDistance = 3;
-    public static Celestial selectedCelestial = null;
+//    public static Celestial selectedCelestial = null;
     public static int pixelKmScale = 100;
 
     public void start(Stage stage) throws Exception {
@@ -57,13 +54,7 @@ public class Main extends Application {
         stage.setScene(mainScene);
         stage.show();
 
-        Stage viewerStage = new Stage();
-        viewerStage.setTitle("Planet Viewer");
-        HBox viewerRoot = new HBox();
-        viewerRoot.getChildren().add(new Label("Testing"));
-        Scene viewerScene = new Scene(viewerRoot, 300, 200);
-        viewerStage.setScene(viewerScene);
-        viewerStage.show();
+        PlanetViewer pv = new PlanetViewer();
     }
 
     public static void updateCameraTranslate(double x, double y) {
