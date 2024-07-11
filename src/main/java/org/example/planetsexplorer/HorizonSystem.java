@@ -142,9 +142,7 @@ public class HorizonSystem {
         return ephemData;
     }
 
-
-    private static StringBuilder executeGet(String urlDatabase) throws Exception {
-//        System.out.println(urlDatabase);
+    private static StringBuilder executeGet(String urlDatabase) throws Exception  {
         StringBuilder results = new StringBuilder();
         URL url = new URL(urlDatabase);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();

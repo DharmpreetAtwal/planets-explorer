@@ -4,13 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Small adjustments to updateUIPosition&#10;- Removed unused methods from SecondaryBody&#10;- Removed shapeRadius from Celestial&#10;- Added second viewer stage">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" afterDir="false" />
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Created basic functioning PlanetViewer that changes based on selectedCelestial&#10;- Moved selectedCelestial to PlanetViewer&#10;- Created getScreen/SceneCoordinates in Celestial">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Celestial.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Celestial.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,7 +110,7 @@
       <workItem from="1720445626495" duration="18405000" />
       <workItem from="1720480298808" duration="4104000" />
       <workItem from="1720540729254" duration="17196000" />
-      <workItem from="1720619906149" duration="4016000" />
+      <workItem from="1720619906149" duration="8540000" />
     </task>
     <task id="LOCAL-00001" summary="- Removed unneeded files">
       <option name="closed" value="true" />
@@ -202,7 +200,15 @@
       <option name="project" value="LOCAL" />
       <updated>1720574394873</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="- Created basic functioning PlanetViewer that changes based on selectedCelestial&#10;- Moved selectedCelestial to PlanetViewer&#10;- Created getScreen/SceneCoordinates in Celestial">
+      <option name="closed" value="true" />
+      <created>1720624339158</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1720624339158</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -220,6 +226,7 @@
     <MESSAGE value="- Changed orbitRing to be a Group of Line, instead of a Path of LineTo" />
     <MESSAGE value="- Made camera static&#10;- Orbit ring segments that are further away from the camera than the primaryBody are hidden" />
     <MESSAGE value="- Small adjustments to updateUIPosition&#10;- Removed unused methods from SecondaryBody&#10;- Removed shapeRadius from Celestial&#10;- Added second viewer stage" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Small adjustments to updateUIPosition&#10;- Removed unused methods from SecondaryBody&#10;- Removed shapeRadius from Celestial&#10;- Added second viewer stage" />
+    <MESSAGE value="- Created basic functioning PlanetViewer that changes based on selectedCelestial&#10;- Moved selectedCelestial to PlanetViewer&#10;- Created getScreen/SceneCoordinates in Celestial" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Created basic functioning PlanetViewer that changes based on selectedCelestial&#10;- Moved selectedCelestial to PlanetViewer&#10;- Created getScreen/SceneCoordinates in Celestial" />
   </component>
 </project>

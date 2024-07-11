@@ -41,7 +41,6 @@ public class Celestial {
             Main.updateCameraPivot(shapePos);
             PlanetsCamera.updateUIPosition();
             PlanetViewer.setSelectedCelestial(this);
-//            Main.selectedCelestial = this;
         });
     }
 

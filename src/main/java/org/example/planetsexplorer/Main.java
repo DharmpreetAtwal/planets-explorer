@@ -7,8 +7,17 @@ import javafx.scene.Scene;
 import javafx.scene.SubScene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import org.example.planetsexplorer.celestial.Moon;
 import org.example.planetsexplorer.celestial.Planet;
+import org.example.planetsexplorer.celestial.SecondaryBody;
 import org.example.planetsexplorer.celestial.Sun;
 import org.json.JSONObject;
 
@@ -16,8 +25,6 @@ import java.util.ArrayList;
 
 public class Main extends Application {
     public static PlanetsCamera camera = null;
-    private final float orbitDistance = 3;
-//    public static Celestial selectedCelestial = null;
     public static int pixelKmScale = 100;
 
     public void start(Stage stage) throws Exception {
@@ -39,15 +46,7 @@ public class Main extends Application {
         assert sunInfo != null;
         Sun sun = new Sun(sunInfo.getFloat("meanRadKM") / 600000, "10");
 
-        for(int i=499; i <= 499; i=i+100) createPlanet(rootScene3D, uiGroup, sun, i + "", "10", i);
-
-//        createMoon(rootScene3D, uiGroup, "301", "399");
-        for(int i=401; i<=402; i++) createMoon(rootScene3D, uiGroup, ""+i, "499");
-//        for(int i=501; i<=572; i++) createMoon(rootScene3D, uiGroup, ""+i, "599");
-//        for(int i=501; i<=532; i++) createMoon(rootScene3D, uiGroup, ""+i, "599");
-//        for(int i=601; i<= 609; i++) createMoon(rootScene3D, uiGroup, i +"", "699");
-//        for(int i=701; i<=717; i++) createMoon(rootScene3D, uiGroup, i+"", "799");
-//        for(int i=801; i<=814; i++) createMoon(rootScene3D, uiGroup, i+"", "899");
+        startGetThreads(rootScene3D, uiGroup, sun);
 
         stage.setResizable(false);
         stage.setTitle("DHARM!");
@@ -56,6 +55,60 @@ public class Main extends Application {
 
         PlanetViewer pv = new PlanetViewer();
     }
+
+    private void startGetThreads(Group rootScene3D, Group uiGroup, Sun sun) {
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        List<Future<SecondaryBody>> futures = new ArrayList<>();
+
+        for(int i=199; i <= 999; i=i+100) {
+            final String planetID = i + "";
+            Callable<SecondaryBody> task = () -> createPlanet(rootScene3D, uiGroup, sun, planetID, "10");
+            futures.add(executor.submit(task));
+        }
+
+        Callable<SecondaryBody> moonTask = () -> createMoon(rootScene3D, uiGroup, "301", "399");
+        futures.add(executor.submit(moonTask));
+
+        for(int i=401; i<=402; i++) {
+            final String moonID = i + "";
+            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "499");
+            futures.add(executor.submit(task));
+        }
+
+        for(int i=501; i<=572; i++) {
+            final String moonID = i + "";
+            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "599");
+            futures.add(executor.submit(task));
+        }
+
+        for(int i=601; i<= 609; i++) {
+            final String moonID = i + "";
+            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "699");
+            futures.add(executor.submit(task));
+        }
+
+        for(int i=701; i<=717; i++) {
+            final String moonID = i + "";
+            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "799");
+            futures.add(executor.submit(task));
+        }
+
+        for(int i=801; i<=814; i++) {
+            final String moonID = i + "";
+            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "899");
+            futures.add(executor.submit(task));
+        }
+
+        for (Future<SecondaryBody> future : futures) {
+            try {
+                System.out.println(future.get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        executor.shutdown();
+    }
+
 
     public static void updateCameraTranslate(double x, double y) {
         Main.camera.getTranslate().setX(x);
@@ -76,7 +129,7 @@ public class Main extends Application {
         Main.camera.getRotateZ().setPivotZ(pivot.getZ());
     }
 
-    private void createPlanet(Group rootScene3D, Group mainSceneRoot, Sun sun, String planetID, String centerID, int i) throws Exception {
+    private Planet createPlanet(Group rootScene3D, Group mainSceneRoot, Sun sun, String planetID, String centerID) throws Exception {
         ArrayList<JSONObject> ephem = HorizonSystem.getEphemeris(planetID, centerID, "2024-01-01", "2024-12-31", StepSize.DAYS);
         JSONObject planetJSON = HorizonSystem.getBody(planetID);
         float orbitDistance = ephem.get(0).getFloat("qr") / pixelKmScale;
@@ -94,13 +147,15 @@ public class Main extends Application {
         newPlanet.setEphemData(ephem);
         newPlanet.setEphemIndex(HorizonSystem.empherisIndex);
 
-        rootScene3D.getChildren().addAll(newPlanet.getShape());
+        rootScene3D.getChildren().add(newPlanet.getShape());
         mainSceneRoot.getChildren().add(newPlanet.getOrbitRing());
         mainSceneRoot.getChildren().add(newPlanet.getGroupUI());
         newPlanet.getGroupUI().toFront();
+
+        return newPlanet;
     }
 
-    private void createMoon(Group root, Group sceneRoot, String moonID, String planetID) throws Exception {
+    private Moon createMoon(Group root, Group sceneRoot, String moonID, String planetID) throws Exception {
         Planet planet = Planet.getPlanetByName(HorizonSystem.idToName(planetID));
         JSONObject moonJSON = HorizonSystem.getBody(moonID);
         ArrayList<JSONObject> ephemMoon = HorizonSystem.getEphemeris(moonID, planetID, "2024-01-01", "2024-12-31", StepSize.DAYS);
@@ -122,6 +177,8 @@ public class Main extends Application {
         sceneRoot.getChildren().add(moon.getOrbitRing());
         sceneRoot.getChildren().add(moon.getGroupUI());
         moon.getGroupUI().toFront();
+
+        return moon;
     }
 
     private void testAnimations(Group root, Sun sun) throws Exception {
