@@ -12,10 +12,14 @@ import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
+import org.example.planetsexplorer.HorizonSystem;
 import org.example.planetsexplorer.Main;
+import org.example.planetsexplorer.StepSize;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import static org.example.planetsexplorer.Main.pixelKmScale;
 
 public class SecondaryBody extends PrimaryBody {
     private final PrimaryBody primaryBody;
@@ -35,9 +39,58 @@ public class SecondaryBody extends PrimaryBody {
 
     private final Group orbitRing = new Group();
 
-    public SecondaryBody(String name, String dbID, float sphereRadius, PrimaryBody primaryBody, float distance, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
+    public SecondaryBody(String name, String dbID, float sphereRadius, PrimaryBody primaryBody, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
         super(name, dbID, sphereRadius);
-        this.orbitDistance = distance;
+
+        ArrayList<JSONObject> ephemMoon = null;
+        try {
+            int years = (int) orbitPeriodYear;
+            float yearFraction = orbitPeriodYear - years;
+            int daysFraction = (int) (yearFraction * 365.25);
+
+            int months = daysFraction / 30;
+            int days = (daysFraction % 30) + 1;
+
+            int dateStopYear = 2024 + years;
+            int dateStopMonth = 1 + months;
+            int dateStopDay = 1 + days;
+
+            // No ephemeris for target "Pluto" after A.D. 2199-DEC-29 00:00:00.0000 TDB
+            if(dateStopYear >= 2198) {
+                dateStopYear = 2199;
+            }
+
+            StepSize step;
+            if(days <= 1 && months == 0 && years == 0) {
+                step = StepSize.MINUTES;
+            } else if(days <= 8 && months == 0 && years == 0) {
+                step = StepSize.HOURS;
+            } else if(months <= 8 && years == 0) {
+                step = StepSize.DAYS;
+            } else if(years <= 8) {
+                step = StepSize.MONTHS;
+            } else {
+                step = StepSize.YEARS;
+            }
+
+            ephemMoon = HorizonSystem.getEphemeris(dbID, primaryBody.getDbID(),
+                    String.format("%02d", dateStopYear - years) + "-" +
+                            String.format("%02d", dateStopMonth - months) + "-" +
+                            String.format("%02d", dateStopDay - days),
+                    String.format("%02d", dateStopYear) + "-" +
+                            String.format("%02d", dateStopMonth) + "-" +
+                            String.format("%02d", dateStopDay),
+                    step);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        float orbitDistance = ephemMoon.get(0).getFloat("qr") / pixelKmScale;
+
+        this.setEphemData(ephemMoon);
+
+        this.orbitDistance = orbitDistance;
         this.orbitPeriodYear = orbitPeriodYear;
         this.siderealDayHr = siderealDayHr;
         this.obliquityToOrbitDeg = obliquityToOrbitDeg;
@@ -70,7 +123,7 @@ public class SecondaryBody extends PrimaryBody {
     public void setEphemIndex(int index) {
         if(!this.getEphemData().isEmpty()) {
             JSONObject data = this.getEphemData().get(index);
-            this.setEphemerisPosition(data.getFloat("qr") / Main.pixelKmScale,
+            this.setEphemerisPosition(data.getFloat("qr") / pixelKmScale,
                     data.getFloat("ma"),
                     data.getFloat("in"));
         }

@@ -13,6 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,11 +27,10 @@ public class HorizonSystem {
                 "'&MAKE_EPHEM='" + "NO" + "'";
         String planetStrJSON = executeGet(urlQuery).toString();
 
+        System.out.println(urlQuery);
         try{
             JSONObject planetJSON = new JSONObject(planetStrJSON);
             String resultStr = (String) planetJSON.get("result");
-
-            System.out.println("Getting :" + id);
 
             JSONObject planetInfo = new JSONObject();
             String siderealPeriod = extractSiderealOrbPeriod(resultStr);
@@ -50,7 +50,6 @@ public class HorizonSystem {
             String meanRadKM = extractVolMeanRadiusKM(resultStr);
             planetInfo.put("meanRadKM", Float.parseFloat(meanRadKM));
 
-//            System.out.println(planetInfo);
             return planetInfo;
         } catch (JSONException err) {
             System.err.println(err);
@@ -59,6 +58,8 @@ public class HorizonSystem {
     }
 
     public static ArrayList<JSONObject> getEphemeris(String id, String centerId, String startTime, String stopTime, StepSize stepSize) throws Exception {
+        System.out.println(startTime);
+        System.out.println(stopTime);
         String urlQuery = "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='" + id +
                 "'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='"+  centerId +
                 "'&CSV_FORMAT='YES'" +
@@ -182,11 +183,19 @@ public class HorizonSystem {
         Matcher matcher = sideOrbPattern.matcher(result);
 
         if(matcher.find()) {
-//            System.out.println(matcher.group());
             return extractLastNumber(matcher.group());
         } else {
-            System.err.println("Could not find 'Sidereal Orb Period'");
-            return "0";
+            Pattern sideOrbPatternDays = Pattern.compile("orbit(al)? period\\s*[=~]\\s+\\d*\\.?\\d+\\s* d", Pattern.CASE_INSENSITIVE);
+            Matcher matcher1 = sideOrbPatternDays.matcher(result);
+
+            if(matcher1.find()) {
+                float lastNumber = Float.parseFloat(Objects.requireNonNull(extractLastNumber(matcher1.group())));
+                lastNumber = lastNumber / 365.25f;
+                return String.valueOf(lastNumber);
+            } else {
+                System.err.println("Could not find 'Sidereal Orb Period'");
+                return "0";
+            }
         }
     }
 

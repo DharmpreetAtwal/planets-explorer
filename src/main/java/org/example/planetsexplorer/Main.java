@@ -75,33 +75,35 @@ public class Main extends Application {
             futures.add(executor.submit(task));
         }
 
-        for(int i=501; i<=572; i++) {
-            final String moonID = i + "";
-            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "599");
-            futures.add(executor.submit(task));
-        }
+//        for(int i=501; i<=572; i++) {
+//            final String moonID = i + "";
+//            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "599");
+//            futures.add(executor.submit(task));
+//        }
 
-        for(int i=601; i<= 609; i++) {
-            final String moonID = i + "";
-            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "699");
-            futures.add(executor.submit(task));
-        }
-
-        for(int i=701; i<=717; i++) {
-            final String moonID = i + "";
-            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "799");
-            futures.add(executor.submit(task));
-        }
-
-        for(int i=801; i<=814; i++) {
-            final String moonID = i + "";
-            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "899");
-            futures.add(executor.submit(task));
-        }
+//        for(int i=601; i<= 609; i++) {
+//            final String moonID = i + "";
+//            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "699");
+//            futures.add(executor.submit(task));
+//        }
+//
+//        for(int i=701; i<=717; i++) {
+//            final String moonID = i + "";
+//            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "799");
+//            futures.add(executor.submit(task));
+//        }
+//
+//        for(int i=801; i<=814; i++) {
+//            final String moonID = i + "";
+//            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "899");
+//            futures.add(executor.submit(task));
+//        }
 
         for (Future<SecondaryBody> future : futures) {
             try {
-                System.out.println(future.get());
+                //System.out.println(
+                        future.get();
+                //);
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
@@ -130,21 +132,16 @@ public class Main extends Application {
     }
 
     private Planet createPlanet(Group rootScene3D, Group mainSceneRoot, Sun sun, String planetID, String centerID) throws Exception {
-        ArrayList<JSONObject> ephem = HorizonSystem.getEphemeris(planetID, centerID, "2024-01-01", "2024-12-31", StepSize.DAYS);
         JSONObject planetJSON = HorizonSystem.getBody(planetID);
-        float orbitDistance = ephem.get(0).getFloat("qr") / pixelKmScale;
 
         Planet newPlanet = new Planet(
                 HorizonSystem.idToName(planetID),
                 planetID,
                 planetJSON.getFloat("meanRadKM") / pixelKmScale,
                 sun,
-                orbitDistance,// * i / 10,
                 planetJSON.getFloat("siderealOrbitDays"),
                 planetJSON.getFloat("siderealDayHr"),
                 planetJSON.getFloat("obliquityToOrbitDeg"));
-
-        newPlanet.setEphemData(ephem);
         newPlanet.setEphemIndex(HorizonSystem.empherisIndex);
 
         rootScene3D.getChildren().add(newPlanet.getShape());
@@ -158,19 +155,14 @@ public class Main extends Application {
     private Moon createMoon(Group root, Group sceneRoot, String moonID, String planetID) throws Exception {
         Planet planet = Planet.getPlanetByName(HorizonSystem.idToName(planetID));
         JSONObject moonJSON = HorizonSystem.getBody(moonID);
-        ArrayList<JSONObject> ephemMoon = HorizonSystem.getEphemeris(moonID, planetID, "2024-01-01", "2024-12-31", StepSize.DAYS);
-        float orbitDistance = ephemMoon.get(0).getFloat("qr") / pixelKmScale;
 
         Moon moon = new Moon(HorizonSystem.idToName(moonID),
                 moonID,
                 moonJSON.getFloat("meanRadKM") / pixelKmScale,
                 planet,
-                orbitDistance,
                 moonJSON.getFloat("siderealOrbitDays"),
                 moonJSON.getFloat("siderealDayHr"),
                 moonJSON.getFloat("obliquityToOrbitDeg"));
-
-        moon.setEphemData(ephemMoon);
         moon.setEphemIndex(HorizonSystem.empherisIndex);
 
         root.getChildren().addAll(moon.getShape());
@@ -179,24 +171,6 @@ public class Main extends Application {
         moon.getGroupUI().toFront();
 
         return moon;
-    }
-
-    private void testAnimations(Group root, Sun sun) throws Exception {
-        for(int i=1; i <= 9; i++) {
-            JSONObject planetJSON = HorizonSystem.getBody(i+"99");
-            float orbitDistance = i * 15;
-            Planet newPlanet = new Planet(
-                    HorizonSystem.idToName(i+"99"),
-                    i+"99",
-                    planetJSON.getFloat("meanRadKM") / 10000,
-                    sun,
-                    orbitDistance * i,
-                    planetJSON.getFloat("siderealOrbitDays"),
-                    planetJSON.getFloat("siderealDayHr"),
-                    planetJSON.getFloat("obliquityToOrbitDeg"));
-
-            root.getChildren().addAll(newPlanet.getShape(), newPlanet.getOrbitRing());
-        }
     }
 
     public static void main(String[] args) {
