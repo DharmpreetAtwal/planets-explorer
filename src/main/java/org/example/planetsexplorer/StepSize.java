@@ -2,7 +2,7 @@ package org.example.planetsexplorer;
 
 public enum StepSize {
     MINUTES("10m"),
-    HOURS("3%20h"),
+    HOURS("60 min"),
     DAYS("1d"),
     MONTHS("1 mo"),
     YEARS("1 year");

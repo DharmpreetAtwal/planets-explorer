@@ -75,7 +75,7 @@ public class PlanetsCamera {
     private void updateEphemeris() {
         for(Planet planet: Planet.planetArrayList) {
             if(!planet.getEphemData().isEmpty()) {
-//                planet.setEphemIndex(HorizonSystem.empherisIndex % planet.getEphemData().size());
+                planet.setEphemIndex(HorizonSystem.empherisIndex % planet.getEphemData().size());
             }
 
             for(SecondaryBody secondaryBody: planet.getSecondaryBodies()) {
@@ -126,12 +126,7 @@ public class PlanetsCamera {
                     }
 
                     Line segment = new Line(lastPointScreen.getX(), lastPointScreen.getY(), nextPointScreen.getX(), nextPointScreen.getY());
-                    segment.setOpacity(1 - ((double) i / totalSegments));
-                    segment.setStrokeWidth(5);
-                    body.getOrbitRing().getChildren().add(segment);
-
-                    // Determining the mix of two gradient colors
-                    double ratio;
+                    double ratio; // Determining the mix of two gradient colors
                     if (i <= midSegment) {
                         ratio = (double) i / midSegment;
                         segment.setStroke(mixColours(startColor, midColor, ratio));
@@ -139,6 +134,10 @@ public class PlanetsCamera {
                         ratio = (double) (i - midSegment) / (totalSegments - midSegment);
                         segment.setStroke(mixColours(midColor, endColor, ratio));
                     }
+
+                    segment.setOpacity(1 - ((double) i / totalSegments));
+                    segment.setStrokeWidth(5);
+                    body.getOrbitRing().getChildren().add(segment);
 
                     lastPointScreen = nextPointScreen;
                     lastPointGlobal = nextPointGlobal;

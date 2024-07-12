@@ -27,7 +27,6 @@ public class HorizonSystem {
                 "'&MAKE_EPHEM='" + "NO" + "'";
         String planetStrJSON = executeGet(urlQuery).toString();
 
-        System.out.println(urlQuery);
         try{
             JSONObject planetJSON = new JSONObject(planetStrJSON);
             String resultStr = (String) planetJSON.get("result");
@@ -58,14 +57,15 @@ public class HorizonSystem {
     }
 
     public static ArrayList<JSONObject> getEphemeris(String id, String centerId, String startTime, String stopTime, StepSize stepSize) throws Exception {
-        System.out.println(startTime);
-        System.out.println(stopTime);
         String urlQuery = "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='" + id +
                 "'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='"+  centerId +
                 "'&CSV_FORMAT='YES'" +
                 "&START_TIME='" + startTime +
                 "'&STOP_TIME='" + stopTime +
                 "'&STEP_SIZE='" + stepSize.toString() + "'";
+        System.out.println(urlQuery);
+        System.out.println(startTime);
+        System.out.println(stopTime);
         String ephemStrJSON = executeGet(urlQuery).toString();
 
         try {
@@ -194,7 +194,7 @@ public class HorizonSystem {
                 return String.valueOf(lastNumber);
             } else {
                 System.err.println("Could not find 'Sidereal Orb Period'");
-                return "0";
+                return "1";
             }
         }
     }
