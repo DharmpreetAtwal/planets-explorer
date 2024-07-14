@@ -48,27 +48,18 @@ public class SecondaryBody extends PrimaryBody {
 
     public SecondaryBody(String name, String dbID, float sphereRadius, PrimaryBody primaryBody, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
         super(name, dbID, sphereRadius);
+        this.primaryBody = primaryBody;
 
-        ArrayList<JSONObject> ephemMoon = null;
-        try {
-            this.initializeEphemStartStop(orbitPeriodYear);
-            ephemMoon = HorizonSystem.getEphemeris(dbID, primaryBody.getDbID(),
-                    this.getEphemStartDateTimeStamp(),
-                    this.getEphemStopDateTimeStamp(),
-                    this.ephemStepSize);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        float orbitDistance = ephemMoon.get(0).getFloat("qr") / pixelKmScale;
-        this.setEphemData(ephemMoon);
+        this.initializeEphemStartStop(orbitPeriodYear);
+        this.setEphemeris(this.getEphemStartDateTimeStamp(),
+                this.getEphemStopDateTimeStamp(),
+                this.getEphemStepSize());
 
-        this.orbitDistance = orbitDistance;
         this.orbitPeriodYear = orbitPeriodYear;
         this.siderealDayHr = siderealDayHr;
         this.obliquityToOrbitDeg = obliquityToOrbitDeg;
         this.tiltRotation.setAngle(-this.obliquityToOrbitDeg);
 
-        this.primaryBody = primaryBody;
         this.primaryBody.addSecondaryBody(this);
 
         this.orbitRing.setStyle(
@@ -86,6 +77,20 @@ public class SecondaryBody extends PrimaryBody {
         Point3D shapePoint = this.getShape().localToScene(Point3D.ZERO).add(0, 0, 1);
         this.tiltCorrectionZ.setAxis(this.getShape().sceneToLocal(shapePoint));
         this.tiltCorrectionZ.angleProperty().bind(this.orbitRotation.angleProperty().multiply(-1));
+    }
+
+    public void setEphemeris(String startDateTimeStamp, String stopDateTimeStamp, StepSize ephemStepSize) {
+        ArrayList<JSONObject> ephemMoon = null;
+        try {
+            ephemMoon = HorizonSystem.getEphemeris(this.getDbID(), primaryBody.getDbID(),
+                    startDateTimeStamp,
+                    stopDateTimeStamp,
+                    ephemStepSize);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        this.setEphemData(ephemMoon);
+        this.orbitDistance = ephemMoon.get(0).getFloat("qr") / pixelKmScale;;
     }
 
     private void initializeEphemStartStop(float orbitYear) {
@@ -147,6 +152,8 @@ public class SecondaryBody extends PrimaryBody {
                 String.format("%02d", this.ephemStopHour) + ":" +
                 String.format("%02d", this.ephemStopMinute);
     }
+
+
 
     public void setEphemIndex(int index) {
         if(!this.getEphemData().isEmpty()) {
@@ -266,5 +273,49 @@ public class SecondaryBody extends PrimaryBody {
 
     public float getObliquityToOrbitDeg() {
         return obliquityToOrbitDeg;
+    }
+
+    public int getEphemStartYear() {
+        return ephemStartYear;
+    }
+
+    public int getEphemStartMonth() {
+        return ephemStartMonth;
+    }
+
+    public int getEphemStartDay() {
+        return ephemStartDay;
+    }
+
+    public int getEphemStartHour() {
+        return ephemStartHour;
+    }
+
+    public int getEphemStartMinute() {
+        return ephemStartMinute;
+    }
+
+    public int getEphemStopYear() {
+        return ephemStopYear;
+    }
+
+    public int getEphemStopMonth() {
+        return ephemStopMonth;
+    }
+
+    public int getEphemStopDay() {
+        return ephemStopDay;
+    }
+
+    public int getEphemStopHour() {
+        return ephemStopHour;
+    }
+
+    public int getEphemStopMinute() {
+        return ephemStopMinute;
+    }
+
+    public StepSize getEphemStepSize() {
+        return ephemStepSize;
     }
 }

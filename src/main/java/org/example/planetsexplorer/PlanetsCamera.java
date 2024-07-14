@@ -35,6 +35,11 @@ public class PlanetsCamera {
                 this.isShiftToggle = !this.isShiftToggle;
             }
 
+            // Only update the orbit ring UI when camera is transformed
+            // Only update the orbit ring UI when O/P are NOT pressed
+            // By default true, set to false if O/P are pressed
+            boolean updateOrbitRing = true;
+
             switch (e.getCode()) {
                 case W -> this.rotateX.setAngle(this.rotateX.getAngle() + 10);
                 case S -> this.rotateX.setAngle(this.rotateX.getAngle() - 10);
@@ -49,11 +54,13 @@ public class PlanetsCamera {
                 case X -> this.translate.setZ(this.translate.getZ() - 1000);
 
                 case P -> {
+                    updateOrbitRing = false;
                     HorizonSystem.empherisIndex = HorizonSystem.empherisIndex + 1;
                     updateEphemeris();
                 }
 
                 case O -> {
+                    updateOrbitRing = false;
                     if(HorizonSystem.empherisIndex > 0) {
                         HorizonSystem.empherisIndex = HorizonSystem.empherisIndex - 1;
                         updateEphemeris();
@@ -68,20 +75,21 @@ public class PlanetsCamera {
                 }
             }
 
-            updateUIPosition();
+            updateUIPosition(updateOrbitRing);
         });
     }
 
     private void updateEphemeris() {
         for(Planet planet: Planet.planetArrayList) {
             if(!planet.getEphemData().isEmpty()) {
-                planet.setEphemIndex(HorizonSystem.empherisIndex % planet.getEphemData().size());
+//                planet.setEphemIndex(HorizonSystem.empherisIndex % planet.getEphemData().size());
             }
 
             for(SecondaryBody secondaryBody: planet.getSecondaryBodies()) {
                 secondaryBody.setEphemIndex(HorizonSystem.empherisIndex % secondaryBody.getEphemData().size());
             }
         }
+
         if(PlanetViewer.selectedCelestial != null) {
             Point3D pos = PlanetViewer.selectedCelestial.getShape().localToScene(Point3D.ZERO);
             Main.updateCameraTranslate(pos.getX(),pos.getY());
@@ -89,13 +97,13 @@ public class PlanetsCamera {
         }
     }
 
-    public static void updateUIPosition() {
+    public static void updateUIPosition(boolean updateOrbitRing) {
         for(Celestial celestial: Celestial.celestialArrayList) {
             Point2D celestialPoint = celestial.getScreenCoordinates();
             celestial.getGroupUI().setTranslateX(celestialPoint.getX());
             celestial.getGroupUI().setTranslateY(celestialPoint.getY());
 
-            if(celestial instanceof SecondaryBody body) {
+            if(celestial instanceof SecondaryBody body && updateOrbitRing) {
                 body.getOrbitRing().getChildren().clear();
 
                 Color startColor = Color.BLUE;

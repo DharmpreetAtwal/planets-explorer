@@ -32,12 +32,10 @@ public class Main extends Application {
         SubScene scene3D = new SubScene(rootScene3D, 600, 600, true, null);
         scene3D.setFill(Color.ALICEBLUE);
 
-        Group uiGroup = new Group();
-        Group mainSceneRoot = new Group();
-        mainSceneRoot.getChildren().addAll(scene3D, uiGroup);
+        Group sceneRoot = new Group();
+        sceneRoot.getChildren().add(scene3D);
 
-        // Main scene is what record keyboard input. must be passed into PlanetsCamera
-        Scene mainScene = new Scene(mainSceneRoot,600, 600);
+        Scene mainScene = new Scene(sceneRoot,600, 600);
         camera = new PlanetsCamera(mainScene);
         scene3D.setCamera(camera.getCamera());
         rootScene3D.getChildren().add(camera.getCamera());
@@ -46,7 +44,7 @@ public class Main extends Application {
         assert sunInfo != null;
         Sun sun = new Sun(sunInfo.getFloat("meanRadKM") / 600000, "10");
 
-        startGetThreads(rootScene3D, uiGroup, sun);
+        startGetThreads(rootScene3D, sceneRoot, sun);
 
         stage.setResizable(false);
         stage.setTitle("DHARM!");
@@ -60,7 +58,7 @@ public class Main extends Application {
         ExecutorService executor = Executors.newFixedThreadPool(1);
         List<Future<SecondaryBody>> futures = new ArrayList<>();
 
-        for(int i=399; i <= 399; i=i+100) {
+        for(int i=399; i <= 499; i=i+100) {
             final String planetID = i + "";
             Callable<SecondaryBody> task = () -> createPlanet(rootScene3D, uiGroup, sun, planetID, "10");
             futures.add(executor.submit(task));
@@ -69,13 +67,13 @@ public class Main extends Application {
         Callable<SecondaryBody> moonTask = () -> createMoon(rootScene3D, uiGroup, "301", "399");
         futures.add(executor.submit(moonTask));
 
-//        for(int i=401; i<=402; i++) {
-//            final String moonID = i + "";
-//            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "499");
-//            futures.add(executor.submit(task));
-//        }
+        for(int i=401; i<=402; i++) {
+            final String moonID = i + "";
+            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "499");
+            futures.add(executor.submit(task));
+        }
 
-//        for(int i=501; i<=572; i++) {
+//        for(int i=501; i<=517; i++) {
 //            final String moonID = i + "";
 //            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "599");
 //            futures.add(executor.submit(task));

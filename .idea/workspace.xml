@@ -4,12 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- The default date range for a body's ephemeris data is now tied to its orbital period">
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Ephem query now incorperates time stamp&#10;- Added Start/Stop/Step attributes to SecondaryBody&#10;- HorizonSystem now returns &quot;1&quot; for any body with no side real orbit period">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/StepSize.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/StepSize.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Celestial.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Celestial.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -113,7 +113,7 @@
       <workItem from="1720480298808" duration="4104000" />
       <workItem from="1720540729254" duration="17196000" />
       <workItem from="1720619906149" duration="8809000" />
-      <workItem from="1720719552055" duration="16856000" />
+      <workItem from="1720719552055" duration="25358000" />
     </task>
     <task id="LOCAL-00001" summary="- Removed unneeded files">
       <option name="closed" value="true" />
@@ -227,7 +227,23 @@
       <option name="project" value="LOCAL" />
       <updated>1720745864690</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="- Ephem query now incorperates time stamp&#10;- Added Start/Stop/Step attributes to SecondaryBody&#10;- HorizonSystem now returns &quot;1&quot; for any body with no side real orbit period">
+      <option name="closed" value="true" />
+      <created>1720812238120</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1720812238120</updated>
+    </task>
+    <task id="LOCAL-00016" summary="- Ephem query now incorperates time stamp&#10;- Added Start/Stop/Step attributes to SecondaryBody&#10;- HorizonSystem now returns &quot;1&quot; for any body with no side real orbit period">
+      <option name="closed" value="true" />
+      <created>1720812296429</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1720812296429</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -248,6 +264,7 @@
     <MESSAGE value="- Created basic functioning PlanetViewer that changes based on selectedCelestial&#10;- Moved selectedCelestial to PlanetViewer&#10;- Created getScreen/SceneCoordinates in Celestial" />
     <MESSAGE value="- Added ExecutorService to allow 2 HTTP requests to be run at the same time" />
     <MESSAGE value="- The default date range for a body's ephemeris data is now tied to its orbital period" />
-    <option name="LAST_COMMIT_MESSAGE" value="- The default date range for a body's ephemeris data is now tied to its orbital period" />
+    <MESSAGE value="- Ephem query now incorperates time stamp&#10;- Added Start/Stop/Step attributes to SecondaryBody&#10;- HorizonSystem now returns &quot;1&quot; for any body with no side real orbit period" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Ephem query now incorperates time stamp&#10;- Added Start/Stop/Step attributes to SecondaryBody&#10;- HorizonSystem now returns &quot;1&quot; for any body with no side real orbit period" />
   </component>
 </project>
