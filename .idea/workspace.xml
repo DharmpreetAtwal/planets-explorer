@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Ephem query now incorperates time stamp&#10;- Added Start/Stop/Step attributes to SecondaryBody&#10;- HorizonSystem now returns &quot;1&quot; for any body with no side real orbit period">
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Added updateOrbitRing parameter to handle issues around orbit ring&#10;- Added Date and Time input to PlanetViewer&#10;- User can now query their own ephemData">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Celestial.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Celestial.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/StepSize.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/StepSize.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -60,26 +59,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Planets.executor&quot;: &quot;Run&quot;,
-    &quot;Maven.planets-explorer [clean,install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.planets-explorer [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.planets-explorer [install].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.repository.indices&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "Application.Planets.executor": "Run",
+    "Maven.planets-explorer [clean,install].executor": "Run",
+    "Maven.planets-explorer [clean].executor": "Run",
+    "Maven.planets-explorer [install].executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "extract.method.default.visibility": "private",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.settings.project.maven.repository.indices",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="Planets" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="org.example.planetsexplorer.Main" />
@@ -113,7 +113,7 @@
       <workItem from="1720480298808" duration="4104000" />
       <workItem from="1720540729254" duration="17196000" />
       <workItem from="1720619906149" duration="8809000" />
-      <workItem from="1720719552055" duration="25358000" />
+      <workItem from="1720719552055" duration="34180000" />
     </task>
     <task id="LOCAL-00001" summary="- Removed unneeded files">
       <option name="closed" value="true" />
@@ -243,7 +243,15 @@
       <option name="project" value="LOCAL" />
       <updated>1720812296429</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="- Added updateOrbitRing parameter to handle issues around orbit ring&#10;- Added Date and Time input to PlanetViewer&#10;- User can now query their own ephemData">
+      <option name="closed" value="true" />
+      <created>1720921748260</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1720921748261</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -265,6 +273,7 @@
     <MESSAGE value="- Added ExecutorService to allow 2 HTTP requests to be run at the same time" />
     <MESSAGE value="- The default date range for a body's ephemeris data is now tied to its orbital period" />
     <MESSAGE value="- Ephem query now incorperates time stamp&#10;- Added Start/Stop/Step attributes to SecondaryBody&#10;- HorizonSystem now returns &quot;1&quot; for any body with no side real orbit period" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Ephem query now incorperates time stamp&#10;- Added Start/Stop/Step attributes to SecondaryBody&#10;- HorizonSystem now returns &quot;1&quot; for any body with no side real orbit period" />
+    <MESSAGE value="- Added updateOrbitRing parameter to handle issues around orbit ring&#10;- Added Date and Time input to PlanetViewer&#10;- User can now query their own ephemData" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Added updateOrbitRing parameter to handle issues around orbit ring&#10;- Added Date and Time input to PlanetViewer&#10;- User can now query their own ephemData" />
   </component>
 </project>

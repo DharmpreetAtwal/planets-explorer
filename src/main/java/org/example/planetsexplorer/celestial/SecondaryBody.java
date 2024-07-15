@@ -12,6 +12,7 @@ import org.example.planetsexplorer.HorizonSystem;
 import org.example.planetsexplorer.StepSize;
 import org.json.JSONObject;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static org.example.planetsexplorer.Main.pixelKmScale;
@@ -51,9 +52,14 @@ public class SecondaryBody extends PrimaryBody {
         this.primaryBody = primaryBody;
 
         this.initializeEphemStartStop(orbitPeriodYear);
-        this.setEphemeris(this.getEphemStartDateTimeStamp(),
-                this.getEphemStopDateTimeStamp(),
-                this.getEphemStepSize());
+        LocalDate dateStart = LocalDate.of(this.getEphemStartYear(),
+                this.getEphemStartMonth(),
+                this.getEphemStartDay());
+        LocalDate dateStop = LocalDate.of(this.getEphemStopYear(),
+                this.getEphemStopMonth(),
+                this.getEphemStopDay());
+        this.setEphemeris(dateStart, this.getEphemStartHour(), this.getEphemStartMinute(),
+                dateStop, this.getEphemStopHour(), this.getEphemStopMinute(), this.getEphemStepSize());
 
         this.orbitPeriodYear = orbitPeriodYear;
         this.siderealDayHr = siderealDayHr;
@@ -79,8 +85,23 @@ public class SecondaryBody extends PrimaryBody {
         this.tiltCorrectionZ.angleProperty().bind(this.orbitRotation.angleProperty().multiply(-1));
     }
 
-    public void setEphemeris(String startDateTimeStamp, String stopDateTimeStamp, StepSize ephemStepSize) {
+    public void setEphemeris(LocalDate dateStart, Integer hourStart, Integer minStart, LocalDate dateStop, Integer hourStop, Integer minStop, StepSize ephemStepSize) {
         ArrayList<JSONObject> ephemMoon = null;
+        String startDateTimeStamp =  dateStart + " " + String.format("%02d", hourStart) + ":" + String.format("%02d", minStart);
+        String stopDateTimeStamp = dateStop + " " + String.format("%02d", hourStop) + ":" + String.format("%02d", minStop);
+
+        this.ephemStartYear = dateStart.getYear();
+        this.ephemStartMonth = dateStart.getMonthValue();
+        this.ephemStartDay = dateStart.getDayOfMonth();
+        this.ephemStartHour = hourStart;
+        this.ephemStartMinute = minStart;
+
+        this.ephemStopYear = dateStop.getYear();
+        this.ephemStopMonth = dateStop.getMonthValue();
+        this.ephemStopDay = dateStop.getDayOfMonth();
+        this.ephemStopHour = hourStop;
+        this.ephemStopMinute = minStop;
+
         try {
             ephemMoon = HorizonSystem.getEphemeris(this.getDbID(), primaryBody.getDbID(),
                     startDateTimeStamp,
@@ -152,8 +173,6 @@ public class SecondaryBody extends PrimaryBody {
                 String.format("%02d", this.ephemStopHour) + ":" +
                 String.format("%02d", this.ephemStopMinute);
     }
-
-
 
     public void setEphemIndex(int index) {
         if(!this.getEphemData().isEmpty()) {

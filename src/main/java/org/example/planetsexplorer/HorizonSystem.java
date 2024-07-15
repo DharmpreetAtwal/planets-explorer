@@ -63,9 +63,9 @@ public class HorizonSystem {
                 "&START_TIME='" + startTime +
                 "'&STOP_TIME='" + stopTime +
                 "'&STEP_SIZE='" + stepSize.toString() + "'";
-        System.out.println(urlQuery);
-        System.out.println(startTime);
-        System.out.println(stopTime);
+//        System.out.println(urlQuery);
+//        System.out.println(startTime);
+//        System.out.println(stopTime);
         String ephemStrJSON = executeGet(urlQuery).toString();
 
         try {

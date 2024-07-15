@@ -9,6 +9,8 @@ import org.example.planetsexplorer.celestial.PrimaryBody;
 import org.example.planetsexplorer.celestial.SecondaryBody;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class PlanetViewer {
     public static Celestial selectedCelestial = null;
@@ -97,10 +99,15 @@ public class PlanetViewer {
         viewerGridRoot.getChildren().add(btnQueryEphem);
 
         btnQueryEphem.setOnMouseClicked(e -> {
-            if(selectedCelestial instanceof SecondaryBody secBody) {
+            if(selectedCelestial instanceof SecondaryBody secBody && queryEphemInputCheck()) {
+                System.out.println("Input GOOD");
                 secBody.setEphemeris(
-                        dateEphemStart.getValue() + " " + hourEphemStart.getValue() + ":" + minEphemStart.getValue(),
-                        dateEphemStop.getValue() + " " + hourEphemStop.getValue() + ":" + minEphemStop.getValue(),
+                        dateEphemStart.getValue(),
+                                hourEphemStart.getValue(),
+                                minEphemStart.getValue(),
+                        dateEphemStop.getValue(),
+                                hourEphemStop.getValue(),
+                                minEphemStop.getValue(),
                         stepEphem.getValue());
                 PlanetsCamera.updateUIPosition(true);
             }
@@ -156,5 +163,41 @@ public class PlanetViewer {
 
             stepEphem.setValue(secondaryBody.getEphemStepSize());
         }
+    }
+
+    public static boolean queryEphemInputCheck() {
+        // Max limit per ephem query of 90024 rows
+        // Each extra minute produces 4 extra rows, 90024 = 22506 * 4
+        // No need for years case, already default
+        ChronoUnit units = ChronoUnit.YEARS;
+        switch (stepEphem.getValue()) {
+            case MINUTES -> units = ChronoUnit.MINUTES;
+            case HOURS -> units = ChronoUnit.HOURS;
+            case DAYS -> units = ChronoUnit.DAYS;
+            case MONTHS -> units = ChronoUnit.MONTHS;
+        }
+
+        long diff = getUnitDiff(units);
+        return diff > 0 && diff <= 22505;
+    }
+
+    private static long getUnitDiff(ChronoUnit units) {
+        LocalDateTime startDateTime = LocalDateTime.of(
+                dateEphemStart.getValue().getYear(),
+                dateEphemStart.getValue().getMonth(),
+                dateEphemStart.getValue().getDayOfMonth(),
+                hourEphemStart.getValue(),
+                minEphemStart.getValue()
+        );
+
+        LocalDateTime stopDateTime = LocalDateTime.of(
+                dateEphemStop.getValue().getYear(),
+                dateEphemStop.getValue().getMonth(),
+                dateEphemStop.getValue().getDayOfMonth(),
+                hourEphemStop.getValue(),
+                minEphemStop.getValue()
+        );
+
+        return startDateTime.until(stopDateTime, units);
     }
 }
