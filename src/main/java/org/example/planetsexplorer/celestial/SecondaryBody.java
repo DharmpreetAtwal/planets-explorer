@@ -26,6 +26,8 @@ public class SecondaryBody extends PrimaryBody {
     private final float obliquityToOrbitDeg;
 
     private ArrayList<JSONObject> ephemData = new ArrayList<>();
+    private boolean ephemFrozen;
+
     private int ephemStartYear;
     private int ephemStartMonth;
     private int ephemStartDay;
@@ -60,6 +62,7 @@ public class SecondaryBody extends PrimaryBody {
                 this.getEphemStopDay());
         this.setEphemeris(dateStart, this.getEphemStartHour(), this.getEphemStartMinute(),
                 dateStop, this.getEphemStopHour(), this.getEphemStopMinute(), this.getEphemStepSize());
+        this.ephemFrozen = false;
 
         this.orbitPeriodYear = orbitPeriodYear;
         this.siderealDayHr = siderealDayHr;
@@ -336,5 +339,13 @@ public class SecondaryBody extends PrimaryBody {
 
     public StepSize getEphemStepSize() {
         return ephemStepSize;
+    }
+
+    public boolean isEphemFrozen() {
+        return ephemFrozen;
+    }
+
+    public void setEphemFrozen(boolean ephemFrozen) {
+        this.ephemFrozen = ephemFrozen;
     }
 }

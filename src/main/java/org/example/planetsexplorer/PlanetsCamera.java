@@ -81,8 +81,8 @@ public class PlanetsCamera {
 
     private void updateEphemeris() {
         for(Planet planet: Planet.planetArrayList) {
-            if(!planet.getEphemData().isEmpty()) {
-//                planet.setEphemIndex(HorizonSystem.empherisIndex % planet.getEphemData().size());
+            if(!planet.getEphemData().isEmpty() && !planet.isEphemFrozen()) {
+                planet.setEphemIndex(HorizonSystem.empherisIndex % planet.getEphemData().size());
             }
 
             for(SecondaryBody secondaryBody: planet.getSecondaryBodies()) {

@@ -38,6 +38,8 @@ public class PlanetViewer {
 
     private final static Button btnQueryEphem = new Button("Query Ephemeris");
 
+    private final static CheckBox checkEphemFrozen = new CheckBox("Freeze Ephemeris");
+
     public PlanetViewer() {
         GridPane viewerGridRoot = new GridPane();
 
@@ -69,6 +71,7 @@ public class PlanetViewer {
         viewerGridRoot.getChildren().add(lblObliquityToOrbit);
 
 
+
         GridPane.setConstraints(dateEphemStart, 0, 9);
         viewerGridRoot.getChildren().add(dateEphemStart);
 
@@ -77,7 +80,6 @@ public class PlanetViewer {
 
         GridPane.setConstraints(minEphemStart, 2, 9);
         viewerGridRoot.getChildren().add(minEphemStart);
-
 
         GridPane.setConstraints(dateEphemStop, 0, 10);
         viewerGridRoot.getChildren().add(dateEphemStop);
@@ -91,27 +93,28 @@ public class PlanetViewer {
         GridPane.setConstraints(stepEphem, 0, 11);
         viewerGridRoot.getChildren().add(stepEphem);
 
-        for(StepSize step: StepSize.values()) {
-            stepEphem.getItems().add(step);
-        }
-
         GridPane.setConstraints(btnQueryEphem, 0, 12);
         viewerGridRoot.getChildren().add(btnQueryEphem);
 
-        btnQueryEphem.setOnMouseClicked(e -> {
-            if(selectedCelestial instanceof SecondaryBody secBody && queryEphemInputCheck()) {
-                System.out.println("Input GOOD");
-                secBody.setEphemeris(
-                        dateEphemStart.getValue(),
-                                hourEphemStart.getValue(),
-                                minEphemStart.getValue(),
-                        dateEphemStop.getValue(),
-                                hourEphemStop.getValue(),
-                                minEphemStop.getValue(),
-                        stepEphem.getValue());
-                PlanetsCamera.updateUIPosition(true);
-            }
-        });
+        GridPane.setConstraints(checkEphemFrozen, 0, 13);
+        checkEphemFrozen.setAllowIndeterminate(false);
+        viewerGridRoot.getChildren().add(checkEphemFrozen);
+
+        initializeComboBoxes();
+        initializeQueryButton();
+        initializeEphemerisFreeze();
+
+        Scene viewerScene = new Scene(viewerGridRoot, 300, 600);
+        Stage viewerStage = new Stage();
+        viewerStage.setTitle("Planet Viewer");
+        viewerStage.setScene(viewerScene);
+        viewerStage.show();
+    }
+
+    private static void initializeComboBoxes() {
+        for(StepSize step: StepSize.values()) {
+            stepEphem.getItems().add(step);
+        }
 
         for(int i=0; i<=24; i++) {
             hourEphemStart.getItems().add(i);
@@ -122,12 +125,30 @@ public class PlanetViewer {
             minEphemStart.getItems().add(i);
             minEphemStop.getItems().add(i);
         }
+    }
 
-        Scene viewerScene = new Scene(viewerGridRoot, 300, 600);
-        Stage viewerStage = new Stage();
-        viewerStage.setTitle("Planet Viewer");
-        viewerStage.setScene(viewerScene);
-        viewerStage.show();
+    private static void initializeQueryButton() {
+        btnQueryEphem.setOnMouseClicked(e -> {
+            if(selectedCelestial instanceof SecondaryBody secBody && queryEphemInputCheck()) {
+                secBody.setEphemeris(
+                        dateEphemStart.getValue(),
+                        hourEphemStart.getValue(),
+                        minEphemStart.getValue(),
+                        dateEphemStop.getValue(),
+                        hourEphemStop.getValue(),
+                        minEphemStop.getValue(),
+                        stepEphem.getValue());
+                PlanetsCamera.updateUIPosition(true);
+            }
+        });
+    }
+
+    private static void initializeEphemerisFreeze() {
+        checkEphemFrozen.selectedProperty().addListener(e -> {
+            if(selectedCelestial instanceof SecondaryBody secBody) {
+                secBody.setEphemFrozen(checkEphemFrozen.isSelected());
+            }
+        });
     }
 
     public static void setSelectedCelestial(Celestial celestial) {
@@ -162,6 +183,7 @@ public class PlanetViewer {
             minEphemStop.setValue(secondaryBody.getEphemStopMinute());
 
             stepEphem.setValue(secondaryBody.getEphemStepSize());
+            checkEphemFrozen.setSelected(secondaryBody.isEphemFrozen());
         }
     }
 
