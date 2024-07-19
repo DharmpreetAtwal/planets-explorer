@@ -15,10 +15,11 @@ import org.example.planetsexplorer.celestial.SecondaryBody;
 
 public class PlanetsCamera {
     public static final PerspectiveCamera camera = new PerspectiveCamera(true);
+    public static double diffZ = 0;
     private final Rotate rotateX= new Rotate(0, Rotate.X_AXIS);
     private final Rotate rotateY= new Rotate(0, Rotate.Y_AXIS);
     private final Rotate rotateZ= new Rotate(0, Rotate.Z_AXIS);
-    private final Translate translate = new Translate(0, 0.0, -50);
+    private final static Translate translate = new Translate(0, 0.0, -50);
     private boolean isShiftToggle = false;
     private final Scene scene;
 
@@ -26,7 +27,7 @@ public class PlanetsCamera {
         this.scene = scene;
         this.initializeKeyEvents();
         camera.setFarClip(20000);
-        camera.getTransforms().addAll(this.rotateX, this.rotateY, this.rotateZ, this.translate);
+        camera.getTransforms().addAll(this.rotateX, this.rotateY, this.rotateZ, translate);
     }
 
     private void initializeKeyEvents() {
@@ -35,11 +36,10 @@ public class PlanetsCamera {
                 this.isShiftToggle = !this.isShiftToggle;
             }
 
+            boolean updateZ = false;
             // Only update the orbit ring UI when camera is transformed
             // Only update the orbit ring UI when O/P are NOT pressed
             // By default true, set to false if O/P are pressed
-            boolean updateOrbitRing = true;
-
             switch (e.getCode()) {
                 case W -> this.rotateX.setAngle(this.rotateX.getAngle() + 10);
                 case S -> this.rotateX.setAngle(this.rotateX.getAngle() - 10);
@@ -47,46 +47,49 @@ public class PlanetsCamera {
                 case A -> this.rotateY.setAngle(this.rotateY.getAngle() + 10);
                 case D -> this.rotateY.setAngle(this.rotateY.getAngle() - 10);
 
-                case Q -> this.translate.setZ(this.translate.getZ() + 1000000);
-                case E -> this.translate.setZ(this.translate.getZ() - 1000000);
+                case C -> PlanetViewer.selectedCelestial = null;
 
-                case Z -> this.translate.setZ(this.translate.getZ() + 1000);
-                case X -> this.translate.setZ(this.translate.getZ() - 1000);
+                case Q -> translate.setZ(translate.getZ() + 1000000);
+                case E -> translate.setZ(translate.getZ() - 1000000);
+                case Z -> translate.setZ(translate.getZ() + 1000);
+                case X -> translate.setZ(translate.getZ() - 1000);
 
                 case P -> {
-                    updateOrbitRing = false;
                     HorizonSystem.empherisIndex = HorizonSystem.empherisIndex + 1;
-                    updateEphemeris();
+                    updateZ = true;
                 }
 
                 case O -> {
-                    updateOrbitRing = false;
                     if(HorizonSystem.empherisIndex > 0) {
                         HorizonSystem.empherisIndex = HorizonSystem.empherisIndex - 1;
-                        updateEphemeris();
+                        updateZ = true;
                     }
                 }
 
                 case SPACE -> {
                     if(PlanetViewer.selectedCelestial != null) {
                         Point3D point = PlanetViewer.selectedCelestial.getShape().localToScene(Point3D.ZERO);
-                        this.translate.setZ(-PlanetViewer.selectedCelestial.getShape().getRadius()*5 + point.getZ());
+                        translate.setZ(-PlanetViewer.selectedCelestial.getShape().getRadius()*5 + point.getZ());
                     }
                 }
             }
 
-            updateUIPosition(updateOrbitRing);
+            if(!updateZ && PlanetViewer.selectedCelestial != null) {
+                Point3D pos = PlanetViewer.selectedCelestial.getShape().localToScene(Point3D.ZERO);
+                diffZ = Math.abs(pos.getZ() - translate.getZ());
+            }
+
+            updateEphemeris(updateZ);
+            updateUIPosition();
         });
     }
 
-    private void updateEphemeris() {
-        for(Planet planet: Planet.planetArrayList) {
-            if(!planet.getEphemData().isEmpty() && !planet.isEphemFrozen()) {
-                planet.setEphemIndex(HorizonSystem.empherisIndex % planet.getEphemData().size());
-            }
-
-            for(SecondaryBody secondaryBody: planet.getSecondaryBodies()) {
-                secondaryBody.setEphemIndex(HorizonSystem.empherisIndex % secondaryBody.getEphemData().size());
+    public static void updateEphemeris(boolean updateZ) {
+        for(Celestial celestial: Celestial.celestialArrayList) {
+            if(celestial instanceof SecondaryBody secbody) {
+                if(!secbody.getEphemData().isEmpty() && !secbody.isEphemFrozen()){
+                    secbody.setEphemIndex(HorizonSystem.empherisIndex % secbody.getEphemData().size());
+                }
             }
         }
 
@@ -94,16 +97,18 @@ public class PlanetsCamera {
             Point3D pos = PlanetViewer.selectedCelestial.getShape().localToScene(Point3D.ZERO);
             Main.updateCameraTranslate(pos.getX(),pos.getY());
             Main.updateCameraPivot(PlanetViewer.selectedCelestial.getShape().localToScene(Point3D.ZERO));
+
+            if(updateZ) translate.setZ(pos.getZ() + diffZ);
         }
     }
 
-    public static void updateUIPosition(boolean updateOrbitRing) {
+    public static void updateUIPosition() {
         for(Celestial celestial: Celestial.celestialArrayList) {
             Point2D celestialPoint = celestial.getScreenCoordinates();
             celestial.getGroupUI().setTranslateX(celestialPoint.getX());
             celestial.getGroupUI().setTranslateY(celestialPoint.getY());
 
-            if(celestial instanceof SecondaryBody body && updateOrbitRing) {
+            if(celestial instanceof SecondaryBody body) {
                 body.getOrbitRing().getChildren().clear();
 
                 Color startColor = Color.BLUE;
@@ -112,6 +117,7 @@ public class PlanetsCamera {
 
                 int totalSegments = body.getEphemData().size();
                 int midSegment = totalSegments / 2;
+                double originalAngle = body.getOrbitRotation().getAngle();
 
                 body.getOrbitRotation().setAngle(body.getEphemData().get(0).getFloat("ma"));
                 Point2D lastPointScreen = body.getScreenCoordinates();
@@ -126,12 +132,12 @@ public class PlanetsCamera {
                     Point3D nextPointGlobal = body.getSceneCoordinates();
 
                     // If segment is further away from the camera than the celestialObject it's modelling
-                    if(cameraPosGlobal.distance(nextPointGlobal) > cameraPosGlobal.distance(celestialPrimaryPointGlobal) + (body.getOrbitDistance() / 2) ||
-                            cameraPosGlobal.distance(lastPointGlobal) > cameraPosGlobal.distance(celestialPrimaryPointGlobal) + (body.getOrbitDistance() / 2)) {
-                        lastPointScreen = nextPointScreen;
-                        lastPointGlobal = nextPointGlobal;
-                        continue;
-                    }
+//                    if(cameraPosGlobal.distance(nextPointGlobal) > cameraPosGlobal.distance(celestialPrimaryPointGlobal) + (body.getOrbitDistance() / 2) ||
+//                            cameraPosGlobal.distance(lastPointGlobal) > cameraPosGlobal.distance(celestialPrimaryPointGlobal) + (body.getOrbitDistance() / 2)) {
+//                        lastPointScreen = nextPointScreen;
+//                        lastPointGlobal = nextPointGlobal;
+//                        continue;
+//                    }
 
                     Line segment = new Line(lastPointScreen.getX(), lastPointScreen.getY(), nextPointScreen.getX(), nextPointScreen.getY());
                     double ratio; // Determining the mix of two gradient colors
@@ -150,6 +156,8 @@ public class PlanetsCamera {
                     lastPointScreen = nextPointScreen;
                     lastPointGlobal = nextPointGlobal;
                 }
+
+                body.getOrbitRotation().setAngle(originalAngle);
             }
         }
     }

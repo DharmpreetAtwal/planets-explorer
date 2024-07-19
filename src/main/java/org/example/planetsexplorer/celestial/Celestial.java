@@ -39,8 +39,10 @@ public class Celestial {
 
             Main.updateCameraTranslate(shapePos.getX(), shapePos.getY());
             Main.updateCameraPivot(shapePos);
-            PlanetsCamera.updateUIPosition(true);
+
             PlanetViewer.setSelectedCelestial(this);
+            PlanetsCamera.updateEphemeris(false);
+            PlanetsCamera.updateUIPosition();
         });
     }
 
