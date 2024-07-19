@@ -5,7 +5,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.example.planetsexplorer.celestial.Celestial;
-import org.example.planetsexplorer.celestial.Planet;
 import org.example.planetsexplorer.celestial.PrimaryBody;
 import org.example.planetsexplorer.celestial.SecondaryBody;
 
@@ -140,7 +139,7 @@ public class PlanetViewer {
                         minEphemStop.getValue(),
                         stepEphem.getValue());
                 PlanetsCamera.updateEphemeris(false);
-                PlanetsCamera.updateUIPosition();
+                PlanetsCamera.updateCameraUI();
             }
         });
     }

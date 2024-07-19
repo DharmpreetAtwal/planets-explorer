@@ -107,24 +107,24 @@ public class Main extends Application {
         executor.shutdown();
     }
 
-    public static void updateCameraTranslate(double x, double y) {
-        Main.camera.getTranslate().setX(x);
-        Main.camera.getTranslate().setY(y);
-    }
-
-    public static void updateCameraPivot(Point3D pivot) {
-        Main.camera.getRotateX().setPivotX(pivot.getX());
-        Main.camera.getRotateX().setPivotY(pivot.getY());
-        Main.camera.getRotateX().setPivotZ(pivot.getZ());
-
-        Main.camera.getRotateY().setPivotX(pivot.getX());
-        Main.camera.getRotateY().setPivotY(pivot.getY());
-        Main.camera.getRotateY().setPivotZ(pivot.getZ());
-
-        Main.camera.getRotateZ().setPivotX(pivot.getX());
-        Main.camera.getRotateZ().setPivotY(pivot.getY());
-        Main.camera.getRotateZ().setPivotZ(pivot.getZ());
-    }
+//    public static void updateCameraTranslate(double x, double y) {
+//        Main.camera.getTranslate().setX(x);
+//        Main.camera.getTranslate().setY(y);
+//    }
+//
+//    public static void updateCameraPivot(Point3D pivot) {
+//        Main.camera.getRotateX().setPivotX(pivot.getX());
+//        Main.camera.getRotateX().setPivotY(pivot.getY());
+//        Main.camera.getRotateX().setPivotZ(pivot.getZ());
+//
+//        Main.camera.getRotateY().setPivotX(pivot.getX());
+//        Main.camera.getRotateY().setPivotY(pivot.getY());
+//        Main.camera.getRotateY().setPivotZ(pivot.getZ());
+//
+//        Main.camera.getRotateZ().setPivotX(pivot.getX());
+//        Main.camera.getRotateZ().setPivotY(pivot.getY());
+//        Main.camera.getRotateZ().setPivotZ(pivot.getZ());
+//    }
 
     private Planet createPlanet(Group rootScene3D, Group mainSceneRoot, Sun sun, String planetID, String centerID) throws Exception {
         JSONObject planetJSON = HorizonSystem.getBody(planetID);

@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Added input error checking into Ephem Query&#10;- Changed SecondaryBody.setEphemeris parameters to (LocalDate dateStart, Integer hourStart, Integer minStart,  LocalDate dateStop, Integer hourStop, Integer minStop, StepSize ephemStepSize)&#10;- Fixed StepSize.MINUTES now &quot;1 min&quot;">
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Added Z zoom transform">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" afterDir="false" />
@@ -261,7 +261,15 @@
       <option name="project" value="LOCAL" />
       <updated>1721069054464</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="- Added Z zoom transform">
+      <option name="closed" value="true" />
+      <created>1721353030515</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1721353030515</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -285,6 +293,7 @@
     <MESSAGE value="- Ephem query now incorperates time stamp&#10;- Added Start/Stop/Step attributes to SecondaryBody&#10;- HorizonSystem now returns &quot;1&quot; for any body with no side real orbit period" />
     <MESSAGE value="- Added updateOrbitRing parameter to handle issues around orbit ring&#10;- Added Date and Time input to PlanetViewer&#10;- User can now query their own ephemData" />
     <MESSAGE value="- Added input error checking into Ephem Query&#10;- Changed SecondaryBody.setEphemeris parameters to (LocalDate dateStart, Integer hourStart, Integer minStart,  LocalDate dateStop, Integer hourStop, Integer minStop, StepSize ephemStepSize)&#10;- Fixed StepSize.MINUTES now &quot;1 min&quot;" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Added input error checking into Ephem Query&#10;- Changed SecondaryBody.setEphemeris parameters to (LocalDate dateStart, Integer hourStart, Integer minStart,  LocalDate dateStop, Integer hourStop, Integer minStop, StepSize ephemStepSize)&#10;- Fixed StepSize.MINUTES now &quot;1 min&quot;" />
+    <MESSAGE value="- Added Z zoom transform" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Added Z zoom transform" />
   </component>
 </project>

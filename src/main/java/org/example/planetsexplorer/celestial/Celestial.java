@@ -5,7 +5,6 @@ import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Sphere;
-import org.example.planetsexplorer.Main;
 import org.example.planetsexplorer.PlanetViewer;
 import org.example.planetsexplorer.PlanetsCamera;
 
@@ -37,12 +36,12 @@ public class Celestial {
         this.labelName.setOnMouseClicked(e ->{
             Point3D shapePos = this.shape.localToScene(Point3D.ZERO);
 
-            Main.updateCameraTranslate(shapePos.getX(), shapePos.getY());
-            Main.updateCameraPivot(shapePos);
+            PlanetsCamera.updateTranslate(shapePos.getX(), shapePos.getY());
+            PlanetsCamera.updatePivot(shapePos);
 
             PlanetViewer.setSelectedCelestial(this);
             PlanetsCamera.updateEphemeris(false);
-            PlanetsCamera.updateUIPosition();
+            PlanetsCamera.updateCameraUI();
         });
     }
 
