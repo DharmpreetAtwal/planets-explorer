@@ -1,7 +1,6 @@
 package org.example.planetsexplorer;
 
 import javafx.application.Application;
-import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
@@ -42,7 +41,9 @@ public class Main extends Application {
 
         JSONObject sunInfo = HorizonSystem.getBody("10");
         assert sunInfo != null;
-        Sun sun = new Sun(sunInfo.getFloat("meanRadKM") / 600000, "10");
+        Sun sun = new Sun(sunInfo.getFloat("meanRadKM") / pixelKmScale, "10");
+        rootScene3D.getChildren().add(sun.getShape());
+        sceneRoot.getChildren().add(sun.getGroupUI());
 
         startGetThreads(rootScene3D, sceneRoot, sun);
 
@@ -58,7 +59,7 @@ public class Main extends Application {
         ExecutorService executor = Executors.newFixedThreadPool(1);
         List<Future<SecondaryBody>> futures = new ArrayList<>();
 
-        for(int i=399; i <= 599; i=i+100) {
+        for(int i=399; i <= 399; i=i+100) {
             final String planetID = i + "";
             Callable<SecondaryBody> task = () -> createPlanet(rootScene3D, uiGroup, sun, planetID, "10");
             futures.add(executor.submit(task));
@@ -73,11 +74,11 @@ public class Main extends Application {
 //            futures.add(executor.submit(task));
 //        }
 
-        for(int i=501; i<=517; i++) {
-            final String moonID = i + "";
-            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "599");
-            futures.add(executor.submit(task));
-        }
+//        for(int i=501; i<=517; i++) {
+//            final String moonID = i + "";
+//            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "599");
+//            futures.add(executor.submit(task));
+//        }
 
 //        for(int i=601; i<= 609; i++) {
 //            final String moonID = i + "";
@@ -106,25 +107,6 @@ public class Main extends Application {
         }
         executor.shutdown();
     }
-
-//    public static void updateCameraTranslate(double x, double y) {
-//        Main.camera.getTranslate().setX(x);
-//        Main.camera.getTranslate().setY(y);
-//    }
-//
-//    public static void updateCameraPivot(Point3D pivot) {
-//        Main.camera.getRotateX().setPivotX(pivot.getX());
-//        Main.camera.getRotateX().setPivotY(pivot.getY());
-//        Main.camera.getRotateX().setPivotZ(pivot.getZ());
-//
-//        Main.camera.getRotateY().setPivotX(pivot.getX());
-//        Main.camera.getRotateY().setPivotY(pivot.getY());
-//        Main.camera.getRotateY().setPivotZ(pivot.getZ());
-//
-//        Main.camera.getRotateZ().setPivotX(pivot.getX());
-//        Main.camera.getRotateZ().setPivotY(pivot.getY());
-//        Main.camera.getRotateZ().setPivotZ(pivot.getZ());
-//    }
 
     private Planet createPlanet(Group rootScene3D, Group mainSceneRoot, Sun sun, String planetID, String centerID) throws Exception {
         JSONObject planetJSON = HorizonSystem.getBody(planetID);

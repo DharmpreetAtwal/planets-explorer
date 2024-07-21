@@ -58,7 +58,7 @@ public class HorizonSystem {
 
     public static ArrayList<JSONObject> getEphemeris(String id, String centerId, String startTime, String stopTime, StepSize stepSize) throws Exception {
         String urlQuery = "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='" + id +
-                "'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='"+  centerId +
+                "'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&VEC_TABLE='2'&CENTER='@"+  centerId +
                 "'&CSV_FORMAT='YES'" +
                 "&START_TIME='" + startTime +
                 "'&STOP_TIME='" + stopTime +
@@ -77,7 +77,7 @@ public class HorizonSystem {
             Matcher matcher = csvPattern.matcher(ephemResult);
 
             if(matcher.find()) {
-                return extractCSV(matcher.group());
+                return extractVectorsCSV(matcher.group());
             } else {
                 System.err.println("No CSV found");
                 return null;
@@ -111,6 +111,48 @@ public class HorizonSystem {
         } catch(JSONException err) {
             System.err.println(err);
         }
+    }
+
+    private static ArrayList<JSONObject> extractVectorsCSV(String strCSV) throws IOException, CsvException {
+        CSVReader reader = new CSVReader(new StringReader(strCSV));
+        List<String[]> rows = reader.readAll();
+        ArrayList<JSONObject> ephemData = new ArrayList<>();
+
+
+        for(String[] row: rows) {
+            String x = "";
+            String y = "";
+            String z = "";
+
+            String vx = "";
+            String vy = "";
+            String vz = "";
+
+            int i=0;
+            for (String cell : row) {
+                if(i==2) x = cell;
+                if(i==3) y = cell;
+                if(i==4) z = cell;
+                if(i==5) vx= cell;
+                if(i==6) vy= cell;
+                if(i==7) vz= cell;
+                i++;
+            }
+
+            if(!x.isEmpty() && !y.isEmpty() && !z.isEmpty() && !vx.isEmpty() && !vy.isEmpty() && !vz.isEmpty()) {
+                JSONObject data = new JSONObject();
+                data.put("x", Float.parseFloat(x));
+                data.put("y", Float.parseFloat(y));
+                data.put("z", Float.parseFloat(z));
+                data.put("vx", Float.parseFloat(vx));
+                data.put("vy", Float.parseFloat(vy));
+                data.put("vz", Float.parseFloat(vz));
+
+                ephemData.add(data);
+            }
+        }
+
+        return ephemData;
     }
 
     private static ArrayList<JSONObject> extractCSV(String strCSV) throws IOException, CsvException {

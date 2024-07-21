@@ -54,16 +54,18 @@ public class SecondaryBody extends PrimaryBody {
         this.primaryBody = primaryBody;
 
         this.initializeEphemStartStop(orbitPeriodYear);
+
         LocalDate dateStart = LocalDate.of(this.getEphemStartYear(),
                 this.getEphemStartMonth(),
                 this.getEphemStartDay());
         LocalDate dateStop = LocalDate.of(this.getEphemStopYear(),
                 this.getEphemStopMonth(),
                 this.getEphemStopDay());
+
         this.setEphemeris(dateStart, this.getEphemStartHour(), this.getEphemStartMinute(),
                 dateStop, this.getEphemStopHour(), this.getEphemStopMinute(), this.getEphemStepSize());
-        this.ephemFrozen = false;
 
+        this.ephemFrozen = false;
         this.orbitPeriodYear = orbitPeriodYear;
         this.siderealDayHr = siderealDayHr;
         this.obliquityToOrbitDeg = obliquityToOrbitDeg;
@@ -89,7 +91,7 @@ public class SecondaryBody extends PrimaryBody {
     }
 
     public void setEphemeris(LocalDate dateStart, Integer hourStart, Integer minStart, LocalDate dateStop, Integer hourStop, Integer minStop, StepSize ephemStepSize) {
-        ArrayList<JSONObject> ephemMoon = null;
+        ArrayList<JSONObject> ephem = null;
         String startDateTimeStamp =  dateStart + " " + String.format("%02d", hourStart) + ":" + String.format("%02d", minStart);
         String stopDateTimeStamp = dateStop + " " + String.format("%02d", hourStop) + ":" + String.format("%02d", minStop);
 
@@ -106,15 +108,23 @@ public class SecondaryBody extends PrimaryBody {
         this.ephemStopMinute = minStop;
 
         try {
-            ephemMoon = HorizonSystem.getEphemeris(this.getDbID(), primaryBody.getDbID(),
+            ephem = HorizonSystem.getEphemeris(this.getDbID(), primaryBody.getDbID(),
                     startDateTimeStamp,
                     stopDateTimeStamp,
                     ephemStepSize);
+            System.out.println(ephem);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        this.setEphemData(ephemMoon);
-        this.orbitDistance = ephemMoon.get(0).getFloat("qr") / pixelKmScale;;
+
+        this.setEphemData(ephem);
+
+        float x = ephem.get(0).getFloat("x") / pixelKmScale;
+        float y = ephem.get(0).getFloat("y") / pixelKmScale;
+        float z = ephem.get(0).getFloat("z") / pixelKmScale;
+
+        float orbitDist = (float) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+        this.orbitDistance = orbitDist;
     }
 
     private void initializeEphemStartStop(float orbitYear) {
@@ -179,33 +189,19 @@ public class SecondaryBody extends PrimaryBody {
 
     public void setEphemIndex(int index) {
         if(!this.getEphemData().isEmpty()) {
-            JSONObject data = this.getEphemData().get(index);
-            this.setEphemerisPosition(data.getFloat("qr") / pixelKmScale,
-                    data.getFloat("ma"),
-                    data.getFloat("in"));
+            JSONObject data = this.getEphemData().get(index % this.getEphemData().size());
+            this.setEphemerisPosition(data.getFloat("x") / pixelKmScale,
+                    data.getFloat("y") / pixelKmScale,
+                    data.getFloat("z") /pixelKmScale);
         }
     }
 
-    private void setEphemerisPosition(float orbitDistance, float meanAnon, float inclin) {
-        if(this.primaryBody != null) {
-            float x = (float) (orbitDistance * Math.cos(Math.toRadians(inclin)));
-            float z  = (float) (orbitDistance * Math.sin(Math.toRadians(inclin)));
-
-            Point3D parentPoint = this.primaryBody.getShape().localToScene(Point3D.ZERO);
-            this.getShape().setTranslateX(x + parentPoint.getX());
-            this.getShape().setTranslateY(parentPoint.getY());
-            this.getShape().setTranslateZ(z  + parentPoint.getZ());
-
-            this.orbitRotation.setPivotX(-x);
-            this.orbitRotation.setPivotZ(-z);
-            this.orbitRotation.setAngle(meanAnon);
-            Point3D newAxis = new Point3D(
-                    -Math.sin(Math.toRadians(inclin)),
-                    0,
-                    Math.cos(Math.toRadians(inclin)));
-            this.orbitRotation.setAxis(newAxis);
-
-            this.orbitDistance = orbitDistance;
+    private void setEphemerisPosition(float x, float y, float z) {
+        if(this.primaryBody !=null) {
+            Point3D primaryPoint = this.getPrimaryBody().getShape().localToScene(Point3D.ZERO);
+            this.getShape().setTranslateX(x + primaryPoint.getX());
+            this.getShape().setTranslateY(y + primaryPoint.getY());
+            this.getShape().setTranslateZ(z + primaryPoint.getZ());
         }
     }
 

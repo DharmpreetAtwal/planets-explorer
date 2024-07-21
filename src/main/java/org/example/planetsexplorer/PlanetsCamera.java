@@ -94,7 +94,7 @@ public class PlanetsCamera {
         for(Celestial celestial: Celestial.celestialArrayList) {
             if(celestial instanceof SecondaryBody secbody) {
                 if(!secbody.getEphemData().isEmpty() && !secbody.isEphemFrozen()){
-                    secbody.setEphemIndex(HorizonSystem.empherisIndex % secbody.getEphemData().size());
+                    secbody.setEphemIndex(HorizonSystem.empherisIndex);
                 }
             }
         }
@@ -128,14 +128,12 @@ public class PlanetsCamera {
             int totalSegments = body.getEphemData().size();
             int midSegment = totalSegments / 2;
 
-            double originalAngle = body.getOrbitRotation().getAngle();
-            body.getOrbitRotation().setAngle(body.getEphemData().get(0).getFloat("ma"));
-
+            body.setEphemIndex(0);
             Point2D lastPointScreen = body.getScreenCoordinates();
             Point3D lastPointGlobal = body.getSceneCoordinates();
 
             for(int i=1; i < totalSegments; i++) {
-                body.getOrbitRotation().setAngle(body.getEphemData().get(i).getFloat("ma"));
+                body.setEphemIndex(i);
 
                 Point2D nextPointScreen = body.getScreenCoordinates();
                 Point3D cameraPosGlobal = PlanetsCamera.camera.localToScene(Point3D.ZERO);
@@ -168,7 +166,7 @@ public class PlanetsCamera {
                 lastPointGlobal = nextPointGlobal;
             }
 
-            body.getOrbitRotation().setAngle(originalAngle);
+            body.setEphemIndex(HorizonSystem.empherisIndex);
         }
     }
 
