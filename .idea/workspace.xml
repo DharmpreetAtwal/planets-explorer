@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Cleaned up code, refactored out functions">
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- HorizonSystem now queries x, y, z vectors instead of orbital elements&#10;- This switched also fixed the visual bug with the moon's orbits">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" afterDir="false" />
     </list>
@@ -277,7 +275,15 @@
       <option name="project" value="LOCAL" />
       <updated>1721413499866</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="- HorizonSystem now queries x, y, z vectors instead of orbital elements&#10;- This switched also fixed the visual bug with the moon's orbits">
+      <option name="closed" value="true" />
+      <created>1721574981434</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1721574981434</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -303,6 +309,7 @@
     <MESSAGE value="- Added input error checking into Ephem Query&#10;- Changed SecondaryBody.setEphemeris parameters to (LocalDate dateStart, Integer hourStart, Integer minStart,  LocalDate dateStop, Integer hourStop, Integer minStop, StepSize ephemStepSize)&#10;- Fixed StepSize.MINUTES now &quot;1 min&quot;" />
     <MESSAGE value="- Added Z zoom transform" />
     <MESSAGE value="- Cleaned up code, refactored out functions" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Cleaned up code, refactored out functions" />
+    <MESSAGE value="- HorizonSystem now queries x, y, z vectors instead of orbital elements&#10;- This switched also fixed the visual bug with the moon's orbits" />
+    <option name="LAST_COMMIT_MESSAGE" value="- HorizonSystem now queries x, y, z vectors instead of orbital elements&#10;- This switched also fixed the visual bug with the moon's orbits" />
   </component>
 </project>

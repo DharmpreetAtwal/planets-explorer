@@ -27,6 +27,7 @@ public class SecondaryBody extends PrimaryBody {
 
     private ArrayList<JSONObject> ephemData = new ArrayList<>();
     private boolean ephemFrozen;
+    private int ephemIndex = 0;
 
     private int ephemStartYear;
     private int ephemStartMonth;
@@ -189,7 +190,10 @@ public class SecondaryBody extends PrimaryBody {
 
     public void setEphemIndex(int index) {
         if(!this.getEphemData().isEmpty()) {
-            JSONObject data = this.getEphemData().get(index % this.getEphemData().size());
+            int newIndex = index % this.getEphemData().size();
+            JSONObject data = this.getEphemData().get(newIndex);
+            this.ephemIndex = newIndex;
+
             this.setEphemerisPosition(data.getFloat("x") / pixelKmScale,
                     data.getFloat("y") / pixelKmScale,
                     data.getFloat("z") /pixelKmScale);
@@ -343,5 +347,9 @@ public class SecondaryBody extends PrimaryBody {
 
     public void setEphemFrozen(boolean ephemFrozen) {
         this.ephemFrozen = ephemFrozen;
+    }
+
+    public int getEphemIndex() {
+        return ephemIndex;
     }
 }

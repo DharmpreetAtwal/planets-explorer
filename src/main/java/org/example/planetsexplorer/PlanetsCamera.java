@@ -73,7 +73,7 @@ public class PlanetsCamera {
                 case SPACE -> {
                     if(PlanetViewer.selectedCelestial != null) {
                         Point3D point = PlanetViewer.selectedCelestial.getShape().localToScene(Point3D.ZERO);
-                        translate.setZ(-PlanetViewer.selectedCelestial.getShape().getRadius()*5 + point.getZ());
+                        translate.setZ(PlanetViewer.selectedCelestial.getShape().getRadius()*5 + point.getZ());
                     }
                 }
             }
@@ -127,6 +127,7 @@ public class PlanetsCamera {
 
             int totalSegments = body.getEphemData().size();
             int midSegment = totalSegments / 2;
+            int originalIndex = body.getEphemIndex();
 
             body.setEphemIndex(0);
             Point2D lastPointScreen = body.getScreenCoordinates();
@@ -166,7 +167,7 @@ public class PlanetsCamera {
                 lastPointGlobal = nextPointGlobal;
             }
 
-            body.setEphemIndex(HorizonSystem.empherisIndex);
+            body.setEphemIndex(originalIndex);
         }
     }
 
