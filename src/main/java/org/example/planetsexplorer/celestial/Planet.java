@@ -2,7 +2,6 @@ package org.example.planetsexplorer.celestial;
 
 import javafx.scene.Group;
 import org.example.planetsexplorer.HorizonSystem;
-import org.example.planetsexplorer.Main;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ public class Planet extends SecondaryBody {
         Planet newPlanet = new Planet(
                 HorizonSystem.idToName(planetID),
                 planetID,
-                planetJSON.getFloat("meanRadKM") / Main.pixelKmScale,
+                planetJSON.getFloat("meanRadKM") / HorizonSystem.pixelKmScale,
                 sun,
                 planetJSON.getFloat("siderealOrbitDays"),
                 planetJSON.getFloat("siderealDayHr"),

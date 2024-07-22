@@ -4,7 +4,7 @@ import javafx.scene.Group;
 import org.example.planetsexplorer.HorizonSystem;
 import org.json.JSONObject;
 
-import static org.example.planetsexplorer.Main.pixelKmScale;
+import static org.example.planetsexplorer.HorizonSystem.pixelKmScale;
 
 public class Moon extends  SecondaryBody {
     public Moon(String name, String dbID, float shapeRadius, PrimaryBody primaryBody, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
@@ -22,7 +22,6 @@ public class Moon extends  SecondaryBody {
                 moonJSON.getFloat("siderealOrbitDays"),
                 moonJSON.getFloat("siderealDayHr"),
                 moonJSON.getFloat("obliquityToOrbitDeg"));
-//        moon.setEphemIndex(HorizonSystem.empherisIndex);
 
         root.getChildren().addAll(moon.getShape());
         sceneRoot.getChildren().add(moon.getOrbitRing());

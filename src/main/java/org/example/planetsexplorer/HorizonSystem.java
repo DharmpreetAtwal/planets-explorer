@@ -18,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class HorizonSystem {
+    public static final int pixelKmScale = 100;
     public static int empherisIndex = 0;
     private static String bodiesNameID = "";
 
@@ -117,7 +118,6 @@ public class HorizonSystem {
         CSVReader reader = new CSVReader(new StringReader(strCSV));
         List<String[]> rows = reader.readAll();
         ArrayList<JSONObject> ephemData = new ArrayList<>();
-
 
         for(String[] row: rows) {
             String x = "";

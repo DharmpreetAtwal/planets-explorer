@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Added ephemIndex attr">
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Refactored createMoon/Planet&#10;- Made PlanetViewer a singleton&#10;- Removed animateSecondaryBodies from PrimaryBody&#10;- Fixed issue where ephem step size wasn't update after a query">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" afterDir="false" />
@@ -82,6 +83,11 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveMembersDialog.RECENTS_KEY">
+      <recent name="org.example.planetsexplorer.HorizonSystem" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="Planets" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="org.example.planetsexplorer.Main" />
@@ -294,7 +300,15 @@
       <option name="project" value="LOCAL" />
       <updated>1721577125625</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="- Refactored createMoon/Planet&#10;- Made PlanetViewer a singleton&#10;- Removed animateSecondaryBodies from PrimaryBody&#10;- Fixed issue where ephem step size wasn't update after a query">
+      <option name="closed" value="true" />
+      <created>1721675432993</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1721675432993</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -322,6 +336,8 @@
     <MESSAGE value="- Cleaned up code, refactored out functions" />
     <MESSAGE value="- HorizonSystem now queries x, y, z vectors instead of orbital elements&#10;- This switched also fixed the visual bug with the moon's orbits" />
     <MESSAGE value="- Added ephemIndex attr" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Added ephemIndex attr" />
+    <MESSAGE value="- Refractored createMoon/Planet&#10;- Made PlanetViewer a singleton&#10;- Removed animateSecondaryBodies from PrimaryBody&#10;- Fixed issue where ephem step size wasn't update after a query" />
+    <MESSAGE value="- Refactored createMoon/Planet&#10;- Made PlanetViewer a singleton&#10;- Removed animateSecondaryBodies from PrimaryBody&#10;- Fixed issue where ephem step size wasn't update after a query" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Refactored createMoon/Planet&#10;- Made PlanetViewer a singleton&#10;- Removed animateSecondaryBodies from PrimaryBody&#10;- Fixed issue where ephem step size wasn't update after a query" />
   </component>
 </project>

@@ -23,9 +23,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class Main extends Application {
-    public static PlanetsCamera camera = null;
-    public static int pixelKmScale = 100;
-
     public void start(Stage stage) throws Exception {
         Group rootScene3D = new Group();
         SubScene scene3D = new SubScene(rootScene3D, 600, 600, true, null);
@@ -35,12 +32,12 @@ public class Main extends Application {
         sceneRoot.getChildren().add(scene3D);
 
         Scene mainScene = new Scene(sceneRoot,600, 600);
-        camera = new PlanetsCamera(mainScene);
+        PlanetsCamera camera = new PlanetsCamera(mainScene);
         scene3D.setCamera(camera.getCamera());
         rootScene3D.getChildren().add(camera.getCamera());
 
         JSONObject sunInfo = HorizonSystem.getBody("10");
-        Sun sun = new Sun(sunInfo.getFloat("meanRadKM") / pixelKmScale, "10");
+        Sun sun = new Sun(sunInfo.getFloat("meanRadKM") / HorizonSystem.pixelKmScale, "10");
         rootScene3D.getChildren().add(sun.getShape());
         sceneRoot.getChildren().add(sun.getGroupUI());
 
@@ -58,7 +55,7 @@ public class Main extends Application {
         ExecutorService executor = Executors.newFixedThreadPool(2);
         List<Future<SecondaryBody>> futures = new ArrayList<>();
 
-        for(int i=399; i <= 499; i=i+100) {
+        for(int i=399; i <= 999; i=i+100) {
             final String planetID = i + "";
             Callable<SecondaryBody> task = () -> Planet.createPlanet(rootScene3D, uiGroup, sun, planetID);
             futures.add(executor.submit(task));

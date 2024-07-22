@@ -1,6 +1,5 @@
 package org.example.planetsexplorer.celestial;
 
-import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
@@ -15,7 +14,7 @@ import org.json.JSONObject;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import static org.example.planetsexplorer.Main.pixelKmScale;
+import static org.example.planetsexplorer.HorizonSystem.pixelKmScale;
 
 public class SecondaryBody extends PrimaryBody {
     private final PrimaryBody primaryBody;
@@ -42,27 +41,23 @@ public class SecondaryBody extends PrimaryBody {
     private int ephemStopMinute;
     private StepSize ephemStepSize;
 
-    private ChangeListener<Number> orbitRotationAngleListener = null;
-    private final Rotate orbitRotation = new Rotate();
-    private final Rotate tiltCorrectionZ = new Rotate(0);
-    private final Rotate spinRotation = new Rotate();
     private final Rotate tiltRotation = new Rotate(0, Rotate.Y_AXIS);
-
     private final Group orbitRing = new Group();
 
     public SecondaryBody(String name, String dbID, float sphereRadius, PrimaryBody primaryBody, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
         super(name, dbID, sphereRadius);
         this.primaryBody = primaryBody;
-
+        this.primaryBody.addSecondaryBody(this);
         this.initializeEphemStartStop(orbitPeriodYear);
 
-        LocalDate dateStart = LocalDate.of(this.getEphemStartYear(),
+        LocalDate dateStart = LocalDate.of(
+                this.getEphemStartYear(),
                 this.getEphemStartMonth(),
                 this.getEphemStartDay());
-        LocalDate dateStop = LocalDate.of(this.getEphemStopYear(),
+        LocalDate dateStop = LocalDate.of(
+                this.getEphemStopYear(),
                 this.getEphemStopMonth(),
                 this.getEphemStopDay());
-
         this.setEphemeris(dateStart, this.getEphemStartHour(), this.getEphemStartMinute(),
                 dateStop, this.getEphemStopHour(), this.getEphemStopMinute(), this.getEphemStepSize());
 
@@ -72,61 +67,19 @@ public class SecondaryBody extends PrimaryBody {
         this.obliquityToOrbitDeg = obliquityToOrbitDeg;
         this.tiltRotation.setAngle(-this.obliquityToOrbitDeg);
 
-        this.primaryBody.addSecondaryBody(this);
-
         this.orbitRing.setStyle(
-                "    -fx-stroke-width: 2;\n" +
-                "    -fx-stroke-dash-array: 4 4; /* 4 units filled, 4 units empty */\n" +
-                "    -fx-fill: transparent;");
+                """
+                    -fx-stroke-width: 2;
+                    -fx-stroke-dash-array: 4 4; /* 4 units filled, 4 units empty */
+                    -fx-fill: transparent;\
+                """);
         this.orbitRing.setMouseTransparent(true);
 
         this.getShape().setTranslateX(this.primaryBody.getShape().getTranslateX() + this.orbitDistance);
         this.getShape().setTranslateY(this.primaryBody.getShape().getTranslateY());
         this.getShape().setTranslateZ(this.primaryBody.getShape().getTranslateZ());
         this.getShape().setMaterial(new PhongMaterial(Color.ORANGE));
-        this.getShape().getTransforms().addAll(this.orbitRotation, this.tiltRotation, this.tiltCorrectionZ, this.spinRotation);
-
-        Point3D shapePoint = this.getShape().localToScene(Point3D.ZERO).add(0, 0, 1);
-        this.tiltCorrectionZ.setAxis(this.getShape().sceneToLocal(shapePoint));
-        this.tiltCorrectionZ.angleProperty().bind(this.orbitRotation.angleProperty().multiply(-1));
-    }
-
-    public void setEphemeris(LocalDate dateStart, Integer hourStart, Integer minStart, LocalDate dateStop, Integer hourStop, Integer minStop, StepSize ephemStepSize) {
-        ArrayList<JSONObject> ephem = null;
-        String startDateTimeStamp =  dateStart + " " + String.format("%02d", hourStart) + ":" + String.format("%02d", minStart);
-        String stopDateTimeStamp = dateStop + " " + String.format("%02d", hourStop) + ":" + String.format("%02d", minStop);
-
-        this.ephemStartYear = dateStart.getYear();
-        this.ephemStartMonth = dateStart.getMonthValue();
-        this.ephemStartDay = dateStart.getDayOfMonth();
-        this.ephemStartHour = hourStart;
-        this.ephemStartMinute = minStart;
-
-        this.ephemStopYear = dateStop.getYear();
-        this.ephemStopMonth = dateStop.getMonthValue();
-        this.ephemStopDay = dateStop.getDayOfMonth();
-        this.ephemStopHour = hourStop;
-        this.ephemStopMinute = minStop;
-        this.ephemStepSize = ephemStepSize;
-
-        try {
-            ephem = HorizonSystem.getEphemeris(this.getDbID(), primaryBody.getDbID(),
-                    startDateTimeStamp,
-                    stopDateTimeStamp,
-                    ephemStepSize);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        this.setEphemData(ephem);
-        this.setEphemIndex(HorizonSystem.empherisIndex);
-
-        float x = ephem.get(0).getFloat("x") / pixelKmScale;
-        float y = ephem.get(0).getFloat("y") / pixelKmScale;
-        float z = ephem.get(0).getFloat("z") / pixelKmScale;
-
-        float orbitDist = (float) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
-        this.orbitDistance = orbitDist;
+        this.getShape().getTransforms().addAll(this.tiltRotation);
     }
 
     private void initializeEphemStartStop(float orbitYear) {
@@ -173,6 +126,38 @@ public class SecondaryBody extends PrimaryBody {
         }
     }
 
+    public void setEphemeris(LocalDate dateStart, Integer hourStart, Integer minStart, LocalDate dateStop, Integer hourStop, Integer minStop, StepSize ephemStepSize) {
+        ArrayList<JSONObject> ephem = null;
+
+        this.ephemStartYear = dateStart.getYear();
+        this.ephemStartMonth = dateStart.getMonthValue();
+        this.ephemStartDay = dateStart.getDayOfMonth();
+        this.ephemStartHour = hourStart;
+        this.ephemStartMinute = minStart;
+
+        this.ephemStopYear = dateStop.getYear();
+        this.ephemStopMonth = dateStop.getMonthValue();
+        this.ephemStopDay = dateStop.getDayOfMonth();
+        this.ephemStopHour = hourStop;
+        this.ephemStopMinute = minStop;
+        this.ephemStepSize = ephemStepSize;
+
+//        String startDateTimeStamp =  dateStart + " " + String.format("%02d", hourStart) + ":" + String.format("%02d", minStart);
+//        String stopDateTimeStamp = dateStop + " " + String.format("%02d", hourStop) + ":" + String.format("%02d", minStop);
+
+        try {
+            ephem = HorizonSystem.getEphemeris(this.getDbID(), primaryBody.getDbID(),
+                    this.getEphemStartDateTimeStamp(),
+                    this.getEphemStopDateTimeStamp(),
+                    ephemStepSize);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        this.setEphemData(ephem);
+        this.setEphemIndex(HorizonSystem.empherisIndex);
+    }
+
     public String getEphemStartDateTimeStamp() {
         return String.format("%02d", this.ephemStartYear) + "-" +
                 String.format("%02d", this.ephemStartMonth) + "-" +
@@ -198,6 +183,11 @@ public class SecondaryBody extends PrimaryBody {
             this.setEphemerisPosition(data.getFloat("x") / pixelKmScale,
                     data.getFloat("y") / pixelKmScale,
                     data.getFloat("z") /pixelKmScale);
+
+            float x = this.ephemData.get(newIndex).getFloat("x") / pixelKmScale;
+            float y = this.ephemData.get(newIndex).getFloat("y") / pixelKmScale;
+            float z = this.ephemData.get(newIndex).getFloat("z") / pixelKmScale;
+            this.orbitDistance = (float) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
         }
     }
 
@@ -224,14 +214,6 @@ public class SecondaryBody extends PrimaryBody {
 
     public void setEphemData(ArrayList<JSONObject> ephemData) {
         this.ephemData = ephemData;
-    }
-
-    public ChangeListener<Number> getOrbitRotationAngleListener() {
-        return orbitRotationAngleListener;
-    }
-
-    public Rotate getOrbitRotation() {
-        return orbitRotation;
     }
 
     public Group getOrbitRing() {
