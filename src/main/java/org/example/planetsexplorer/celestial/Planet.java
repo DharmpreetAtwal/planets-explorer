@@ -1,5 +1,10 @@
 package org.example.planetsexplorer.celestial;
 
+import javafx.scene.Group;
+import org.example.planetsexplorer.HorizonSystem;
+import org.example.planetsexplorer.Main;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class Planet extends SecondaryBody {
@@ -8,6 +13,26 @@ public class Planet extends SecondaryBody {
     public Planet(String name, String dbID, float shapeRadius, PrimaryBody primaryBody, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
         super(name, dbID, shapeRadius, primaryBody, orbitPeriodYear, siderealDayHr, obliquityToOrbitDeg);
         planetArrayList.add(this);
+    }
+
+    public static Planet createPlanet(Group rootScene3D, Group mainSceneRoot, Sun sun, String planetID) throws Exception {
+        JSONObject planetJSON = HorizonSystem.getBody(planetID);
+
+        Planet newPlanet = new Planet(
+                HorizonSystem.idToName(planetID),
+                planetID,
+                planetJSON.getFloat("meanRadKM") / Main.pixelKmScale,
+                sun,
+                planetJSON.getFloat("siderealOrbitDays"),
+                planetJSON.getFloat("siderealDayHr"),
+                planetJSON.getFloat("obliquityToOrbitDeg"));
+
+        rootScene3D.getChildren().add(newPlanet.getShape());
+        mainSceneRoot.getChildren().add(newPlanet.getOrbitRing());
+        mainSceneRoot.getChildren().add(newPlanet.getGroupUI());
+        newPlanet.getGroupUI().toFront();
+
+        return newPlanet;
     }
 
     public static Planet getPlanetByName(String name) {

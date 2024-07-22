@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- HorizonSystem now queries x, y, z vectors instead of orbital elements&#10;- This switched also fixed the visual bug with the moon's orbits">
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Added ephemIndex attr">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -283,7 +286,15 @@
       <option name="project" value="LOCAL" />
       <updated>1721574981434</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="- Added ephemIndex attr">
+      <option name="closed" value="true" />
+      <created>1721577125625</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1721577125625</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -310,6 +321,7 @@
     <MESSAGE value="- Added Z zoom transform" />
     <MESSAGE value="- Cleaned up code, refactored out functions" />
     <MESSAGE value="- HorizonSystem now queries x, y, z vectors instead of orbital elements&#10;- This switched also fixed the visual bug with the moon's orbits" />
-    <option name="LAST_COMMIT_MESSAGE" value="- HorizonSystem now queries x, y, z vectors instead of orbital elements&#10;- This switched also fixed the visual bug with the moon's orbits" />
+    <MESSAGE value="- Added ephemIndex attr" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Added ephemIndex attr" />
   </component>
 </project>

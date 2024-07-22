@@ -107,18 +107,19 @@ public class SecondaryBody extends PrimaryBody {
         this.ephemStopDay = dateStop.getDayOfMonth();
         this.ephemStopHour = hourStop;
         this.ephemStopMinute = minStop;
+        this.ephemStepSize = ephemStepSize;
 
         try {
             ephem = HorizonSystem.getEphemeris(this.getDbID(), primaryBody.getDbID(),
                     startDateTimeStamp,
                     stopDateTimeStamp,
                     ephemStepSize);
-            System.out.println(ephem);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
         this.setEphemData(ephem);
+        this.setEphemIndex(HorizonSystem.empherisIndex);
 
         float x = ephem.get(0).getFloat("x") / pixelKmScale;
         float y = ephem.get(0).getFloat("y") / pixelKmScale;

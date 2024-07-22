@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 public class PlanetViewer {
+    private static PlanetViewer singleton = null;
     public static Celestial selectedCelestial = null;
 
     private final static Label lblName = new Label("Celestial Name: ");
@@ -40,7 +41,7 @@ public class PlanetViewer {
 
     private final static CheckBox checkEphemFrozen = new CheckBox("Freeze Ephemeris");
 
-    public PlanetViewer() {
+    private PlanetViewer() {
         GridPane viewerGridRoot = new GridPane();
 
         GridPane.setConstraints(lblName, 0, 0);
@@ -104,11 +105,18 @@ public class PlanetViewer {
         initializeQueryButton();
         initializeEphemerisFreeze();
 
-        Scene viewerScene = new Scene(viewerGridRoot, 300, 600);
+        Scene viewerScene = new Scene(viewerGridRoot, 400, 600);
         Stage viewerStage = new Stage();
         viewerStage.setTitle("Planet Viewer");
         viewerStage.setScene(viewerScene);
         viewerStage.show();
+    }
+
+    public static PlanetViewer getInstance() {
+        if(singleton == null)
+            singleton = new PlanetViewer();
+
+        return singleton;
     }
 
     private static void initializeComboBoxes() {

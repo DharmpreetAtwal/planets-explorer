@@ -40,7 +40,6 @@ public class Main extends Application {
         rootScene3D.getChildren().add(camera.getCamera());
 
         JSONObject sunInfo = HorizonSystem.getBody("10");
-        assert sunInfo != null;
         Sun sun = new Sun(sunInfo.getFloat("meanRadKM") / pixelKmScale, "10");
         rootScene3D.getChildren().add(sun.getShape());
         sceneRoot.getChildren().add(sun.getGroupUI());
@@ -52,49 +51,49 @@ public class Main extends Application {
         stage.setScene(mainScene);
         stage.show();
 
-        PlanetViewer pv = new PlanetViewer();
+        PlanetViewer.getInstance();
     }
 
     private void startGetThreads(Group rootScene3D, Group uiGroup, Sun sun) {
-        ExecutorService executor = Executors.newFixedThreadPool(1);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
         List<Future<SecondaryBody>> futures = new ArrayList<>();
 
-        for(int i=399; i <= 399; i=i+100) {
+        for(int i=399; i <= 499; i=i+100) {
             final String planetID = i + "";
-            Callable<SecondaryBody> task = () -> createPlanet(rootScene3D, uiGroup, sun, planetID, "10");
+            Callable<SecondaryBody> task = () -> Planet.createPlanet(rootScene3D, uiGroup, sun, planetID);
             futures.add(executor.submit(task));
         }
 
-        Callable<SecondaryBody> moonTask = () -> createMoon(rootScene3D, uiGroup, "301", "399");
+        Callable<SecondaryBody> moonTask = () -> Moon.createMoon(rootScene3D, uiGroup, "301", "399");
         futures.add(executor.submit(moonTask));
 
-//        for(int i=401; i<=402; i++) {
-//            final String moonID = i + "";
-//            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "499");
-//            futures.add(executor.submit(task));
-//        }
+        for(int i=401; i<=402; i++) {
+            final String moonID = i + "";
+            Callable<SecondaryBody> task = () -> Moon.createMoon(rootScene3D, uiGroup, moonID, "499");
+            futures.add(executor.submit(task));
+        }
 
 //        for(int i=501; i<=517; i++) {
 //            final String moonID = i + "";
-//            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "599");
+//            Callable<SecondaryBody> task = () -> Moon.createMoon(rootScene3D, uiGroup, moonID, "599");
 //            futures.add(executor.submit(task));
 //        }
 
 //        for(int i=601; i<= 609; i++) {
 //            final String moonID = i + "";
-//            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "699");
+//            Callable<SecondaryBody> task = () -> Moon.createMoon(rootScene3D, uiGroup, moonID, "699");
 //            futures.add(executor.submit(task));
 //        }
-//
+
 //        for(int i=701; i<=717; i++) {
 //            final String moonID = i + "";
-//            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "799");
+//            Callable<SecondaryBody> task = () -> Moon.createMoon(rootScene3D, uiGroup, moonID, "799");
 //            futures.add(executor.submit(task));
 //        }
 //
 //        for(int i=801; i<=814; i++) {
 //            final String moonID = i + "";
-//            Callable<SecondaryBody> task = () -> createMoon(rootScene3D, uiGroup, moonID, "899");
+//            Callable<SecondaryBody> task = () -> Moon.createMoon(rootScene3D, uiGroup, moonID, "899");
 //            futures.add(executor.submit(task));
 //        }
 
@@ -106,48 +105,6 @@ public class Main extends Application {
             }
         }
         executor.shutdown();
-    }
-
-    private Planet createPlanet(Group rootScene3D, Group mainSceneRoot, Sun sun, String planetID, String centerID) throws Exception {
-        JSONObject planetJSON = HorizonSystem.getBody(planetID);
-
-        Planet newPlanet = new Planet(
-                HorizonSystem.idToName(planetID),
-                planetID,
-                planetJSON.getFloat("meanRadKM") / pixelKmScale,
-                sun,
-                planetJSON.getFloat("siderealOrbitDays"),
-                planetJSON.getFloat("siderealDayHr"),
-                planetJSON.getFloat("obliquityToOrbitDeg"));
-        newPlanet.setEphemIndex(HorizonSystem.empherisIndex);
-
-        rootScene3D.getChildren().add(newPlanet.getShape());
-        mainSceneRoot.getChildren().add(newPlanet.getOrbitRing());
-        mainSceneRoot.getChildren().add(newPlanet.getGroupUI());
-        newPlanet.getGroupUI().toFront();
-
-        return newPlanet;
-    }
-
-    private Moon createMoon(Group root, Group sceneRoot, String moonID, String planetID) throws Exception {
-        Planet planet = Planet.getPlanetByName(HorizonSystem.idToName(planetID));
-        JSONObject moonJSON = HorizonSystem.getBody(moonID);
-
-        Moon moon = new Moon(HorizonSystem.idToName(moonID),
-                moonID,
-                moonJSON.getFloat("meanRadKM") / pixelKmScale,
-                planet,
-                moonJSON.getFloat("siderealOrbitDays"),
-                moonJSON.getFloat("siderealDayHr"),
-                moonJSON.getFloat("obliquityToOrbitDeg"));
-        moon.setEphemIndex(HorizonSystem.empherisIndex);
-
-        root.getChildren().addAll(moon.getShape());
-        sceneRoot.getChildren().add(moon.getOrbitRing());
-        sceneRoot.getChildren().add(moon.getGroupUI());
-        moon.getGroupUI().toFront();
-
-        return moon;
     }
 
     public static void main(String[] args) {
