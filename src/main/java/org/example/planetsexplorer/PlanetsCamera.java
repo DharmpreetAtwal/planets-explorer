@@ -142,12 +142,14 @@ public class PlanetsCamera {
                 Point3D primaryPointScene = body.getPrimaryBody().getSceneCoordinates();
                 Point3D nextPointScene = body.getSceneCoordinates();
 
-                // If segment is further away from the camera than the celestialObject it's modelling
-                if(cameraPointScene.distance(nextPointScene) > cameraPointScene.distance(primaryPointScene) + (body.getOrbitDistance() / 2) ||
-                        cameraPointScene.distance(currPointGlobal) > cameraPointScene.distance(primaryPointScene) + (body.getOrbitDistance() / 2)) {
-                    currPointScreen = nextPointScreen;
-                    currPointGlobal = nextPointScene;
-                    continue;
+                if(PlanetViewer.isHideOrbitGlobalSelected()) {
+                    // If segment is further away from the camera than the celestialObject it's modelling
+                    if(cameraPointScene.distance(nextPointScene) > cameraPointScene.distance(primaryPointScene) + (body.getOrbitDistance() / 2) ||
+                            cameraPointScene.distance(currPointGlobal) > cameraPointScene.distance(primaryPointScene) + (body.getOrbitDistance() / 2)) {
+                        currPointScreen = nextPointScreen;
+                        currPointGlobal = nextPointScene;
+                        continue;
+                    }
                 }
 
                 Line segment = new Line(currPointScreen.getX(), currPointScreen.getY(),

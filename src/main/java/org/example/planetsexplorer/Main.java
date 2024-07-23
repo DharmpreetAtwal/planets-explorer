@@ -44,11 +44,11 @@ public class Main extends Application {
         startGetThreads(rootScene3D, sceneRoot, sun);
 
         stage.setResizable(false);
-        stage.setTitle("DHARM!");
+        stage.setTitle("Planet Explorer!");
         stage.setScene(mainScene);
         stage.show();
 
-        PlanetViewer.getInstance();
+        PlanetViewer.initializePlanetViewer();
     }
 
     private void startGetThreads(Group rootScene3D, Group uiGroup, Sun sun) {

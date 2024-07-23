@@ -4,6 +4,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 import javafx.scene.transform.Rotate;
@@ -43,6 +44,7 @@ public class SecondaryBody extends PrimaryBody {
 
     private final Rotate tiltRotation = new Rotate(0, Rotate.Y_AXIS);
     private final Group orbitRing = new Group();
+    private final Cylinder primaryConnection = new Cylinder();
 
     public SecondaryBody(String name, String dbID, float sphereRadius, PrimaryBody primaryBody, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
         super(name, dbID, sphereRadius);
@@ -70,7 +72,7 @@ public class SecondaryBody extends PrimaryBody {
         this.orbitRing.setStyle(
                 """
                     -fx-stroke-width: 2;
-                    -fx-stroke-dash-array: 4 4; /* 4 units filled, 4 units empty */
+                    -fx-stroke-dash-array: 4 4;
                     -fx-fill: transparent;\
                 """);
         this.orbitRing.setMouseTransparent(true);
@@ -80,6 +82,8 @@ public class SecondaryBody extends PrimaryBody {
         this.getShape().setTranslateZ(this.primaryBody.getShape().getTranslateZ());
         this.getShape().setMaterial(new PhongMaterial(Color.ORANGE));
         this.getShape().getTransforms().addAll(this.tiltRotation);
+
+        this.primaryConnection.setRadius(sphereRadius / 3);
     }
 
     private void initializeEphemStartStop(float orbitYear) {
@@ -127,7 +131,7 @@ public class SecondaryBody extends PrimaryBody {
     }
 
     public void setEphemeris(LocalDate dateStart, Integer hourStart, Integer minStart, LocalDate dateStop, Integer hourStop, Integer minStop, StepSize ephemStepSize) {
-        ArrayList<JSONObject> ephem = null;
+        ArrayList<JSONObject> ephem;
 
         this.ephemStartYear = dateStart.getYear();
         this.ephemStartMonth = dateStart.getMonthValue();
@@ -141,9 +145,6 @@ public class SecondaryBody extends PrimaryBody {
         this.ephemStopHour = hourStop;
         this.ephemStopMinute = minStop;
         this.ephemStepSize = ephemStepSize;
-
-//        String startDateTimeStamp =  dateStart + " " + String.format("%02d", hourStart) + ":" + String.format("%02d", minStart);
-//        String stopDateTimeStamp = dateStop + " " + String.format("%02d", hourStop) + ":" + String.format("%02d", minStop);
 
         try {
             ephem = HorizonSystem.getEphemeris(this.getDbID(), primaryBody.getDbID(),
@@ -192,12 +193,45 @@ public class SecondaryBody extends PrimaryBody {
     }
 
     private void setEphemerisPosition(float x, float y, float z) {
-        if(this.primaryBody !=null) {
+        if(this.primaryBody != null) {
             Point3D primaryPoint = this.getPrimaryBody().getShape().localToScene(Point3D.ZERO);
             this.getShape().setTranslateX(x + primaryPoint.getX());
             this.getShape().setTranslateY(y + primaryPoint.getY());
             this.getShape().setTranslateZ(z + primaryPoint.getZ());
+
+            Point3D startPos = this.getShape().localToScene(Point3D.ZERO);
+            Point3D endPos = this.primaryBody.getShape().localToScene(Point3D.ZERO);
+            this.updateConnectionLine(startPos.getX(), startPos.getY(),startPos.getZ(),
+                    endPos.getX(), endPos.getY(), endPos.getZ());
         }
+    }
+
+    private void updateConnectionLine(double startX, double startY, double startZ, double endX, double endY, double endZ) {
+        double distance = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2) + Math.pow(endZ - startZ, 2));
+        this.primaryConnection.setHeight(distance);
+
+        PhongMaterial material = new PhongMaterial(Color.BLUE);
+        this.primaryConnection.setMaterial(material);
+
+        double midX = (startX + endX) / 2;
+        double midY = (startY + endY) / 2;
+        double midZ = (startZ + endZ) / 2;
+
+        this.primaryConnection.setTranslateX(midX);
+        this.primaryConnection.setTranslateY(midY);
+        this.primaryConnection.setTranslateZ(midZ);
+
+        double dx = endX - startX;
+        double dy = endY - startY;
+        double dz = endZ - startZ;
+        double theta = Math.atan(dy / dx);
+        double phi = Math.acos(dz / distance);
+
+        this.primaryConnection.getTransforms().clear();
+        this.primaryConnection.getTransforms().addAll(
+                new Rotate(Math.toDegrees(theta) + 90, Rotate.Z_AXIS),
+                new Rotate(Math.toDegrees(phi) - 90, Rotate.X_AXIS)
+        );
     }
 
     public float getOrbitDistance() {
@@ -334,5 +368,9 @@ public class SecondaryBody extends PrimaryBody {
 
     public int getEphemIndex() {
         return ephemIndex;
+    }
+
+    public Cylinder getPrimaryConnection() {
+        return primaryConnection;
     }
 }

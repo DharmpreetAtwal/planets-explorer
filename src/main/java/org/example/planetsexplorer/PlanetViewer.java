@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 public class PlanetViewer {
-    private static PlanetViewer singleton = null;
     public static Celestial selectedCelestial = null;
 
     private final static Label lblName = new Label("Celestial Name: ");
@@ -39,9 +38,11 @@ public class PlanetViewer {
 
     private final static Button btnQueryEphem = new Button("Query Ephemeris");
 
-    private final static CheckBox checkEphemFrozen = new CheckBox("Freeze Ephemeris");
+    private final static CheckBox checkEphemFrozen = new CheckBox("Freeze Selected Ephemeris");
+    private final static CheckBox checkDisableOrbitSelected = new CheckBox("Disable Selected Celestial Orbit Ring ");
+    private final static CheckBox checkHideOrbitGlobal = new CheckBox("Hide Orbit Ring Behind Body");
 
-    private PlanetViewer() {
+    public static void initializePlanetViewer() {
         GridPane viewerGridRoot = new GridPane();
 
         GridPane.setConstraints(lblName, 0, 0);
@@ -71,7 +72,7 @@ public class PlanetViewer {
         GridPane.setConstraints(lblObliquityToOrbit, 0, 7);
         viewerGridRoot.getChildren().add(lblObliquityToOrbit);
 
-
+        // VISUAL SEPARATION
 
         GridPane.setConstraints(dateEphemStart, 0, 9);
         viewerGridRoot.getChildren().add(dateEphemStart);
@@ -97,26 +98,29 @@ public class PlanetViewer {
         GridPane.setConstraints(btnQueryEphem, 0, 12);
         viewerGridRoot.getChildren().add(btnQueryEphem);
 
+        // VISUAL SEPARATION
+
         GridPane.setConstraints(checkEphemFrozen, 0, 13);
         checkEphemFrozen.setAllowIndeterminate(false);
         viewerGridRoot.getChildren().add(checkEphemFrozen);
 
+        GridPane.setConstraints(checkDisableOrbitSelected, 0, 14);
+        checkDisableOrbitSelected.setAllowIndeterminate(false);
+        viewerGridRoot.getChildren().add(checkDisableOrbitSelected);
+
+        GridPane.setConstraints(checkHideOrbitGlobal, 0, 15);
+        checkHideOrbitGlobal.setAllowIndeterminate(false);
+        viewerGridRoot.getChildren().add(checkHideOrbitGlobal);
+
         initializeComboBoxes();
         initializeQueryButton();
-        initializeEphemerisFreeze();
+        initializeCheckboxes();
 
         Scene viewerScene = new Scene(viewerGridRoot, 400, 600);
         Stage viewerStage = new Stage();
         viewerStage.setTitle("Planet Viewer");
         viewerStage.setScene(viewerScene);
         viewerStage.show();
-    }
-
-    public static PlanetViewer getInstance() {
-        if(singleton == null)
-            singleton = new PlanetViewer();
-
-        return singleton;
     }
 
     private static void initializeComboBoxes() {
@@ -152,11 +156,15 @@ public class PlanetViewer {
         });
     }
 
-    private static void initializeEphemerisFreeze() {
+    private static void initializeCheckboxes() {
         checkEphemFrozen.selectedProperty().addListener(e -> {
-            if(selectedCelestial instanceof SecondaryBody secBody) {
+            if(selectedCelestial instanceof SecondaryBody secBody)
                 secBody.setEphemFrozen(checkEphemFrozen.isSelected());
-            }
+        });
+
+        checkDisableOrbitSelected.selectedProperty().addListener(e -> {
+            if(selectedCelestial instanceof SecondaryBody secBody)
+                secBody.getOrbitRing().setVisible(!checkDisableOrbitSelected.isSelected());
         });
     }
 
@@ -193,6 +201,7 @@ public class PlanetViewer {
 
             stepEphem.setValue(secondaryBody.getEphemStepSize());
             checkEphemFrozen.setSelected(secondaryBody.isEphemFrozen());
+            checkDisableOrbitSelected.setSelected(!secondaryBody.getOrbitRing().isVisible());
         }
     }
 
@@ -230,5 +239,10 @@ public class PlanetViewer {
         );
 
         return startDateTime.until(stopDateTime, units);
+    }
+
+    public static boolean isHideOrbitGlobalSelected() {
+        System.out.println(checkHideOrbitGlobal.isSelected());
+        return checkHideOrbitGlobal.isSelected();
     }
 }

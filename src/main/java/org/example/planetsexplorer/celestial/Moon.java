@@ -11,7 +11,7 @@ public class Moon extends  SecondaryBody {
         super(name, dbID, shapeRadius, primaryBody, orbitPeriodYear, siderealDayHr, obliquityToOrbitDeg);
     }
 
-    public static Moon createMoon(Group root, Group sceneRoot, String moonID, String planetID) throws Exception {
+    public static Moon createMoon(Group rootScene3D, Group mainSceneRoot, String moonID, String planetID) throws Exception {
         Planet planet = Planet.getPlanetByName(HorizonSystem.idToName(planetID));
         JSONObject moonJSON = HorizonSystem.getBody(moonID);
 
@@ -23,9 +23,11 @@ public class Moon extends  SecondaryBody {
                 moonJSON.getFloat("siderealDayHr"),
                 moonJSON.getFloat("obliquityToOrbitDeg"));
 
-        root.getChildren().addAll(moon.getShape());
-        sceneRoot.getChildren().add(moon.getOrbitRing());
-        sceneRoot.getChildren().add(moon.getGroupUI());
+        rootScene3D.getChildren().addAll(moon.getShape());
+        rootScene3D.getChildren().add(moon.getPrimaryConnection());
+
+        mainSceneRoot.getChildren().add(moon.getOrbitRing());
+        mainSceneRoot.getChildren().add(moon.getGroupUI());
         moon.getGroupUI().toFront();
 
         return moon;
