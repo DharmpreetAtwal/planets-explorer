@@ -242,7 +242,6 @@ public class PlanetViewer {
     }
 
     public static boolean isHideOrbitGlobalSelected() {
-        System.out.println(checkHideOrbitGlobal.isSelected());
         return checkHideOrbitGlobal.isSelected();
     }
 }

@@ -156,7 +156,7 @@ public class SecondaryBody extends PrimaryBody {
         }
 
         this.setEphemData(ephem);
-        this.setEphemIndex(HorizonSystem.empherisIndex);
+        this.setEphemIndex(HorizonSystem.empherisIndex, true);
     }
 
     public String getEphemStartDateTimeStamp() {
@@ -175,7 +175,7 @@ public class SecondaryBody extends PrimaryBody {
                 String.format("%02d", this.ephemStopMinute);
     }
 
-    public void setEphemIndex(int index) {
+    public void setEphemIndex(int index, boolean updateConnectionLine) {
         if(!this.getEphemData().isEmpty()) {
             int newIndex = index % this.getEphemData().size();
             JSONObject data = this.getEphemData().get(newIndex);
@@ -183,7 +183,7 @@ public class SecondaryBody extends PrimaryBody {
 
             this.setEphemerisPosition(data.getFloat("x") / pixelKmScale,
                     data.getFloat("y") / pixelKmScale,
-                    data.getFloat("z") /pixelKmScale);
+                    data.getFloat("z") /pixelKmScale, updateConnectionLine);
 
             float x = this.ephemData.get(newIndex).getFloat("x") / pixelKmScale;
             float y = this.ephemData.get(newIndex).getFloat("y") / pixelKmScale;
@@ -192,7 +192,7 @@ public class SecondaryBody extends PrimaryBody {
         }
     }
 
-    private void setEphemerisPosition(float x, float y, float z) {
+    private void setEphemerisPosition(float x, float y, float z, boolean updateConnectionLine) {
         if(this.primaryBody != null) {
             Point3D primaryPoint = this.getPrimaryBody().getShape().localToScene(Point3D.ZERO);
             this.getShape().setTranslateX(x + primaryPoint.getX());
@@ -201,25 +201,26 @@ public class SecondaryBody extends PrimaryBody {
 
             Point3D startPos = this.getShape().localToScene(Point3D.ZERO);
             Point3D endPos = this.primaryBody.getShape().localToScene(Point3D.ZERO);
-            this.updateConnectionLine(startPos.getX(), startPos.getY(),startPos.getZ(),
+            if(updateConnectionLine)
+                this.updateConnectionLine(this.primaryConnection, startPos.getX(), startPos.getY(),startPos.getZ(),
                     endPos.getX(), endPos.getY(), endPos.getZ());
         }
     }
 
-    private void updateConnectionLine(double startX, double startY, double startZ, double endX, double endY, double endZ) {
+    private void updateConnectionLine(Cylinder line, double startX, double startY, double startZ, double endX, double endY, double endZ) {
         double distance = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2) + Math.pow(endZ - startZ, 2));
-        this.primaryConnection.setHeight(distance);
+        line.setHeight(distance);
 
         PhongMaterial material = new PhongMaterial(Color.BLUE);
-        this.primaryConnection.setMaterial(material);
+        line.setMaterial(material);
 
         double midX = (startX + endX) / 2;
         double midY = (startY + endY) / 2;
         double midZ = (startZ + endZ) / 2;
 
-        this.primaryConnection.setTranslateX(midX);
-        this.primaryConnection.setTranslateY(midY);
-        this.primaryConnection.setTranslateZ(midZ);
+        line.setTranslateX(midX);
+        line.setTranslateY(midY);
+        line.setTranslateZ(midZ);
 
         double dx = endX - startX;
         double dy = endY - startY;
@@ -227,10 +228,13 @@ public class SecondaryBody extends PrimaryBody {
         double theta = Math.atan(dy / dx);
         double phi = Math.acos(dz / distance);
 
-        this.primaryConnection.getTransforms().clear();
-        this.primaryConnection.getTransforms().addAll(
+        double phiDeg = Math.toDegrees(phi) - 90;
+        if(dx < 0) phiDeg = phiDeg * -1;
+
+        line.getTransforms().clear();
+        line.getTransforms().addAll(
                 new Rotate(Math.toDegrees(theta) + 90, Rotate.Z_AXIS),
-                new Rotate(Math.toDegrees(phi) - 90, Rotate.X_AXIS)
+                new Rotate(phiDeg, Rotate.X_AXIS)
         );
     }
 

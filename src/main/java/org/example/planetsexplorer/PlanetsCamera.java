@@ -59,7 +59,7 @@ public class PlanetsCamera {
                 case SPACE -> {
                     if(PlanetViewer.selectedCelestial != null) {
                         Point3D point = PlanetViewer.selectedCelestial.getShape().localToScene(Point3D.ZERO);
-                        translate.setZ(PlanetViewer.selectedCelestial.getShape().getRadius()*5 + point.getZ());
+                        translate.setZ(point.getZ() - PlanetViewer.selectedCelestial.getShape().getRadius()*5);
                     }
                 }
 
@@ -85,14 +85,14 @@ public class PlanetsCamera {
         // If O/P were pressed, save distance between camera and selectedCelestial before moving Celestial
         if(!updateZ && PlanetViewer.selectedCelestial != null) {
             Point3D pos = PlanetViewer.selectedCelestial.getShape().localToScene(Point3D.ZERO);
-            diffZ = Math.abs(pos.getZ() - translate.getZ());
+            diffZ = pos.getZ() - translate.getZ();
         }
 
         // Moving all celestials if they are SecondaryBody and not frozen
         for(Celestial celestial: Celestial.celestialArrayList) {
             if(celestial instanceof SecondaryBody secbody) {
-                if(!secbody.getEphemData().isEmpty() && !secbody.isEphemFrozen()){
-                    secbody.setEphemIndex(HorizonSystem.empherisIndex);
+                if(!secbody.getEphemData().isEmpty() && !secbody.isEphemFrozen()) {
+                    secbody.setEphemIndex(HorizonSystem.empherisIndex, true);
                 }
             }
         }
@@ -104,7 +104,7 @@ public class PlanetsCamera {
             updateTranslate(pos.getX(),pos.getY());
             updatePivot(PlanetViewer.selectedCelestial.getShape().localToScene(Point3D.ZERO));
 
-            if(updateZ) translate.setZ(pos.getZ() + diffZ);
+            if(updateZ) translate.setZ(pos.getZ() - diffZ);
         }
     }
 
@@ -130,12 +130,12 @@ public class PlanetsCamera {
             int originalIndex = body.getEphemIndex();
 
             // Initialize the first point of the orbit ring
-            body.setEphemIndex(0);
+            body.setEphemIndex(0, false);
             Point2D currPointScreen = body.getScreenCoordinates();
             Point3D currPointGlobal = body.getSceneCoordinates();
 
             for(int i=1; i < totalSegments; i++) {
-                body.setEphemIndex(i);
+                body.setEphemIndex(i, false);
 
                 Point2D nextPointScreen = body.getScreenCoordinates();
                 Point3D cameraPointScene = PlanetsCamera.camera.localToScene(Point3D.ZERO);
@@ -171,7 +171,7 @@ public class PlanetsCamera {
                 currPointGlobal = nextPointScene;
             }
 
-            body.setEphemIndex(originalIndex);
+            body.setEphemIndex(originalIndex, true);
         }
     }
 

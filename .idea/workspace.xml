@@ -4,13 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Refactored HorizonSystem.pixelKmScale&#10;- Refactored Main, no longer has any members as a class&#10;- Reorganized PlanetsCamera.initializeKeyEvents, renamed and refactored various things&#10;- Removed unneeded transformations from SecondaryBody, reorgnaized code,">
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Added primaryConnection Cylinder to visualize Planet/Moon alignment&#10;- Removed PlanetViewer.singleton, replaced PlanetViewer constructor with PlanetViewer.initializePlanetViewer&#10;- Added disable selected orbit and global hide behind orbit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -123,6 +121,7 @@
       <workItem from="1720619906149" duration="8809000" />
       <workItem from="1720719552055" duration="34609000" />
       <workItem from="1721165162196" duration="3049000" />
+      <workItem from="1721941073497" duration="8718000" />
     </task>
     <task id="LOCAL-00001" summary="- Removed unneeded files">
       <option name="closed" value="true" />
@@ -316,7 +315,15 @@
       <option name="project" value="LOCAL" />
       <updated>1721683463025</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="- Added primaryConnection Cylinder to visualize Planet/Moon alignment&#10;- Removed PlanetViewer.singleton, replaced PlanetViewer constructor with PlanetViewer.initializePlanetViewer&#10;- Added disable selected orbit and global hide behind orbit">
+      <option name="closed" value="true" />
+      <created>1721761961567</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1721761961567</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -347,6 +354,7 @@
     <MESSAGE value="- Refractored createMoon/Planet&#10;- Made PlanetViewer a singleton&#10;- Removed animateSecondaryBodies from PrimaryBody&#10;- Fixed issue where ephem step size wasn't update after a query" />
     <MESSAGE value="- Refactored createMoon/Planet&#10;- Made PlanetViewer a singleton&#10;- Removed animateSecondaryBodies from PrimaryBody&#10;- Fixed issue where ephem step size wasn't update after a query" />
     <MESSAGE value="- Refactored HorizonSystem.pixelKmScale&#10;- Refactored Main, no longer has any members as a class&#10;- Reorganized PlanetsCamera.initializeKeyEvents, renamed and refactored various things&#10;- Removed unneeded transformations from SecondaryBody, reorgnaized code," />
-    <option name="LAST_COMMIT_MESSAGE" value="- Refactored HorizonSystem.pixelKmScale&#10;- Refactored Main, no longer has any members as a class&#10;- Reorganized PlanetsCamera.initializeKeyEvents, renamed and refactored various things&#10;- Removed unneeded transformations from SecondaryBody, reorgnaized code," />
+    <MESSAGE value="- Added primaryConnection Cylinder to visualize Planet/Moon alignment&#10;- Removed PlanetViewer.singleton, replaced PlanetViewer constructor with PlanetViewer.initializePlanetViewer&#10;- Added disable selected orbit and global hide behind orbit" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Added primaryConnection Cylinder to visualize Planet/Moon alignment&#10;- Removed PlanetViewer.singleton, replaced PlanetViewer constructor with PlanetViewer.initializePlanetViewer&#10;- Added disable selected orbit and global hide behind orbit" />
   </component>
 </project>

@@ -64,11 +64,11 @@ public class Main extends Application {
         Callable<SecondaryBody> moonTask = () -> Moon.createMoon(rootScene3D, uiGroup, "301", "399");
         futures.add(executor.submit(moonTask));
 
-        for(int i=401; i<=402; i++) {
-            final String moonID = i + "";
-            Callable<SecondaryBody> task = () -> Moon.createMoon(rootScene3D, uiGroup, moonID, "499");
-            futures.add(executor.submit(task));
-        }
+//        for(int i=401; i<=402; i++) {
+//            final String moonID = i + "";
+//            Callable<SecondaryBody> task = () -> Moon.createMoon(rootScene3D, uiGroup, moonID, "499");
+//            futures.add(executor.submit(task));
+//        }
 
 //        for(int i=501; i<=517; i++) {
 //            final String moonID = i + "";
