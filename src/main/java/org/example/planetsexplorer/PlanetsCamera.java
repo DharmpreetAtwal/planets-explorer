@@ -90,10 +90,10 @@ public class PlanetsCamera {
 
         // Moving all celestials if they are SecondaryBody and not frozen
         for(Celestial celestial: Celestial.celestialArrayList) {
-            if(celestial instanceof SecondaryBody secbody) {
-                if(!secbody.getEphemData().isEmpty() && !secbody.isEphemFrozen()) {
-                    secbody.setEphemIndex(HorizonSystem.empherisIndex, true);
-                }
+            if(celestial instanceof SecondaryBody secBody && !secBody.getEphemData().isEmpty()) {
+                if(!secBody.isEphemFrozen())
+                    secBody.setEphemIndex(HorizonSystem.empherisIndex);
+                secBody.updateEphemPosition(true);
             }
         }
 
@@ -104,7 +104,8 @@ public class PlanetsCamera {
             updateTranslate(pos.getX(),pos.getY());
             updatePivot(PlanetViewer.selectedCelestial.getShape().localToScene(Point3D.ZERO));
 
-            if(updateZ) translate.setZ(pos.getZ() - diffZ);
+            if(updateZ)
+                translate.setZ(pos.getZ() - diffZ);
         }
     }
 
@@ -130,12 +131,14 @@ public class PlanetsCamera {
             int originalIndex = body.getEphemIndex();
 
             // Initialize the first point of the orbit ring
-            body.setEphemIndex(0, false);
+            body.setEphemIndex(0);
+            body.updateEphemPosition(false);
             Point2D currPointScreen = body.getScreenCoordinates();
             Point3D currPointGlobal = body.getSceneCoordinates();
 
             for(int i=1; i < totalSegments; i++) {
-                body.setEphemIndex(i, false);
+                body.setEphemIndex(i);
+                body.updateEphemPosition(false);
 
                 Point2D nextPointScreen = body.getScreenCoordinates();
                 Point3D cameraPointScene = PlanetsCamera.camera.localToScene(Point3D.ZERO);
@@ -171,7 +174,8 @@ public class PlanetsCamera {
                 currPointGlobal = nextPointScene;
             }
 
-            body.setEphemIndex(originalIndex, true);
+            body.setEphemIndex(originalIndex);
+            body.updateEphemPosition(true);
         }
     }
 

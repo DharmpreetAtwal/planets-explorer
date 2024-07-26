@@ -156,7 +156,7 @@ public class SecondaryBody extends PrimaryBody {
         }
 
         this.setEphemData(ephem);
-        this.setEphemIndex(HorizonSystem.empherisIndex, true);
+        this.updateEphemPosition(true);
     }
 
     public String getEphemStartDateTimeStamp() {
@@ -175,35 +175,29 @@ public class SecondaryBody extends PrimaryBody {
                 String.format("%02d", this.ephemStopMinute);
     }
 
-    public void setEphemIndex(int index, boolean updateConnectionLine) {
+    public void updateEphemPosition(boolean updateConnectionLine) {
         if(!this.getEphemData().isEmpty()) {
-            int newIndex = index % this.getEphemData().size();
+            int newIndex = this.ephemIndex % this.getEphemData().size();
             JSONObject data = this.getEphemData().get(newIndex);
-            this.ephemIndex = newIndex;
 
-            this.setEphemerisPosition(data.getFloat("x") / pixelKmScale,
-                    data.getFloat("y") / pixelKmScale,
-                    data.getFloat("z") /pixelKmScale, updateConnectionLine);
+            if(this.primaryBody != null) {
+                float x = data.getFloat("x") / pixelKmScale;
+                float y = data.getFloat("y") / pixelKmScale;
+                float z = data.getFloat("z") / pixelKmScale;
+                this.orbitDistance = (float) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
 
-            float x = this.ephemData.get(newIndex).getFloat("x") / pixelKmScale;
-            float y = this.ephemData.get(newIndex).getFloat("y") / pixelKmScale;
-            float z = this.ephemData.get(newIndex).getFloat("z") / pixelKmScale;
-            this.orbitDistance = (float) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
-        }
-    }
+                Point3D primaryPoint = this.getPrimaryBody().getShape().localToScene(Point3D.ZERO);
+                this.getShape().setTranslateX(x + primaryPoint.getX());
+                this.getShape().setTranslateY(y + primaryPoint.getY());
+                this.getShape().setTranslateZ(z + primaryPoint.getZ());
 
-    private void setEphemerisPosition(float x, float y, float z, boolean updateConnectionLine) {
-        if(this.primaryBody != null) {
-            Point3D primaryPoint = this.getPrimaryBody().getShape().localToScene(Point3D.ZERO);
-            this.getShape().setTranslateX(x + primaryPoint.getX());
-            this.getShape().setTranslateY(y + primaryPoint.getY());
-            this.getShape().setTranslateZ(z + primaryPoint.getZ());
-
-            Point3D startPos = this.getShape().localToScene(Point3D.ZERO);
-            Point3D endPos = this.primaryBody.getShape().localToScene(Point3D.ZERO);
-            if(updateConnectionLine)
-                this.updateConnectionLine(this.primaryConnection, startPos.getX(), startPos.getY(),startPos.getZ(),
-                    endPos.getX(), endPos.getY(), endPos.getZ());
+                Point3D startPos = this.getShape().localToScene(Point3D.ZERO);
+                Point3D endPos = this.primaryBody.getShape().localToScene(Point3D.ZERO);
+                if(updateConnectionLine)
+                    this.updateConnectionLine(this.primaryConnection,
+                            startPos.getX(), startPos.getY(),startPos.getZ(),
+                            endPos.getX(), endPos.getY(), endPos.getZ());
+            }
         }
     }
 
@@ -376,5 +370,9 @@ public class SecondaryBody extends PrimaryBody {
 
     public Cylinder getPrimaryConnection() {
         return primaryConnection;
+    }
+
+    public void setEphemIndex(int ephemIndex) {
+        this.ephemIndex = ephemIndex;
     }
 }
