@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Generalized updateConnectionLine&#10;- Fixed issue where camerae Z translate wasn't zooming/following celestial correctly &#10;- Fixed issue with SecondaryBody.updateConnectionLine where - sign was missing&#10;- Added boolean parameter to SecondaryBody.setEphemIndex to prevent unnecessary overhead is moving primaryConnection">
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Refactored setEphemIndex, setEphemerisPosition&#10;- Fixed issue where frozen celestial position wasn't updated correctly">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -119,7 +121,8 @@
       <workItem from="1720619906149" duration="8809000" />
       <workItem from="1720719552055" duration="34609000" />
       <workItem from="1721165162196" duration="3049000" />
-      <workItem from="1721941073497" duration="10738000" />
+      <workItem from="1721941073497" duration="11532000" />
+      <workItem from="1722104442801" duration="2219000" />
     </task>
     <task id="LOCAL-00001" summary="- Removed unneeded files">
       <option name="closed" value="true" />
@@ -329,14 +332,21 @@
       <option name="project" value="LOCAL" />
       <updated>1722027032777</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="- Refactored setEphemIndex, setEphemerisPosition&#10;- Fixed issue where frozen celestial position wasn't updated correctly">
+      <option name="closed" value="true" />
+      <created>1722032407640</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1722032407640</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="- Refractored Planet into PrimaryBody, SecondaryBody, Celestial&#10;- Created Sun, Moon, Orbital classes&#10;- Updated SecondaryBody's axis positioning to account for changes in coordinate system caused by refactoring" />
     <MESSAGE value="- HorizonSystem now fetches orbit inclination as part of ephem&#10;- Created methods createPlanet/Moon in Main&#10;- Added constructor to Moon&#10;- Moved setEphemIndex/Position to SecondaryBody&#10;- setEphemIndex/Position now use orbitRotation to calculate ephem position&#10;- O/P now moves the SecondaryBodies of a Planet" />
     <MESSAGE value="- Celestial objects now have a UI label that follows them around&#10;- Clicking on the label will fix the camera onto the object and follow it around while cycling through ephem data &#10;- Created camera update methods in Main" />
     <MESSAGE value="- Orbit distance, and radius are now to scale&#10;- Fixed visual bug where planets would disapear&#10;- Pressing space with celestial selected will dynamically zoom the camera into it" />
@@ -361,6 +371,7 @@
     <MESSAGE value="- Refactored HorizonSystem.pixelKmScale&#10;- Refactored Main, no longer has any members as a class&#10;- Reorganized PlanetsCamera.initializeKeyEvents, renamed and refactored various things&#10;- Removed unneeded transformations from SecondaryBody, reorgnaized code," />
     <MESSAGE value="- Added primaryConnection Cylinder to visualize Planet/Moon alignment&#10;- Removed PlanetViewer.singleton, replaced PlanetViewer constructor with PlanetViewer.initializePlanetViewer&#10;- Added disable selected orbit and global hide behind orbit" />
     <MESSAGE value="- Generalized updateConnectionLine&#10;- Fixed issue where camerae Z translate wasn't zooming/following celestial correctly &#10;- Fixed issue with SecondaryBody.updateConnectionLine where - sign was missing&#10;- Added boolean parameter to SecondaryBody.setEphemIndex to prevent unnecessary overhead is moving primaryConnection" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Generalized updateConnectionLine&#10;- Fixed issue where camerae Z translate wasn't zooming/following celestial correctly &#10;- Fixed issue with SecondaryBody.updateConnectionLine where - sign was missing&#10;- Added boolean parameter to SecondaryBody.setEphemIndex to prevent unnecessary overhead is moving primaryConnection" />
+    <MESSAGE value="- Refactored setEphemIndex, setEphemerisPosition&#10;- Fixed issue where frozen celestial position wasn't updated correctly" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Refactored setEphemIndex, setEphemerisPosition&#10;- Fixed issue where frozen celestial position wasn't updated correctly" />
   </component>
 </project>

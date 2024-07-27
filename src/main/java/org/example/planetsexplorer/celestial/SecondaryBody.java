@@ -45,6 +45,7 @@ public class SecondaryBody extends PrimaryBody {
     private final Rotate tiltRotation = new Rotate(0, Rotate.Y_AXIS);
     private final Group orbitRing = new Group();
     private final Cylinder primaryConnection = new Cylinder();
+    private final Cylinder velocityVector = new Cylinder();
 
     public SecondaryBody(String name, String dbID, float sphereRadius, PrimaryBody primaryBody, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
         super(name, dbID, sphereRadius);
@@ -84,6 +85,10 @@ public class SecondaryBody extends PrimaryBody {
         this.getShape().getTransforms().addAll(this.tiltRotation);
 
         this.primaryConnection.setRadius(sphereRadius / 3);
+        this.primaryConnection.setMaterial(new PhongMaterial(Color.BLUE));
+
+        this.velocityVector.setRadius(sphereRadius / 4);
+        this.velocityVector.setMaterial(new PhongMaterial(Color.PURPLE));
     }
 
     private void initializeEphemStartStop(float orbitYear) {
@@ -184,19 +189,28 @@ public class SecondaryBody extends PrimaryBody {
                 float x = data.getFloat("x") / pixelKmScale;
                 float y = data.getFloat("y") / pixelKmScale;
                 float z = data.getFloat("z") / pixelKmScale;
-                this.orbitDistance = (float) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
 
                 Point3D primaryPoint = this.getPrimaryBody().getShape().localToScene(Point3D.ZERO);
                 this.getShape().setTranslateX(x + primaryPoint.getX());
                 this.getShape().setTranslateY(y + primaryPoint.getY());
                 this.getShape().setTranslateZ(z + primaryPoint.getZ());
+                this.orbitDistance = (float) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+
+                float vx = (float) (data.getFloat("vx") * this.getShape().getRadius() * 2);
+                float vy = (float) (data.getFloat("vy") * this.getShape().getRadius() * 2);
+                float vz = (float) (data.getFloat("vz") * this.getShape().getRadius() * 2);
 
                 Point3D startPos = this.getShape().localToScene(Point3D.ZERO);
-                Point3D endPos = this.primaryBody.getShape().localToScene(Point3D.ZERO);
-                if(updateConnectionLine)
+                Point3D primaryPos = this.primaryBody.getShape().localToScene(Point3D.ZERO);
+                
+                if(updateConnectionLine) {
                     this.updateConnectionLine(this.primaryConnection,
                             startPos.getX(), startPos.getY(),startPos.getZ(),
-                            endPos.getX(), endPos.getY(), endPos.getZ());
+                            primaryPos.getX(), primaryPos.getY(), primaryPos.getZ());
+                    this.updateConnectionLine(this.velocityVector,
+                            startPos.getX(), startPos.getY(), startPos.getZ(),
+                            startPos.getX() + vx, startPos.getY() + vy, startPos.getZ() + vz);
+                }
             }
         }
     }
@@ -204,9 +218,6 @@ public class SecondaryBody extends PrimaryBody {
     private void updateConnectionLine(Cylinder line, double startX, double startY, double startZ, double endX, double endY, double endZ) {
         double distance = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2) + Math.pow(endZ - startZ, 2));
         line.setHeight(distance);
-
-        PhongMaterial material = new PhongMaterial(Color.BLUE);
-        line.setMaterial(material);
 
         double midX = (startX + endX) / 2;
         double midY = (startY + endY) / 2;
@@ -374,5 +385,9 @@ public class SecondaryBody extends PrimaryBody {
 
     public void setEphemIndex(int ephemIndex) {
         this.ephemIndex = ephemIndex;
+    }
+
+    public Cylinder getVelocityVector() {
+        return velocityVector;
     }
 }

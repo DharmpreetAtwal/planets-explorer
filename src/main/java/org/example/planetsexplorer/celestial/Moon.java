@@ -25,6 +25,7 @@ public class Moon extends  SecondaryBody {
 
         rootScene3D.getChildren().addAll(moon.getShape());
         rootScene3D.getChildren().add(moon.getPrimaryConnection());
+        rootScene3D.getChildren().add(moon.getVelocityVector());
 
         mainSceneRoot.getChildren().add(moon.getOrbitRing());
         mainSceneRoot.getChildren().add(moon.getGroupUI());

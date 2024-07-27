@@ -134,7 +134,7 @@ public class PlanetsCamera {
             body.setEphemIndex(0);
             body.updateEphemPosition(false);
             Point2D currPointScreen = body.getScreenCoordinates();
-            Point3D currPointGlobal = body.getSceneCoordinates();
+            Point3D currPointScene = body.getSceneCoordinates();
 
             for(int i=1; i < totalSegments; i++) {
                 body.setEphemIndex(i);
@@ -145,15 +145,22 @@ public class PlanetsCamera {
                 Point3D primaryPointScene = body.getPrimaryBody().getSceneCoordinates();
                 Point3D nextPointScene = body.getSceneCoordinates();
 
+                if(cameraPointScene.distance(currPointScene) < 2 * body.getOrbitDistance()) {
+                    currPointScreen = nextPointScreen;
+                    currPointScene = nextPointScene;
+                    continue;
+                }
+
                 if(PlanetViewer.isHideOrbitGlobalSelected()) {
                     // If segment is further away from the camera than the celestialObject it's modelling
                     if(cameraPointScene.distance(nextPointScene) > cameraPointScene.distance(primaryPointScene) + (body.getOrbitDistance() / 2) ||
-                            cameraPointScene.distance(currPointGlobal) > cameraPointScene.distance(primaryPointScene) + (body.getOrbitDistance() / 2)) {
+                            cameraPointScene.distance(currPointScene) > cameraPointScene.distance(primaryPointScene) + (body.getOrbitDistance() / 2)) {
                         currPointScreen = nextPointScreen;
-                        currPointGlobal = nextPointScene;
+                        currPointScene = nextPointScene;
                         continue;
                     }
                 }
+
 
                 Line segment = new Line(currPointScreen.getX(), currPointScreen.getY(),
                         nextPointScreen.getX(), nextPointScreen.getY());
@@ -171,7 +178,7 @@ public class PlanetsCamera {
                 body.getOrbitRing().getChildren().add(segment);
 
                 currPointScreen = nextPointScreen;
-                currPointGlobal = nextPointScene;
+                currPointScene = nextPointScene;
             }
 
             body.setEphemIndex(originalIndex);

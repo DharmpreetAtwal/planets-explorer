@@ -28,6 +28,7 @@ public class Planet extends SecondaryBody {
 
         rootScene3D.getChildren().add(newPlanet.getShape());
         rootScene3D.getChildren().add(newPlanet.getPrimaryConnection());
+        rootScene3D.getChildren().add(newPlanet.getVelocityVector());
 
         mainSceneRoot.getChildren().add(newPlanet.getOrbitRing());
         mainSceneRoot.getChildren().add(newPlanet.getGroupUI());
