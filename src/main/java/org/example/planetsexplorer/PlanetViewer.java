@@ -25,6 +25,7 @@ public class PlanetViewer {
     private final static Label lblOrbitPeriodYear = new Label("Orbit Period Year: ");
     private final static Label lblSideRealDayHr = new Label("Side Real Day Hr: ");
     private final static Label lblObliquityToOrbit = new Label("Obliquity To Orbit: ");
+    private final static Label lblRadius = new Label("Radius: ");
 
     private final static DatePicker dateEphemStart = new DatePicker();
     private final static ComboBox<Integer> hourEphemStart = new ComboBox<>();
@@ -71,6 +72,9 @@ public class PlanetViewer {
 
         GridPane.setConstraints(lblObliquityToOrbit, 0, 7);
         viewerGridRoot.getChildren().add(lblObliquityToOrbit);
+
+        GridPane.setConstraints(lblRadius, 0, 8);
+        viewerGridRoot.getChildren().add(lblRadius);
 
         // VISUAL SEPARATION
 
@@ -184,6 +188,7 @@ public class PlanetViewer {
             lblOrbitPeriodYear.setText("Orbit Period Year: " + secondaryBody.getOrbitPeriodYear());
             lblSideRealDayHr.setText("Side Real Day Hr: " + secondaryBody.getSiderealDayHr());
             lblObliquityToOrbit.setText("Obliquity To Orbit: " + secondaryBody.getObliquityToOrbitDeg());
+            lblRadius.setText("Radius: " + secondaryBody.getShape().getRadius() * HorizonSystem.pixelKmScale);
 
             LocalDate startDate = LocalDate.of(secondaryBody.getEphemStartYear(),
                     secondaryBody.getEphemStartMonth(),

@@ -7,6 +7,7 @@ module org.example.planetsexplorer {
     requires org.kordamp.bootstrapfx.core;
     requires org.json;
     requires com.opencsv;
+    requires org.apache.commons.lang3;
 
     opens org.example.planetsexplorer to javafx.fxml;
     exports org.example.planetsexplorer;

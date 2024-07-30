@@ -55,7 +55,7 @@ public class Main extends Application {
         ExecutorService executor = Executors.newFixedThreadPool(2);
         List<Future<SecondaryBody>> futures = new ArrayList<>();
 
-        for(int i=399; i <= 999; i=i+100) {
+        for(int i=399; i <= 799; i=i+100) {
             final String planetID = i + "";
             Callable<SecondaryBody> task = () -> Planet.createPlanet(rootScene3D, uiGroup, sun, planetID);
             futures.add(executor.submit(task));
@@ -64,13 +64,13 @@ public class Main extends Application {
         Callable<SecondaryBody> moonTask = () -> Moon.createMoon(rootScene3D, uiGroup, "301", "399");
         futures.add(executor.submit(moonTask));
 
-//        for(int i=401; i<=402; i++) {
-//            final String moonID = i + "";
-//            Callable<SecondaryBody> task = () -> Moon.createMoon(rootScene3D, uiGroup, moonID, "499");
-//            futures.add(executor.submit(task));
-//        }
+        for(int i=401; i<=402; i++) {
+            final String moonID = i + "";
+            Callable<SecondaryBody> task = () -> Moon.createMoon(rootScene3D, uiGroup, moonID, "499");
+            futures.add(executor.submit(task));
+        }
 
-//        for(int i=501; i<=517; i++) {
+//        for(int i=501; i<=572; i++) {
 //            final String moonID = i + "";
 //            Callable<SecondaryBody> task = () -> Moon.createMoon(rootScene3D, uiGroup, moonID, "599");
 //            futures.add(executor.submit(task));
@@ -82,11 +82,11 @@ public class Main extends Application {
 //            futures.add(executor.submit(task));
 //        }
 
-//        for(int i=701; i<=717; i++) {
-//            final String moonID = i + "";
-//            Callable<SecondaryBody> task = () -> Moon.createMoon(rootScene3D, uiGroup, moonID, "799");
-//            futures.add(executor.submit(task));
-//        }
+        for(int i=701; i<=717; i++) {
+            final String moonID = i + "";
+            Callable<SecondaryBody> task = () -> Moon.createMoon(rootScene3D, uiGroup, moonID, "799");
+            futures.add(executor.submit(task));
+        }
 //
 //        for(int i=801; i<=814; i++) {
 //            final String moonID = i + "";

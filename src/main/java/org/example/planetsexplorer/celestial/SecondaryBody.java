@@ -91,12 +91,26 @@ public class SecondaryBody extends PrimaryBody {
         this.velocityVector.setMaterial(new PhongMaterial(Color.PURPLE));
     }
 
+    public static void addToStage(SecondaryBody secondaryBody, Group rootScene3D, Group mainSceneRoot) {
+        if(!rootScene3D.getChildren().contains(secondaryBody.getShape())) {
+            rootScene3D.getChildren().add(secondaryBody.getShape());
+            rootScene3D.getChildren().add(secondaryBody.getPrimaryConnection());
+            rootScene3D.getChildren().add(secondaryBody.getVelocityVector());
+        }
+
+        if(!mainSceneRoot.getChildren().contains(secondaryBody.getOrbitRing())) {
+            mainSceneRoot.getChildren().add(secondaryBody.getOrbitRing());
+            mainSceneRoot.getChildren().add(secondaryBody.getGroupUI());
+            secondaryBody.getGroupUI().toFront();
+        }
+    }
+
     private void initializeEphemStartStop(float orbitYear) {
         int years = (int) orbitYear;
         double fracYear = orbitYear - years;
 
         int fracDays = (int) (fracYear * 365);
-        int months = fracDays / 30;
+        int months = fracDays / 31;
         int days = fracDays % 30;
 
         double daysLeft = fracYear * 365 - fracDays;

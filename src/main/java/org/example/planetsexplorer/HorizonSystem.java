@@ -2,6 +2,7 @@ package org.example.planetsexplorer;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import org.example.planetsexplorer.celestial.Moon;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,7 +34,7 @@ public class HorizonSystem {
             String resultStr = (String) planetJSON.get("result");
 
             JSONObject planetInfo = new JSONObject();
-            String siderealPeriod = extractSiderealOrbPeriod(resultStr);
+            String siderealPeriod = extractSiderealOrbPeriod(resultStr, id);
             planetInfo.put("siderealOrbitDays", Float.parseFloat(siderealPeriod));
 
             String siderealDayPeriod = extractSiderealDayPeriod(resultStr);
@@ -47,7 +48,7 @@ public class HorizonSystem {
             String obliquityToOrbit = extractObliquityToOrbit(resultStr);
             planetInfo.put("obliquityToOrbitDeg", Float.parseFloat(obliquityToOrbit));
 
-            String meanRadKM = extractVolMeanRadiusKM(resultStr);
+            String meanRadKM = extractVolMeanRadiusKM(resultStr, id);
             planetInfo.put("meanRadKM", Float.parseFloat(meanRadKM));
 
             return planetInfo;
@@ -89,8 +90,14 @@ public class HorizonSystem {
         }
     }
 
-    public static String idToName(String id) throws Exception {
-        if(HorizonSystem.bodiesNameID.isEmpty()) HorizonSystem.initializeNameIDLookup();
+    public static String idToName(String id) {
+        if(HorizonSystem.bodiesNameID.isEmpty()) {
+            try {
+                HorizonSystem.initializeNameIDLookup();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         Pattern idNamePattern = Pattern.compile("(?<=" + id +") *[A-Za-z]* ", Pattern.CASE_INSENSITIVE);
         Matcher idNameMatcher = idNamePattern.matcher(HorizonSystem.bodiesNameID);
@@ -100,6 +107,35 @@ public class HorizonSystem {
             System.err.println("Invalid id: " + id);
             return null;
         }
+    }
+
+    public static String idToDesignation(String id) {
+        if(HorizonSystem.bodiesNameID.isEmpty()) {
+            try {
+                HorizonSystem.initializeNameIDLookup();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        Pattern idRow = Pattern.compile("(?<=" + id + ")\\s+[A-Za-z]*\\s+\\d+[A-Z0-9]*");
+        Matcher idRowMatcher = idRow.matcher(bodiesNameID);
+
+        if(idRowMatcher.find()) {
+            Pattern endDesignation = Pattern.compile("[A-Z0-9]*$");
+            Matcher endDesignationMatcher = endDesignation.matcher(idRowMatcher.group());
+
+            if(endDesignationMatcher.find()){
+                return endDesignationMatcher.group();
+            } else {
+                System.err.println("No Designation found: " + id);
+                return "null";
+            }
+        } else {
+            System.err.println("No Designation found: " + id);
+            return "null";
+        }
+
     }
 
     private static void initializeNameIDLookup() throws Exception {
@@ -202,7 +238,7 @@ public class HorizonSystem {
         return results;
     }
 
-    private static String extractVolMeanRadiusKM(String result) {
+    private static String extractVolMeanRadiusKM(String result, String id) {
         // This pattern is meant to match 'mean radius, km   =  1.11'
         // or 'Mean Radius (km) =  1.11'
         Pattern radiusPattern = Pattern.compile("(mean )?radius,? \\(?km\\)?\\s+=\\s+\\d*\\.?\\d+", Pattern.CASE_INSENSITIVE);
@@ -212,12 +248,13 @@ public class HorizonSystem {
 //            System.out.println(matcher.group());
             return extractLastNumber(matcher.group());
         } else {
-            System.err.println("Could not find 'mean radius'");
-            return "0";
+            String radius = Moon.getRadiusKM(id);
+            if(radius.equals("0")) System.err.println("Could not find 'mean radius'");
+            return radius;
         }
     }
 
-    private static String extractSiderealOrbPeriod(String result) {
+    private static String extractSiderealOrbPeriod(String result, String id) {
         // This regex matches Sidereal orb. per.    =  0.2408467 y
         // or Sidereal orb. per., y =   0.61519726
         // or Sidereal orb period  = 1.0000174 y
@@ -235,8 +272,11 @@ public class HorizonSystem {
                 lastNumber = lastNumber / 365.25f;
                 return String.valueOf(lastNumber);
             } else {
-                System.err.println("Could not find 'Sidereal Orb Period'");
-                return "1";
+                float sidereal = Float.parseFloat(Moon.getSiderealOrbitDays(id));
+                sidereal = sidereal / 365.25f;
+
+                if(sidereal == 0) System.err.println("Could not find 'Sidereal Orb Period' " + id);
+                return String.valueOf(sidereal);
             }
         }
     }
