@@ -64,13 +64,13 @@ public class PlanetsCamera {
                 }
 
                 case P -> {
-                    HorizonSystem.empherisIndex = HorizonSystem.empherisIndex + 1;
+                    HorizonSystem.ephemerisIndex = HorizonSystem.ephemerisIndex + 1;
                     updateZ = true;
                 }
 
                 case O -> {
-                    if(HorizonSystem.empherisIndex > 0) {
-                        HorizonSystem.empherisIndex = HorizonSystem.empherisIndex - 1;
+                    if(HorizonSystem.ephemerisIndex > 0) {
+                        HorizonSystem.ephemerisIndex = HorizonSystem.ephemerisIndex - 1;
                         updateZ = true;
                     }
                 }
@@ -92,7 +92,7 @@ public class PlanetsCamera {
         for(Celestial celestial: Celestial.celestialArrayList) {
             if(celestial instanceof SecondaryBody secBody && !secBody.getEphemData().isEmpty()) {
                 if(!secBody.isEphemFrozen())
-                    secBody.setEphemIndex(HorizonSystem.empherisIndex);
+                    secBody.setEphemIndex(HorizonSystem.ephemerisIndex);
                 secBody.updateEphemPosition(true);
             }
         }
@@ -160,7 +160,6 @@ public class PlanetsCamera {
                         continue;
                     }
                 }
-
 
                 Line segment = new Line(currPointScreen.getX(), currPointScreen.getY(),
                         nextPointScreen.getX(), nextPointScreen.getY());

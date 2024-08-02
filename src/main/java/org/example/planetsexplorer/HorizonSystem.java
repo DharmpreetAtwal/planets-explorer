@@ -13,6 +13,7 @@ import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -20,8 +21,10 @@ import java.util.regex.Pattern;
 
 public class HorizonSystem {
     public static final int pixelKmScale = 100;
-    public static int empherisIndex = 0;
-    private static String bodiesNameID = "";
+    public static int ephemerisIndex = 0;
+    public static HashMap<String, String> idNameMap = new HashMap<>(100);
+    public static HashMap<String, String> idDesignationMap = new HashMap<>(100);
+    public static HashMap<String, String> idAliasMap = new HashMap<>(100);
 
     public static JSONObject getBody(String id) throws Exception {
         String urlQuery = "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='" + id +
@@ -90,64 +93,42 @@ public class HorizonSystem {
         }
     }
 
-    public static String idToName(String id) {
-        if(HorizonSystem.bodiesNameID.isEmpty()) {
-            try {
-                HorizonSystem.initializeNameIDLookup();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        Pattern idNamePattern = Pattern.compile("(?<=" + id +") *[A-Za-z]* ", Pattern.CASE_INSENSITIVE);
-        Matcher idNameMatcher = idNamePattern.matcher(HorizonSystem.bodiesNameID);
-        if(idNameMatcher.find()) {
-            return idNameMatcher.group().replaceAll("\\s+", "");
-        } else {
-            System.err.println("Invalid id: " + id);
-            return null;
-        }
-    }
-
-    public static String idToDesignation(String id) {
-        if(HorizonSystem.bodiesNameID.isEmpty()) {
-            try {
-                HorizonSystem.initializeNameIDLookup();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        Pattern idRow = Pattern.compile("(?<=" + id + ")\\s+[A-Za-z]*\\s+\\d+[A-Z0-9]*");
-        Matcher idRowMatcher = idRow.matcher(bodiesNameID);
-
-        if(idRowMatcher.find()) {
-            Pattern endDesignation = Pattern.compile("[A-Z0-9]*$");
-            Matcher endDesignationMatcher = endDesignation.matcher(idRowMatcher.group());
-
-            if(endDesignationMatcher.find()){
-                return endDesignationMatcher.group();
-            } else {
-                System.err.println("No Designation found: " + id);
-                return "null";
-            }
-        } else {
-            System.err.println("No Designation found: " + id);
-            return "null";
-        }
-
-    }
-
-    private static void initializeNameIDLookup() throws Exception {
+    public static void initializeNameIDLookup() throws Exception {
         String urlQuery = "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27*%27";
         String bodyNameIDJSON = executeGet(urlQuery).toString();
 
         try {
             JSONObject bodyNameID = new JSONObject(bodyNameIDJSON);
-            HorizonSystem.bodiesNameID = (String) bodyNameID.get("result");
-        } catch(JSONException err) {
+            BufferedReader reader =new BufferedReader(new StringReader((String) bodyNameID.get("result")));
+            String line;
+
+            while((line = reader.readLine()) != null) {
+                if(line.length() > 20) {
+                    Pattern idPattern = Pattern.compile("^[\\d\\s-]+$");
+                    String id = line.substring(0, 11);
+                    Matcher idMatcher = idPattern.matcher(id);
+                    if(idMatcher.find()) {
+                        id = removeSpaces(id);
+                        String name = removeSpaces(line.substring(11, 46));
+                        String designation = removeSpaces(line.substring(46, 59));
+                        String alias = removeSpaces(line.substring(59, 78));
+
+                        idNameMap.put(id, name);
+                        idDesignationMap.put(id, designation);
+                        idAliasMap.put(id, alias);
+                    }
+                }
+            }
+        } catch(JSONException | IOException err) {
             System.err.println(err);
         }
+    }
+
+    private static String removeSpaces(String str) {
+        String result = str.replaceAll("\\s\\s+", "");
+        result = result.replaceAll("^\\s+", "");
+        result = result.replaceAll("\\s+$", "");
+        return result;
     }
 
     private static ArrayList<JSONObject> extractVectorsCSV(String strCSV) throws IOException, CsvException {

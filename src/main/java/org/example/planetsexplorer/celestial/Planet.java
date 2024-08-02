@@ -1,7 +1,7 @@
 package org.example.planetsexplorer.celestial;
 
-import javafx.scene.Group;
 import org.example.planetsexplorer.HorizonSystem;
+import org.example.planetsexplorer.Main;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -14,20 +14,39 @@ public class Planet extends SecondaryBody {
         planetArrayList.add(this);
     }
 
-    public static Planet createPlanet(Group rootScene3D, Group mainSceneRoot, Sun sun, String planetID) throws Exception {
-        JSONObject planetJSON = HorizonSystem.getBody(planetID);
+    public static Planet createPlanet(String planetID) {
+        JSONObject planetJSON;
+        try {
+            planetJSON = HorizonSystem.getBody(planetID);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         Planet newPlanet = new Planet(
-                HorizonSystem.idToName(planetID),
+                HorizonSystem.idNameMap.get(planetID),
                 planetID,
                 planetJSON.getFloat("meanRadKM") / HorizonSystem.pixelKmScale,
-                sun,
+                Main.sun,
                 planetJSON.getFloat("siderealOrbitDays"),
                 planetJSON.getFloat("siderealDayHr"),
                 planetJSON.getFloat("obliquityToOrbitDeg"));
 
-        SecondaryBody.addToStage(newPlanet, rootScene3D, mainSceneRoot);
+        SecondaryBody.addToStage(newPlanet);
         return newPlanet;
+    }
+
+    public static void deletePlanet(String planetID) {
+        Planet foundPlanet = null;
+        for(Planet planet: planetArrayList)
+            if(planet.getDbID().equals(planetID))
+                foundPlanet = planet;
+
+        if(foundPlanet != null) {
+            SecondaryBody.removeFromStage(foundPlanet);
+            planetArrayList.remove(foundPlanet);
+        } else {
+            System.err.println("No Planet found: " + planetID);
+        }
     }
 
     public static Planet getPlanetByName(String name) {

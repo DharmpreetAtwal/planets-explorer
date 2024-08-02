@@ -8,8 +8,7 @@ import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 import javafx.scene.transform.Rotate;
-import org.example.planetsexplorer.HorizonSystem;
-import org.example.planetsexplorer.StepSize;
+import org.example.planetsexplorer.*;
 import org.json.JSONObject;
 
 import java.time.LocalDate;
@@ -91,18 +90,29 @@ public class SecondaryBody extends PrimaryBody {
         this.velocityVector.setMaterial(new PhongMaterial(Color.PURPLE));
     }
 
-    public static void addToStage(SecondaryBody secondaryBody, Group rootScene3D, Group mainSceneRoot) {
-        if(!rootScene3D.getChildren().contains(secondaryBody.getShape())) {
-            rootScene3D.getChildren().add(secondaryBody.getShape());
-            rootScene3D.getChildren().add(secondaryBody.getPrimaryConnection());
-            rootScene3D.getChildren().add(secondaryBody.getVelocityVector());
+    public static void addToStage(SecondaryBody secondaryBody) {
+        if(!Main.rootScene3D.getChildren().contains(secondaryBody.getShape())) {
+            Main.rootScene3D.getChildren().add(secondaryBody.getShape());
+            Main.rootScene3D.getChildren().add(secondaryBody.getPrimaryConnection());
+            Main.rootScene3D.getChildren().add(secondaryBody.getVelocityVector());
         }
 
-        if(!mainSceneRoot.getChildren().contains(secondaryBody.getOrbitRing())) {
-            mainSceneRoot.getChildren().add(secondaryBody.getOrbitRing());
-            mainSceneRoot.getChildren().add(secondaryBody.getGroupUI());
+        if(!Main.sceneRoot.getChildren().contains(secondaryBody.getOrbitRing())) {
+            Main.sceneRoot.getChildren().add(secondaryBody.getOrbitRing());
+            Main.sceneRoot.getChildren().add(secondaryBody.getGroupUI());
             secondaryBody.getGroupUI().toFront();
         }
+        PlanetsCamera.updateCameraUI();
+    }
+
+    public static void removeFromStage(SecondaryBody secondaryBody) {
+        Main.rootScene3D.getChildren().remove(secondaryBody.getShape());
+        Main.rootScene3D.getChildren().remove(secondaryBody.getPrimaryConnection());
+        Main.rootScene3D.getChildren().remove(secondaryBody.getVelocityVector());
+
+        Main.sceneRoot.getChildren().remove(secondaryBody.getOrbitRing());
+        Main.sceneRoot.getChildren().remove(secondaryBody.getGroupUI());
+        PlanetsCamera.updateCameraUI();
     }
 
     private void initializeEphemStartStop(float orbitYear) {

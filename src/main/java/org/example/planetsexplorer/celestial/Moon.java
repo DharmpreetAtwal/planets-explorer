@@ -1,6 +1,5 @@
 package org.example.planetsexplorer.celestial;
 
-import javafx.scene.Group;
 import org.example.planetsexplorer.HorizonSystem;
 import org.json.JSONObject;
 
@@ -15,17 +14,24 @@ import java.util.regex.Pattern;
 import static org.example.planetsexplorer.HorizonSystem.pixelKmScale;
 
 public class Moon extends  SecondaryBody {
+    public static final ArrayList<Moon> moonArrayList = new ArrayList<>(20);
     public static final List<String[]> moonInfo = new ArrayList<>();
 
     public Moon(String name, String dbID, float shapeRadius, PrimaryBody primaryBody, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
         super(name, dbID, shapeRadius, primaryBody, orbitPeriodYear, siderealDayHr, obliquityToOrbitDeg);
+        moonArrayList.add(this);
     }
 
-    public static Moon createMoon(Group rootScene3D, Group mainSceneRoot, String moonID, String planetID) throws Exception {
-        Planet planet = Planet.getPlanetByName(HorizonSystem.idToName(planetID));
-        JSONObject moonJSON = HorizonSystem.getBody(moonID);
+    public static Moon createMoon(String moonID, String planetID)  {
+        Planet planet = Planet.getPlanetByName(HorizonSystem.idNameMap.get(planetID));
+        JSONObject moonJSON;
+        try {
+            moonJSON = HorizonSystem.getBody(moonID);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-        Moon moon = new Moon(HorizonSystem.idToName(moonID),
+        Moon moon = new Moon(HorizonSystem.idNameMap.get(moonID),
                 moonID,
                 moonJSON.getFloat("meanRadKM") / pixelKmScale,
                 planet,
@@ -33,8 +39,22 @@ public class Moon extends  SecondaryBody {
                 moonJSON.getFloat("siderealDayHr"),
                 moonJSON.getFloat("obliquityToOrbitDeg"));
 
-        SecondaryBody.addToStage(moon, rootScene3D, mainSceneRoot);
+        SecondaryBody.addToStage(moon);
         return moon;
+    }
+
+    public static void deleteMoon(String moonID) {
+        Moon foundMoon = null;
+        for(Moon moon: moonArrayList)
+            if(moon.getDbID().equals(moonID))
+                foundMoon = moon;
+
+        if(foundMoon != null) {
+            SecondaryBody.removeFromStage(foundMoon);
+            moonArrayList.remove(foundMoon);
+        } else {
+            System.err.println("No moon found: " + moonID);
+        }
     }
 
     private static void initializeMoonInfo() {
@@ -44,7 +64,6 @@ public class Moon extends  SecondaryBody {
                 String[] element  = line.split("\\s+");
 
                 // Data cleaning must be done, rows either have both name and desig, or missing one
-                // Any row missing both is discarded
                 String[] moon = new String[5];
                 if(element.length == 13) {
                     float radius;
@@ -95,8 +114,8 @@ public class Moon extends  SecondaryBody {
     public static String getRadiusKM(String id) {
         if(moonInfo.isEmpty()) initializeMoonInfo();
         String radiusKM = "0";
-        String name = HorizonSystem.idToName(id);
-        String designation = HorizonSystem.idToDesignation(id);
+        String name = HorizonSystem.idNameMap.get(id);
+        String designation = HorizonSystem.idDesignationMap.get(id);
 
         for(String[] moon: moonInfo) {
             // While looking for row, first check name, if no name, check designation
@@ -119,8 +138,8 @@ public class Moon extends  SecondaryBody {
     public static String getSiderealOrbitDays(String id) {
         if(moonInfo.isEmpty()) initializeMoonInfo();
         String siderealOrbit = "0";
-        String name = HorizonSystem.idToName(id);
-        String designation = HorizonSystem.idToDesignation(id);
+        String name = HorizonSystem.idNameMap.get(id);
+        String designation = HorizonSystem.idDesignationMap.get(id);
 
         for(String[] moon: moonInfo) {
             // While looking for row, first check name, if no name, check designation

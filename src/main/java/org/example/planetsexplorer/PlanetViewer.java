@@ -1,12 +1,11 @@
 package org.example.planetsexplorer;
 
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import org.example.planetsexplorer.celestial.Celestial;
-import org.example.planetsexplorer.celestial.PrimaryBody;
-import org.example.planetsexplorer.celestial.SecondaryBody;
+import org.example.planetsexplorer.celestial.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,6 +13,12 @@ import java.time.temporal.ChronoUnit;
 
 public class PlanetViewer {
     public static Celestial selectedCelestial = null;
+
+    private final static Tab selectedCelestialTab = new Tab("Selected Celestial");
+    private final static Tab queryCelestialTab = new Tab("Query Celestial");
+    private final static TabPane tabPane = new TabPane(selectedCelestialTab, queryCelestialTab);
+
+    private final static GridPane queryGridPane = new GridPane();
 
     private final static Label lblName = new Label("Celestial Name: ");
     private final static Label lblDbID = new Label("DB ID: ");
@@ -45,6 +50,8 @@ public class PlanetViewer {
 
     public static void initializePlanetViewer() {
         GridPane viewerGridRoot = new GridPane();
+        selectedCelestialTab.setContent(viewerGridRoot);
+        selectedCelestialTab.setClosable(false);
 
         GridPane.setConstraints(lblName, 0, 0);
         viewerGridRoot.getChildren().add(lblName);
@@ -120,11 +127,68 @@ public class PlanetViewer {
         initializeQueryButton();
         initializeCheckboxes();
 
-        Scene viewerScene = new Scene(viewerGridRoot, 400, 600);
+        queryCelestialTab.setContent(queryGridPane);
+
+        for(int i=199; i<=999; i=i+100) {
+            int rowIndex = ((i / 100) - 1) * 2;
+            CheckBox planetCheckBox = new CheckBox(i + " " + HorizonSystem.idNameMap.get(String.valueOf(i)));
+            GridPane.setConstraints(planetCheckBox, 0, rowIndex);
+            queryGridPane.getChildren().add(planetCheckBox);
+            initializeQueryCheckbox(i, rowIndex, planetCheckBox);
+        }
+
+        Scene viewerScene = new Scene(tabPane, 400, 600);
         Stage viewerStage = new Stage();
         viewerStage.setTitle("Planet Viewer");
         viewerStage.setScene(viewerScene);
         viewerStage.show();
+    }
+
+    private static void initializeQueryCheckbox(int planetID, int rowIndex, CheckBox planetCheckbox) {
+        GridPane moonGridPane = new GridPane();
+        moonGridPane.setVisible(false);
+        moonGridPane.setManaged(false);
+
+        GridPane.setConstraints(moonGridPane, 0, rowIndex + 1);
+        queryGridPane.getChildren().add(moonGridPane);
+
+        // Begin at the first possible moonID, "[1-9]01"
+        // Continues until HorizonSystem has no valid ID
+        int row = 0;
+        int col = 0;
+        int moonID = planetID - 98;
+        String moonName = HorizonSystem.idNameMap.get(String.valueOf(moonID));
+
+        while(moonName != null) {
+            CheckBox moonCheckbox = new CheckBox(String.valueOf(moonID));
+            GridPane.setConstraints(moonCheckbox, col, row);
+            moonGridPane.getChildren().add(moonCheckbox);
+
+            moonCheckbox.selectedProperty().addListener(e-> {
+                if(moonCheckbox.isSelected()) Moon.createMoon(moonCheckbox.getText(), moonCheckbox.getText().charAt(0) + "99");
+                else Moon.deleteMoon(moonCheckbox.getText());
+            });
+
+            if(col == 8) { col = 0; row++; }
+            moonID++;
+            col++; // Col should only be updated at the end to give the indentation
+            moonName = HorizonSystem.idNameMap.get(String.valueOf(moonID));
+        }
+
+        planetCheckbox.setOnMouseClicked(e -> {
+            if(planetCheckbox.isSelected()) {
+                Planet.createPlanet(planetCheckbox.getText().substring(0, 3));
+                moonGridPane.setVisible(true);
+                moonGridPane.setManaged(true);
+            } else {
+                Planet.deletePlanet(planetCheckbox.getText().substring(0, 3));
+                moonGridPane.setVisible(false);
+                moonGridPane.setManaged(false);
+                for(Node node: moonGridPane.getChildren())
+                    if(node instanceof CheckBox checkBox)
+                        checkBox.setSelected(false);
+            }
+        });
     }
 
     private static void initializeComboBoxes() {

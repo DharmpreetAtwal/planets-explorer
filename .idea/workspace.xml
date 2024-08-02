@@ -4,13 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- PlanetsCamera now hides orbit segment if camera is too close to it&#10;- Added velocity vector to SecondaryBody">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/moonInfo.txt" afterDir="false" />
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Created HorizonSystem.idToDesignation&#10;- If database query for radius/sidereal orbit fails, HorizonSystem uses info from moonInfo.txt&#10;- Created Moon.getRadiusKM, Moon.getSiderealOrbitDays, access moonInfo.txt if database query fails&#10;- Refactored SecondaryBody.addToStage, now check if body has already been added&#10;- Added radius label to PlanetViewer">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" afterDir="false" />
@@ -129,7 +128,8 @@
       <workItem from="1722104442801" duration="4227000" />
       <workItem from="1722277634335" duration="7160000" />
       <workItem from="1722288983738" duration="444000" />
-      <workItem from="1722290751320" duration="9755000" />
+      <workItem from="1722290751320" duration="10541000" />
+      <workItem from="1722448938942" duration="12723000" />
     </task>
     <task id="LOCAL-00001" summary="- Removed unneeded files">
       <option name="closed" value="true" />
@@ -355,14 +355,21 @@
       <option name="project" value="LOCAL" />
       <updated>1722107379631</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="- Created HorizonSystem.idToDesignation&#10;- If database query for radius/sidereal orbit fails, HorizonSystem uses info from moonInfo.txt&#10;- Created Moon.getRadiusKM, Moon.getSiderealOrbitDays, access moonInfo.txt if database query fails&#10;- Refactored SecondaryBody.addToStage, now check if body has already been added&#10;- Added radius label to PlanetViewer">
+      <option name="closed" value="true" />
+      <created>1722374677513</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1722374677513</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="- Celestial objects now have a UI label that follows them around&#10;- Clicking on the label will fix the camera onto the object and follow it around while cycling through ephem data &#10;- Created camera update methods in Main" />
     <MESSAGE value="- Orbit distance, and radius are now to scale&#10;- Fixed visual bug where planets would disapear&#10;- Pressing space with celestial selected will dynamically zoom the camera into it" />
     <MESSAGE value="- Added dbID to Celestial&#10;- All Ceslestial constructors take dbID as arg&#10;- Created StepSize enum&#10;- getEphemeris now takes StepSize as arg" />
     <MESSAGE value="- Removed Mesh based orbitRing, now a 2D ellipse" />
@@ -387,6 +394,7 @@
     <MESSAGE value="- Generalized updateConnectionLine&#10;- Fixed issue where camerae Z translate wasn't zooming/following celestial correctly &#10;- Fixed issue with SecondaryBody.updateConnectionLine where - sign was missing&#10;- Added boolean parameter to SecondaryBody.setEphemIndex to prevent unnecessary overhead is moving primaryConnection" />
     <MESSAGE value="- Refactored setEphemIndex, setEphemerisPosition&#10;- Fixed issue where frozen celestial position wasn't updated correctly" />
     <MESSAGE value="- PlanetsCamera now hides orbit segment if camera is too close to it&#10;- Added velocity vector to SecondaryBody" />
-    <option name="LAST_COMMIT_MESSAGE" value="- PlanetsCamera now hides orbit segment if camera is too close to it&#10;- Added velocity vector to SecondaryBody" />
+    <MESSAGE value="- Created HorizonSystem.idToDesignation&#10;- If database query for radius/sidereal orbit fails, HorizonSystem uses info from moonInfo.txt&#10;- Created Moon.getRadiusKM, Moon.getSiderealOrbitDays, access moonInfo.txt if database query fails&#10;- Refactored SecondaryBody.addToStage, now check if body has already been added&#10;- Added radius label to PlanetViewer" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Created HorizonSystem.idToDesignation&#10;- If database query for radius/sidereal orbit fails, HorizonSystem uses info from moonInfo.txt&#10;- Created Moon.getRadiusKM, Moon.getSiderealOrbitDays, access moonInfo.txt if database query fails&#10;- Refactored SecondaryBody.addToStage, now check if body has already been added&#10;- Added radius label to PlanetViewer" />
   </component>
 </project>
