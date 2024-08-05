@@ -23,7 +23,9 @@ public class HorizonSystem {
     public static final int pixelKmScale = 100;
     public static int ephemerisIndex = 0;
     public static HashMap<String, String> idNameMap = new HashMap<>(100);
+    public static HashMap<String, String> nameIdMap = new HashMap<>(100);
     public static HashMap<String, String> idDesignationMap = new HashMap<>(100);
+    public static HashMap<String, String> designationIdMap = new HashMap<>(100);
     public static HashMap<String, String> idAliasMap = new HashMap<>(100);
 
     public static JSONObject getBody(String id) throws Exception {
@@ -114,7 +116,9 @@ public class HorizonSystem {
                         String alias = removeSpaces(line.substring(59, 78));
 
                         idNameMap.put(id, name);
+                        nameIdMap.put(name, id);
                         idDesignationMap.put(id, designation);
+                        designationIdMap.put(designation, id);
                         idAliasMap.put(id, alias);
                     }
                 }
@@ -122,6 +126,8 @@ public class HorizonSystem {
         } catch(JSONException | IOException err) {
             System.err.println(err);
         }
+
+        Moon.initializeMoonInfo();
     }
 
     private static String removeSpaces(String str) {
@@ -229,8 +235,8 @@ public class HorizonSystem {
 //            System.out.println(matcher.group());
             return extractLastNumber(matcher.group());
         } else {
-            String radius = Moon.getRadiusKM(id);
-            if(radius.equals("0")) System.err.println("Could not find 'mean radius'");
+            String radius = Moon.idRadiusMap.get(id);
+            if(radius == null) System.err.println("Could not find 'mean radius'");
             return radius;
         }
     }
@@ -252,13 +258,15 @@ public class HorizonSystem {
                 float lastNumber = Float.parseFloat(Objects.requireNonNull(extractLastNumber(matcher1.group())));
                 lastNumber = lastNumber / 365.25f;
                 return String.valueOf(lastNumber);
-            } else {
-                float sidereal = Float.parseFloat(Moon.getSiderealOrbitDays(id));
+            } else if(Moon.idOrbitDaysMap.containsKey(id)) {
+                float sidereal = Float.parseFloat(Moon.idOrbitDaysMap.get(id));
                 sidereal = sidereal / 365.25f;
 
                 if(sidereal == 0) System.err.println("Could not find 'Sidereal Orb Period' " + id);
                 return String.valueOf(sidereal);
             }
+
+            return "0";
         }
     }
 
