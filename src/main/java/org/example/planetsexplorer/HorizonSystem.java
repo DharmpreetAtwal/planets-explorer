@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,11 +30,16 @@ public class HorizonSystem {
     public static HashMap<String, String> designationIdMap = new HashMap<>(100);
     public static HashMap<String, String> idAliasMap = new HashMap<>(100);
 
-    public static JSONObject getBody(String id) throws Exception {
+    public static JSONObject getBody(String id) {
         String urlQuery = "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='" + id +
                 "'&OBJ_DATA='" + "YES" +
                 "'&MAKE_EPHEM='" + "NO" + "'";
-        String planetStrJSON = executeGet(urlQuery).toString();
+        String planetStrJSON;
+        try {
+            planetStrJSON = executeGet(urlQuery).toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         try{
             JSONObject planetJSON = new JSONObject(planetStrJSON);
@@ -70,9 +77,9 @@ public class HorizonSystem {
                 "&START_TIME='" + startTime +
                 "'&STOP_TIME='" + stopTime +
                 "'&STEP_SIZE='" + stepSize.toString() + "'";
-//        System.out.println(urlQuery);
-//        System.out.println(startTime);
-//        System.out.println(stopTime);
+        System.out.println(urlQuery);
+        System.out.println(startTime);
+        System.out.println(stopTime);
         String ephemStrJSON = executeGet(urlQuery).toString();
 
         try {
@@ -209,6 +216,7 @@ public class HorizonSystem {
     }
 
     private static StringBuilder executeGet(String urlDatabase) throws Exception  {
+        System.out.println(urlDatabase);
         StringBuilder results = new StringBuilder();
         URL url = new URL(urlDatabase);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -225,6 +233,63 @@ public class HorizonSystem {
         return results;
     }
 
+    public static String getSpacecraftStartTimestamp(String dbID) {
+        String timestamp = "";
+        try {
+            StringBuilder resultJSON = executeGet("https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27" + dbID +"%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&CENTER=%27@399%27&START_TIME=%271000-01-01%27");
+            JSONObject startTimeJSON = new JSONObject(resultJSON.toString());
+            String result = startTimeJSON.getString("result");
+
+            Pattern timestampPattern = Pattern.compile("(?<=prior to A.D. )\\d{4}-(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+            Matcher timestampPatternMatcher = timestampPattern.matcher(result);
+
+            if(timestampPatternMatcher.find()){
+                timestamp = timestampPatternMatcher.group();
+
+                String time = timestamp.substring(12);
+                time = addMinutes(time, 5);
+
+                timestamp = timestamp.substring(0, 12) + time;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return timestamp;
+    }
+
+    public static String getSpacecraftStopTimestamp(String dbID, String startTime) {
+        String timestamp = "";
+        try {
+            StringBuilder resultJSON = executeGet("https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27" + dbID +"%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&CENTER=%27@399%27&START_TIME=%27" + startTime + "%27&STOP_TIME=%279999-01-01%27");
+            JSONObject startTimeJSON = new JSONObject(resultJSON.toString());
+            String result = startTimeJSON.getString("result");
+
+            Pattern timestampPattern = Pattern.compile("(?<=after A.D. )\\d{4}-(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)-\\d{2} \\d{2}:\\d{2}:\\d{2}");
+            Matcher timestampPatternMatcher = timestampPattern.matcher(result);
+
+            if(timestampPatternMatcher.find()){
+                timestamp = timestampPatternMatcher.group();
+
+                String time = timestamp.substring(12);
+                time = addMinutes(time, -5);
+
+                timestamp = timestamp.substring(0, 12) + time;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return timestamp;
+    }
+
+    private static String addMinutes(String timeString, int minutes) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        LocalTime localTime = LocalTime.parse(timeString, formatter);
+        LocalTime newTime = localTime.plusMinutes(minutes);
+        return newTime.format(formatter);
+    }
+
     private static String extractVolMeanRadiusKM(String result, String id) {
         // This pattern is meant to match 'mean radius, km   =  1.11'
         // or 'Mean Radius (km) =  1.11'
@@ -236,7 +301,10 @@ public class HorizonSystem {
             return extractLastNumber(matcher.group());
         } else {
             String radius = Moon.idRadiusMap.get(id);
-            if(radius == null) System.err.println("Could not find 'mean radius'");
+            if(radius == null) {
+                System.err.println("Could not find 'mean radius'");
+                return "1";
+            }
             return radius;
         }
     }

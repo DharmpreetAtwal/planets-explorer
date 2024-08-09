@@ -10,15 +10,23 @@ import org.example.planetsexplorer.celestial.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class PlanetViewer {
     public static Celestial selectedCelestial = null;
 
     private final static Tab selectedCelestialTab = new Tab("Selected Celestial");
-    private final static Tab queryCelestialTab = new Tab("Query Celestial");
-    private final static TabPane tabPane = new TabPane(selectedCelestialTab, queryCelestialTab);
 
-    private final static GridPane queryGridPane = new GridPane();
+    private final static GridPane queryCelestialGridPane = new GridPane();
+    private final static Tab queryCelestialTab = new Tab("Query Celestial");
+
+    private final static GridPane querySpacecraftGridPane = new GridPane();
+    private final static Tab querySpacecraftTab = new Tab("Query Spacecraft");
+
+    private final static TabPane tabPane = new TabPane(selectedCelestialTab, queryCelestialTab, querySpacecraftTab);
+
 
     private final static Label lblName = new Label("Celestial Name: ");
     private final static Label lblDbID = new Label("DB ID: ");
@@ -127,14 +135,42 @@ public class PlanetViewer {
         initializeQueryButton();
         initializeCheckboxes();
 
-        queryCelestialTab.setContent(queryGridPane);
-
+        queryCelestialTab.setContent(queryCelestialGridPane);
+        queryCelestialTab.setClosable(false);
         for(int i=199; i<=999; i=i+100) {
             int rowIndex = ((i / 100) - 1) * 2;
             CheckBox planetCheckBox = new CheckBox(i + " " + HorizonSystem.idNameMap.get(String.valueOf(i)));
             GridPane.setConstraints(planetCheckBox, 0, rowIndex);
-            queryGridPane.getChildren().add(planetCheckBox);
-            initializeQueryCheckbox(i, rowIndex, planetCheckBox);
+            queryCelestialGridPane.getChildren().add(planetCheckBox);
+
+            initializeMoonQueryCheckbox(i, rowIndex, planetCheckBox);
+        }
+
+        querySpacecraftTab.setContent(querySpacecraftGridPane);
+        querySpacecraftTab.setClosable(false);
+        querySpacecraftGridPane.setVisible(false);
+        int row = 0;
+        int col=0;
+
+        List<String> sortedKeys = new ArrayList<>(HorizonSystem.idNameMap.keySet());
+        Collections.sort(sortedKeys);
+
+        for(String id: sortedKeys) {
+            if(id.contains("-")) {
+                CheckBox spacecraftCheckbox = new CheckBox(id);
+                GridPane.setConstraints(spacecraftCheckbox, col, row);
+                querySpacecraftGridPane.getChildren().add(spacecraftCheckbox);
+
+                spacecraftCheckbox.selectedProperty().addListener(e-> {
+                    System.out.println(id);
+                    if(spacecraftCheckbox.isSelected())
+                        Spacecraft.createSpacecraft(HorizonSystem.idNameMap.get(id), id);
+                    else Spacecraft.deleteSpacecraft(id);
+                });
+
+                row++;
+                if(row % 30 == 0) { row = 0; col++; }
+            }
         }
 
         Scene viewerScene = new Scene(tabPane, 400, 600);
@@ -144,13 +180,13 @@ public class PlanetViewer {
         viewerStage.show();
     }
 
-    private static void initializeQueryCheckbox(int planetID, int rowIndex, CheckBox planetCheckbox) {
+    private static void initializeMoonQueryCheckbox(int planetID, int rowIndex, CheckBox planetCheckbox) {
         GridPane moonGridPane = new GridPane();
         moonGridPane.setVisible(false);
         moonGridPane.setManaged(false);
 
         GridPane.setConstraints(moonGridPane, 0, rowIndex + 1);
-        queryGridPane.getChildren().add(moonGridPane);
+        queryCelestialGridPane.getChildren().add(moonGridPane);
 
         // Begin at the first possible moonID, "[1-9]01"
         // Continues until HorizonSystem has no valid ID
@@ -176,15 +212,22 @@ public class PlanetViewer {
         }
 
         planetCheckbox.setOnMouseClicked(e -> {
+            String id = planetCheckbox.getText().substring(0, 3);
             if(planetCheckbox.isSelected()) {
-                Planet.createPlanet(planetCheckbox.getText().substring(0, 3));
+                Planet.createPlanet(id);
                 moonGridPane.setVisible(true);
                 moonGridPane.setManaged(true);
+                if(id.equals("399")) querySpacecraftGridPane.setVisible(true);
             } else {
-                Planet.deletePlanet(planetCheckbox.getText().substring(0, 3));
+                Planet.deletePlanet(id);
                 moonGridPane.setVisible(false);
                 moonGridPane.setManaged(false);
+                if(id.equals("399")) querySpacecraftGridPane.setVisible(false);
+
                 for(Node node: moonGridPane.getChildren())
+                    if(node instanceof CheckBox checkBox)
+                        checkBox.setSelected(false);
+                for(Node node: querySpacecraftGridPane.getChildren())
                     if(node instanceof CheckBox checkBox)
                         checkBox.setSelected(false);
             }
@@ -210,14 +253,27 @@ public class PlanetViewer {
     private static void initializeQueryButton() {
         btnQueryEphem.setOnMouseClicked(e -> {
             if(selectedCelestial instanceof SecondaryBody secBody && queryEphemInputCheck()) {
-                secBody.setEphemeris(
-                        dateEphemStart.getValue(),
-                        hourEphemStart.getValue(),
-                        minEphemStart.getValue(),
-                        dateEphemStop.getValue(),
-                        hourEphemStop.getValue(),
-                        minEphemStop.getValue(),
-                        stepEphem.getValue());
+                LocalDate dateStart = dateEphemStart.getValue();
+                LocalDateTime dateTimeStart = LocalDateTime.of(
+                        dateStart.getYear(), dateStart.getMonth().getValue(), dateStart.getDayOfMonth(),
+                        hourEphemStart.getValue(), minEphemStart.getValue());
+                LocalDate dateStop = dateEphemStop.getValue();
+                LocalDateTime dateTimeStop = LocalDateTime.of(
+                        dateStop.getYear(), dateStop.getMonth().getValue(), dateStop.getDayOfMonth(),
+                        hourEphemStop.getValue(), minEphemStop.getValue());
+
+                if(selectedCelestial instanceof Spacecraft spacecraft) {
+                    if(spacecraft.getPrimaryBody() instanceof SecondaryBody primary)
+                        primary.setEphemeris(dateTimeStart, dateTimeStop, stepEphem.getValue());
+
+                    for(SecondaryBody child: spacecraft.getPrimaryBody().getSecondaryBodies())
+                        child.setEphemeris(dateTimeStart, dateTimeStop, stepEphem.getValue());
+                } else {
+                    secBody.setEphemeris(dateTimeStart, dateTimeStop, stepEphem.getValue());
+                    for(SecondaryBody child: secBody.getSecondaryBodies())
+                        child.setEphemeris(dateTimeStart, dateTimeStop, stepEphem.getValue());
+                }
+
                 PlanetsCamera.updateEphemeris(false);
                 PlanetsCamera.updateCameraUI();
             }

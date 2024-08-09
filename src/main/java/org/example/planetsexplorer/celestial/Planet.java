@@ -11,6 +11,7 @@ public class Planet extends SecondaryBody {
 
     public Planet(String name, String dbID, float shapeRadius, PrimaryBody primaryBody, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
         super(name, dbID, shapeRadius, primaryBody, orbitPeriodYear, siderealDayHr, obliquityToOrbitDeg);
+        this.initializeStartStop(orbitPeriodYear);
         planetArrayList.add(this);
     }
 

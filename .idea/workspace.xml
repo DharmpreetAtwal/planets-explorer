@@ -4,10 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Removed bodiesNameID, lookup  replaced with HashMaps idNameMap, idDesignationMap, idAliasMap&#10;- Made Main.sceneRoot, Main.rootScene3D, Main.sun, removed unneeded paramters from Moon.createMoon, Planet.createPlanet&#10;- Added deleteMoon, deletePlanet using String dbID&#10;- Added Tabs to PlanetViewer (selectedCelestial, queryCelestial)&#10;- User can now query Celestials using checkboxes">
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Query Ephemeris button now calls setEphemeris on the children of the selectedCelestial&#10;- Added HorizonSystem.getSpacecraftStart/StopTimestamp&#10;- Broke up initializeEphemStartStop into initializeEphemeris/initializeStartStop&#10;- SecondaryBody.setEphemeris now takes LocalDateTime as parameter&#10;- Added querySpacecraftTab to PlanetViewer&#10;- Created Spacecraft class">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Spacecraft.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -124,7 +128,7 @@
       <workItem from="1722277634335" duration="7160000" />
       <workItem from="1722288983738" duration="444000" />
       <workItem from="1722290751320" duration="10541000" />
-      <workItem from="1722448938942" duration="17070000" />
+      <workItem from="1722448938942" duration="39846000" />
     </task>
     <task id="LOCAL-00001" summary="- Removed unneeded files">
       <option name="closed" value="true" />
@@ -366,15 +370,21 @@
       <option name="project" value="LOCAL" />
       <updated>1722632135904</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="- Added reverse lookup HashMaps HorizonSystem.nameIdMap/ HorizonSystem.designationIdMap&#10;- Removed Moon.getRadiusKM, Moon.getSiderealOrbitDays, added Moon.idRadiusMap, Moon.idOrbitDaysMap lookup HashMaps">
+      <option name="closed" value="true" />
+      <created>1722892642791</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1722892642791</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="- Added dbID to Celestial&#10;- All Ceslestial constructors take dbID as arg&#10;- Created StepSize enum&#10;- getEphemeris now takes StepSize as arg" />
-    <MESSAGE value="- Removed Mesh based orbitRing, now a 2D ellipse" />
     <MESSAGE value="- Changed orbitRing so that it is now a Path of lines, instead of an Ellipse" />
     <MESSAGE value="- Changed orbitRing to be a Group of Line, instead of a Path of LineTo" />
     <MESSAGE value="- Made camera static&#10;- Orbit ring segments that are further away from the camera than the primaryBody are hidden" />
@@ -398,6 +408,8 @@
     <MESSAGE value="- PlanetsCamera now hides orbit segment if camera is too close to it&#10;- Added velocity vector to SecondaryBody" />
     <MESSAGE value="- Created HorizonSystem.idToDesignation&#10;- If database query for radius/sidereal orbit fails, HorizonSystem uses info from moonInfo.txt&#10;- Created Moon.getRadiusKM, Moon.getSiderealOrbitDays, access moonInfo.txt if database query fails&#10;- Refactored SecondaryBody.addToStage, now check if body has already been added&#10;- Added radius label to PlanetViewer" />
     <MESSAGE value="- Removed bodiesNameID, lookup  replaced with HashMaps idNameMap, idDesignationMap, idAliasMap&#10;- Made Main.sceneRoot, Main.rootScene3D, Main.sun, removed unneeded paramters from Moon.createMoon, Planet.createPlanet&#10;- Added deleteMoon, deletePlanet using String dbID&#10;- Added Tabs to PlanetViewer (selectedCelestial, queryCelestial)&#10;- User can now query Celestials using checkboxes" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Removed bodiesNameID, lookup  replaced with HashMaps idNameMap, idDesignationMap, idAliasMap&#10;- Made Main.sceneRoot, Main.rootScene3D, Main.sun, removed unneeded paramters from Moon.createMoon, Planet.createPlanet&#10;- Added deleteMoon, deletePlanet using String dbID&#10;- Added Tabs to PlanetViewer (selectedCelestial, queryCelestial)&#10;- User can now query Celestials using checkboxes" />
+    <MESSAGE value="- Added reverse lookup HashMaps HorizonSystem.nameIdMap/ HorizonSystem.designationIdMap&#10;- Removed Moon.getRadiusKM, Moon.getSiderealOrbitDays, added Moon.idRadiusMap, Moon.idOrbitDaysMap lookup HashMaps" />
+    <MESSAGE value="- Query Ephemeris button now calls setEphemeris on the children of the selectedCelestial&#10;- Added HorizonSystem.getSpacecraftStart/StopTimestamp&#10;- Broke up initializeEphemStartStop into initializeEphemeris/initializeStartStop&#10;- SecondaryBody.setEphemeris now takes LocalDateTime as parameter&#10;- Added querySpacecraftTab to PlanetViewer&#10;- Created Spacecraft class" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Query Ephemeris button now calls setEphemeris on the children of the selectedCelestial&#10;- Added HorizonSystem.getSpacecraftStart/StopTimestamp&#10;- Broke up initializeEphemStartStop into initializeEphemeris/initializeStartStop&#10;- SecondaryBody.setEphemeris now takes LocalDateTime as parameter&#10;- Added querySpacecraftTab to PlanetViewer&#10;- Created Spacecraft class" />
   </component>
 </project>

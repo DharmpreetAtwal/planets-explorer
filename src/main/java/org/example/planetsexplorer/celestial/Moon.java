@@ -18,21 +18,16 @@ public class Moon extends  SecondaryBody {
     public static final ArrayList<Moon> moonArrayList = new ArrayList<>(30);
     public static final HashMap<String, String> idRadiusMap = new HashMap<>(30);
     public static final HashMap<String, String> idOrbitDaysMap = new HashMap<>(30);
-//    public static final List<String[]> moonInfo = new ArrayList<>();
 
     public Moon(String name, String dbID, float shapeRadius, PrimaryBody primaryBody, float orbitPeriodYear, float siderealDayHr, float obliquityToOrbitDeg) {
         super(name, dbID, shapeRadius, primaryBody, orbitPeriodYear, siderealDayHr, obliquityToOrbitDeg);
+        this.initializeStartStop(orbitPeriodYear);
         moonArrayList.add(this);
     }
 
     public static Moon createMoon(String moonID, String planetID)  {
         Planet planet = Planet.getPlanetByName(HorizonSystem.idNameMap.get(planetID));
-        JSONObject moonJSON;
-        try {
-            moonJSON = HorizonSystem.getBody(moonID);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        JSONObject moonJSON = HorizonSystem.getBody(moonID);
 
         Moon moon = new Moon(HorizonSystem.idNameMap.get(moonID),
                 moonID,

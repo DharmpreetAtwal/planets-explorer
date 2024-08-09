@@ -11,7 +11,7 @@ import javafx.scene.transform.Rotate;
 import org.example.planetsexplorer.*;
 import org.json.JSONObject;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.example.planetsexplorer.HorizonSystem.pixelKmScale;
@@ -50,18 +50,6 @@ public class SecondaryBody extends PrimaryBody {
         super(name, dbID, sphereRadius);
         this.primaryBody = primaryBody;
         this.primaryBody.addSecondaryBody(this);
-        this.initializeEphemStartStop(orbitPeriodYear);
-
-        LocalDate dateStart = LocalDate.of(
-                this.getEphemStartYear(),
-                this.getEphemStartMonth(),
-                this.getEphemStartDay());
-        LocalDate dateStop = LocalDate.of(
-                this.getEphemStopYear(),
-                this.getEphemStopMonth(),
-                this.getEphemStopDay());
-        this.setEphemeris(dateStart, this.getEphemStartHour(), this.getEphemStartMinute(),
-                dateStop, this.getEphemStopHour(), this.getEphemStopMinute(), this.getEphemStepSize());
 
         this.ephemFrozen = false;
         this.orbitPeriodYear = orbitPeriodYear;
@@ -90,6 +78,69 @@ public class SecondaryBody extends PrimaryBody {
         this.velocityVector.setMaterial(new PhongMaterial(Color.PURPLE));
     }
 
+    public void initializeStartStop(float orbitYear) {
+        int years = (int) orbitYear;
+        double fracYear = orbitYear - years;
+
+        int fracDays = (int) (fracYear * 365);
+        int months = fracDays / 31;
+        int days = fracDays % 30;
+
+        double daysLeft = fracYear * 365 - fracDays;
+        int hours = (int) (daysLeft * 24);
+
+        double hoursLeft = (daysLeft * 24) - hours;
+        int minutes = (int) (hoursLeft * 60);
+
+        this.setEphemStartYear(2024);
+        this.setEphemStartMonth(1);
+        this.setEphemStartDay(1);
+        this.setEphemStartHour(0);
+        this.setEphemStartMinute(0);
+
+        this.setEphemStopYear(this.getEphemStartYear() + years);
+        this.setEphemStopMonth(this.getEphemStartMonth() + months);
+        this.setEphemStopDay(this.getEphemStartDay() + days);
+        this.setEphemStopHour(this.getEphemStartHour() + hours);
+        this.setEphemStopMinute(this.getEphemStartMinute() + minutes);
+
+        // No ephemeris for target "Pluto" after A.D. 2199-DEC-29 00:00:00.0000 TDB
+        if(this.getEphemStopYear() >= 2198) {
+            this.setEphemStopYear(2199);
+        }
+
+        if(days == 0 && months == 0 && years == 0 && hours <= 3) {
+            this.setEphemStepSize(StepSize.MINUTES);
+        } else if(days <= 8 && months == 0 && years == 0) {
+            this.setEphemStepSize(StepSize.HOURS);
+        } else if(months <= 8 && years == 0) {
+            this.setEphemStepSize(StepSize.DAYS);
+        } else if(years <= 8) {
+            this.setEphemStepSize(StepSize.MONTHS);
+        } else {
+            this.setEphemStepSize(StepSize.YEARS);
+        }
+
+        this.initializeEphemeris();
+    }
+
+    public void initializeEphemeris() {
+        LocalDateTime dateStart = LocalDateTime.of(
+                this.ephemStartYear,
+                this.ephemStartMonth,
+                this.ephemStartDay,
+                this.ephemStartHour,
+                this.ephemStartMinute);
+        LocalDateTime dateStop = LocalDateTime.of(
+                this.ephemStopYear,
+                this.ephemStopMonth,
+                this.ephemStopDay,
+                this.ephemStopHour,
+                this.ephemStopMinute);
+        this.setEphemeris(dateStart,
+                dateStop, this.getEphemStepSize());
+    }
+
     public static void addToStage(SecondaryBody secondaryBody) {
         if(!Main.rootScene3D.getChildren().contains(secondaryBody.getShape())) {
             Main.rootScene3D.getChildren().add(secondaryBody.getShape());
@@ -115,64 +166,20 @@ public class SecondaryBody extends PrimaryBody {
         PlanetsCamera.updateCameraUI();
     }
 
-    private void initializeEphemStartStop(float orbitYear) {
-        int years = (int) orbitYear;
-        double fracYear = orbitYear - years;
-
-        int fracDays = (int) (fracYear * 365);
-        int months = fracDays / 31;
-        int days = fracDays % 30;
-
-        double daysLeft = fracYear * 365 - fracDays;
-        int hours = (int) (daysLeft * 24);
-
-        double hoursLeft = (daysLeft * 24) - hours;
-        int minutes = (int) (hoursLeft * 60);
-
-        this.ephemStartYear = 2024;
-        this.ephemStartMonth = 1;
-        this.ephemStartDay = 1;
-        this.ephemStartHour = 0;
-        this.ephemStartMinute = 0;
-
-        this.ephemStopYear = this.ephemStartYear + years;
-        this.ephemStopMonth = this.ephemStartMonth + months;
-        this.ephemStopDay = this.ephemStartDay + days;
-        this.ephemStopHour = this.ephemStartHour + hours;
-        this.ephemStopMinute = this.ephemStartMinute + minutes;
-
-        // No ephemeris for target "Pluto" after A.D. 2199-DEC-29 00:00:00.0000 TDB
-        if(this.ephemStopYear >= 2198) {
-            this.ephemStopYear = 2199;
-        }
-
-        if(days == 0 && months == 0 && years == 0 && hours <= 3) {
-            this.ephemStepSize = StepSize.MINUTES;
-        } else if(days <= 8 && months == 0 && years == 0) {
-            this.ephemStepSize = StepSize.HOURS;
-        } else if(months <= 8 && years == 0) {
-            this.ephemStepSize = StepSize.DAYS;
-        } else if(years <= 8) {
-            this.ephemStepSize = StepSize.MONTHS;
-        } else {
-            this.ephemStepSize = StepSize.YEARS;
-        }
-    }
-
-    public void setEphemeris(LocalDate dateStart, Integer hourStart, Integer minStart, LocalDate dateStop, Integer hourStop, Integer minStop, StepSize ephemStepSize) {
+    public void setEphemeris(LocalDateTime dateStart, LocalDateTime dateStop, StepSize ephemStepSize) {
         ArrayList<JSONObject> ephem;
 
         this.ephemStartYear = dateStart.getYear();
         this.ephemStartMonth = dateStart.getMonthValue();
         this.ephemStartDay = dateStart.getDayOfMonth();
-        this.ephemStartHour = hourStart;
-        this.ephemStartMinute = minStart;
+        this.ephemStartHour = dateStart.getHour();
+        this.ephemStartMinute = dateStart.getMinute();
 
         this.ephemStopYear = dateStop.getYear();
         this.ephemStopMonth = dateStop.getMonthValue();
         this.ephemStopDay = dateStop.getDayOfMonth();
-        this.ephemStopHour = hourStop;
-        this.ephemStopMinute = minStop;
+        this.ephemStopHour = dateStop.getHour();
+        this.ephemStopMinute = dateStop.getMinute();
         this.ephemStepSize = ephemStepSize;
 
         try {
@@ -413,5 +420,49 @@ public class SecondaryBody extends PrimaryBody {
 
     public Cylinder getVelocityVector() {
         return velocityVector;
+    }
+
+    public void setEphemStartYear(int ephemStartYear) {
+        this.ephemStartYear = ephemStartYear;
+    }
+
+    public void setEphemStartMonth(int ephemStartMonth) {
+        this.ephemStartMonth = ephemStartMonth;
+    }
+
+    public void setEphemStartDay(int ephemStartDay) {
+        this.ephemStartDay = ephemStartDay;
+    }
+
+    public void setEphemStartHour(int ephemStartHour) {
+        this.ephemStartHour = ephemStartHour;
+    }
+
+    public void setEphemStartMinute(int ephemStartMinute) {
+        this.ephemStartMinute = ephemStartMinute;
+    }
+
+    public void setEphemStopYear(int ephemStopYear) {
+        this.ephemStopYear = ephemStopYear;
+    }
+
+    public void setEphemStopMonth(int ephemStopMonth) {
+        this.ephemStopMonth = ephemStopMonth;
+    }
+
+    public void setEphemStopDay(int ephemStopDay) {
+        this.ephemStopDay = ephemStopDay;
+    }
+
+    public void setEphemStopHour(int ephemStopHour) {
+        this.ephemStopHour = ephemStopHour;
+    }
+
+    public void setEphemStopMinute(int ephemStopMinute) {
+        this.ephemStopMinute = ephemStopMinute;
+    }
+
+    public void setEphemStepSize(StepSize ephemStepSize) {
+        this.ephemStepSize = ephemStepSize;
     }
 }
