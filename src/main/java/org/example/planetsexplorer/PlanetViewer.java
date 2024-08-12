@@ -16,6 +16,7 @@ import java.util.List;
 
 public class PlanetViewer {
     public static Celestial selectedCelestial = null;
+    public static boolean copyEphemeris = false;
 
     private final static Tab selectedCelestialTab = new Tab("Selected Celestial");
 
@@ -26,7 +27,6 @@ public class PlanetViewer {
     private final static Tab querySpacecraftTab = new Tab("Query Spacecraft");
 
     private final static TabPane tabPane = new TabPane(selectedCelestialTab, queryCelestialTab, querySpacecraftTab);
-
 
     private final static Label lblName = new Label("Celestial Name: ");
     private final static Label lblDbID = new Label("DB ID: ");
@@ -51,6 +51,7 @@ public class PlanetViewer {
     private final static ComboBox<StepSize> stepEphem = new ComboBox<>();
 
     private final static Button btnQueryEphem = new Button("Query Ephemeris");
+    private final static Button btnCopyEphem = new Button("Copy Ephemeris");
 
     private final static CheckBox checkEphemFrozen = new CheckBox("Freeze Selected Ephemeris");
     private final static CheckBox checkDisableOrbitSelected = new CheckBox("Disable Selected Celestial Orbit Ring ");
@@ -117,6 +118,9 @@ public class PlanetViewer {
         GridPane.setConstraints(btnQueryEphem, 0, 12);
         viewerGridRoot.getChildren().add(btnQueryEphem);
 
+        GridPane.setConstraints(btnCopyEphem, 1, 12);
+        viewerGridRoot.getChildren().add(btnCopyEphem);
+
         // VISUAL SEPARATION
 
         GridPane.setConstraints(checkEphemFrozen, 0, 13);
@@ -132,7 +136,7 @@ public class PlanetViewer {
         viewerGridRoot.getChildren().add(checkHideOrbitGlobal);
 
         initializeComboBoxes();
-        initializeQueryButton();
+        initializeButtons();
         initializeCheckboxes();
 
         queryCelestialTab.setContent(queryCelestialGridPane);
@@ -250,7 +254,7 @@ public class PlanetViewer {
         }
     }
 
-    private static void initializeQueryButton() {
+    private static void initializeButtons() {
         btnQueryEphem.setOnMouseClicked(e -> {
             if(selectedCelestial instanceof SecondaryBody secBody && queryEphemInputCheck()) {
                 LocalDate dateStart = dateEphemStart.getValue();
@@ -277,6 +281,11 @@ public class PlanetViewer {
                 PlanetsCamera.updateEphemeris(false);
                 PlanetsCamera.updateCameraUI();
             }
+        });
+
+        btnCopyEphem.setOnMouseClicked(e -> {
+            if(selectedCelestial instanceof SecondaryBody)
+                copyEphemeris = true;
         });
     }
 
@@ -310,19 +319,19 @@ public class PlanetViewer {
             lblObliquityToOrbit.setText("Obliquity To Orbit: " + secondaryBody.getObliquityToOrbitDeg());
             lblRadius.setText("Radius: " + secondaryBody.getShape().getRadius() * HorizonSystem.pixelKmScale);
 
-            LocalDate startDate = LocalDate.of(secondaryBody.getEphemStartYear(),
-                    secondaryBody.getEphemStartMonth(),
-                    secondaryBody.getEphemStartDay());
+            LocalDate startDate = LocalDate.of(secondaryBody.getDateStart().getYear(),
+                    secondaryBody.getDateStart().getMonthValue(),
+                    secondaryBody.getDateStart().getDayOfMonth());
             dateEphemStart.setValue(startDate);
-            hourEphemStart.setValue(secondaryBody.getEphemStartHour());
-            minEphemStart.setValue(secondaryBody.getEphemStartMinute());
+            hourEphemStart.setValue(secondaryBody.getDateStart().getHour());
+            minEphemStart.setValue(secondaryBody.getDateStart().getMinute());
 
-            LocalDate stopDate = LocalDate.of(secondaryBody.getEphemStopYear(),
-                    secondaryBody.getEphemStopMonth(),
-                    secondaryBody.getEphemStopDay());
+            LocalDate stopDate = LocalDate.of(secondaryBody.getDateStop().getYear(),
+                    secondaryBody.getDateStop().getMonthValue(),
+                    secondaryBody.getDateStop().getDayOfMonth());
             dateEphemStop.setValue(stopDate);
-            hourEphemStop.setValue(secondaryBody.getEphemStopHour());
-            minEphemStop.setValue(secondaryBody.getEphemStopMinute());
+            hourEphemStop.setValue(secondaryBody.getDateStop().getHour());
+            minEphemStop.setValue(secondaryBody.getDateStop().getMinute());
 
             stepEphem.setValue(secondaryBody.getEphemStepSize());
             checkEphemFrozen.setSelected(secondaryBody.isEphemFrozen());

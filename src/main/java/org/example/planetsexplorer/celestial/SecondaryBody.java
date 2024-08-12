@@ -5,8 +5,6 @@ import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Cylinder;
-import javafx.scene.shape.MeshView;
-import javafx.scene.shape.TriangleMesh;
 import javafx.scene.transform.Rotate;
 import org.example.planetsexplorer.*;
 import org.json.JSONObject;
@@ -28,17 +26,8 @@ public class SecondaryBody extends PrimaryBody {
     private boolean ephemFrozen;
     private int ephemIndex = 0;
 
-    private int ephemStartYear;
-    private int ephemStartMonth;
-    private int ephemStartDay;
-    private int ephemStartHour;
-    private int ephemStartMinute;
-
-    private int ephemStopYear;
-    private int ephemStopMonth;
-    private int ephemStopDay;
-    private int ephemStopHour;
-    private int ephemStopMinute;
+    private LocalDateTime dateStart;
+    private LocalDateTime dateStop;
     private StepSize ephemStepSize;
 
     private final Rotate tiltRotation = new Rotate(0, Rotate.Y_AXIS);
@@ -78,6 +67,22 @@ public class SecondaryBody extends PrimaryBody {
         this.velocityVector.setMaterial(new PhongMaterial(Color.PURPLE));
     }
 
+    public LocalDateTime getDateStart() {
+        return dateStart;
+    }
+
+    public void setDateStart(LocalDateTime dateStart) {
+        this.dateStart = dateStart;
+    }
+
+    public LocalDateTime getDateStop() {
+        return dateStop;
+    }
+
+    public void setDateStop(LocalDateTime dateStop) {
+        this.dateStop = dateStop;
+    }
+
     public void initializeStartStop(float orbitYear) {
         int years = (int) orbitYear;
         double fracYear = orbitYear - years;
@@ -92,22 +97,12 @@ public class SecondaryBody extends PrimaryBody {
         double hoursLeft = (daysLeft * 24) - hours;
         int minutes = (int) (hoursLeft * 60);
 
-        this.setEphemStartYear(2024);
-        this.setEphemStartMonth(1);
-        this.setEphemStartDay(1);
-        this.setEphemStartHour(0);
-        this.setEphemStartMinute(0);
-
-        this.setEphemStopYear(this.getEphemStartYear() + years);
-        this.setEphemStopMonth(this.getEphemStartMonth() + months);
-        this.setEphemStopDay(this.getEphemStartDay() + days);
-        this.setEphemStopHour(this.getEphemStartHour() + hours);
-        this.setEphemStopMinute(this.getEphemStartMinute() + minutes);
+        this.dateStart = LocalDateTime.of(2024, 1, 1, 0, 0);
+        this.dateStop = this.dateStart.plusYears(
+                years).plusMonths(months).plusDays(days).plusHours(hours).plusMinutes(minutes);
 
         // No ephemeris for target "Pluto" after A.D. 2199-DEC-29 00:00:00.0000 TDB
-        if(this.getEphemStopYear() >= 2198) {
-            this.setEphemStopYear(2199);
-        }
+        if(dateStart.getYear() >= 2198) dateStart = dateStart.withYear(2199);
 
         if(days == 0 && months == 0 && years == 0 && hours <= 3) {
             this.setEphemStepSize(StepSize.MINUTES);
@@ -120,25 +115,11 @@ public class SecondaryBody extends PrimaryBody {
         } else {
             this.setEphemStepSize(StepSize.YEARS);
         }
-
         this.initializeEphemeris();
     }
 
     public void initializeEphemeris() {
-        LocalDateTime dateStart = LocalDateTime.of(
-                this.ephemStartYear,
-                this.ephemStartMonth,
-                this.ephemStartDay,
-                this.ephemStartHour,
-                this.ephemStartMinute);
-        LocalDateTime dateStop = LocalDateTime.of(
-                this.ephemStopYear,
-                this.ephemStopMonth,
-                this.ephemStopDay,
-                this.ephemStopHour,
-                this.ephemStopMinute);
-        this.setEphemeris(dateStart,
-                dateStop, this.getEphemStepSize());
+        this.setEphemeris(this.dateStart, this.dateStop, this.getEphemStepSize());
     }
 
     public static void addToStage(SecondaryBody secondaryBody) {
@@ -169,17 +150,8 @@ public class SecondaryBody extends PrimaryBody {
     public void setEphemeris(LocalDateTime dateStart, LocalDateTime dateStop, StepSize ephemStepSize) {
         ArrayList<JSONObject> ephem;
 
-        this.ephemStartYear = dateStart.getYear();
-        this.ephemStartMonth = dateStart.getMonthValue();
-        this.ephemStartDay = dateStart.getDayOfMonth();
-        this.ephemStartHour = dateStart.getHour();
-        this.ephemStartMinute = dateStart.getMinute();
-
-        this.ephemStopYear = dateStop.getYear();
-        this.ephemStopMonth = dateStop.getMonthValue();
-        this.ephemStopDay = dateStop.getDayOfMonth();
-        this.ephemStopHour = dateStop.getHour();
-        this.ephemStopMinute = dateStop.getMinute();
+        this.dateStart= dateStart;
+        this.dateStop = dateStop;
         this.ephemStepSize = ephemStepSize;
 
         try {
@@ -196,19 +168,19 @@ public class SecondaryBody extends PrimaryBody {
     }
 
     public String getEphemStartDateTimeStamp() {
-        return String.format("%02d", this.ephemStartYear) + "-" +
-                String.format("%02d", this.ephemStartMonth) + "-" +
-                String.format("%02d", this.ephemStartDay) + " " +
-                String.format("%02d", this.ephemStartHour) + ":" +
-                String.format("%02d", this.ephemStartMinute);
+        return String.format("%02d", this.dateStart.getYear()) + "-" +
+                String.format("%02d", this.dateStart.getMonthValue()) + "-" +
+                String.format("%02d", this.dateStart.getDayOfMonth()) + " " +
+                String.format("%02d", this.dateStart.getHour()) + ":" +
+                String.format("%02d", this.dateStart.getMinute());
     }
 
     public String getEphemStopDateTimeStamp() {
-        return String.format("%02d", this.ephemStopYear) + "-" +
-                String.format("%02d", this.ephemStopMonth) + "-" +
-                String.format("%02d", this.ephemStopDay) + " " +
-                String.format("%02d", this.ephemStopHour) + ":" +
-                String.format("%02d", this.ephemStopMinute);
+        return String.format("%02d", this.dateStop.getYear()) + "-" +
+                String.format("%02d", this.dateStop.getMonthValue()) + "-" +
+                String.format("%02d", this.dateStop.getDayOfMonth()) + " " +
+                String.format("%02d", this.dateStop.getHour()) + ":" +
+                String.format("%02d", this.dateStop.getMinute());
     }
 
     public void updateEphemPosition(boolean updateConnectionLine) {
@@ -274,6 +246,10 @@ public class SecondaryBody extends PrimaryBody {
         );
     }
 
+    public void copyEphemerisDateRange(SecondaryBody secondaryBody) {
+        this.setEphemeris(secondaryBody.dateStart, secondaryBody.dateStop, secondaryBody.ephemStepSize);
+    }
+
     public float getOrbitDistance() {
         return orbitDistance;
     }
@@ -294,54 +270,6 @@ public class SecondaryBody extends PrimaryBody {
         return orbitRing;
     }
 
-    private MeshView createRing(float innerRadius, float outerRadius, int sides, int rings) {
-        TriangleMesh mesh = new TriangleMesh();
-
-        float tubeRadius = (outerRadius - innerRadius) / 2f;
-        float centerRadius = innerRadius + tubeRadius;
-
-        for (int ring = 0; ring <= rings; ring++) {
-            double theta = 2.0 * Math.PI * ring / rings;
-            float cosTheta = (float) Math.cos(theta);
-            float sinTheta = (float) Math.sin(theta);
-
-            for (int side = 0; side <= sides; side++) {
-                double phi = 2.0 * Math.PI * side / sides;
-                float cosPhi = (float) Math.cos(phi);
-                float sinPhi = (float) Math.sin(phi);
-
-                float x = (centerRadius + tubeRadius * cosPhi) * cosTheta;
-                float y = (centerRadius + tubeRadius * cosPhi) * sinTheta;
-                float z = tubeRadius * sinPhi;
-
-                mesh.getPoints().addAll(x, y, z);
-
-                float u = (float) side / sides;
-                float v = (float) ring / rings;
-                mesh.getTexCoords().addAll(u, v);
-            }
-        }
-
-        for (int ring = 0; ring < rings; ring++) {
-            for (int side = 0; side < sides; side++) {
-                int current = ring * (sides + 1) + side;
-                int next = current + sides + 1;
-
-                mesh.getFaces().addAll(
-                        current, current, next, next, current + 1, current + 1,
-                        next, next, next + 1, next + 1, current + 1, current + 1
-                );
-            }
-        }
-
-        MeshView meshView = new MeshView(mesh);
-        PhongMaterial material = new PhongMaterial();
-        material.setDiffuseColor(Color.rgb(0, 0, 255, 0.33));
-        meshView.setMaterial(material);
-
-        return meshView;
-    }
-
     public PrimaryBody getPrimaryBody() {
         return primaryBody;
     }
@@ -354,46 +282,46 @@ public class SecondaryBody extends PrimaryBody {
         return obliquityToOrbitDeg;
     }
 
-    public int getEphemStartYear() {
-        return ephemStartYear;
-    }
-
-    public int getEphemStartMonth() {
-        return ephemStartMonth;
-    }
-
-    public int getEphemStartDay() {
-        return ephemStartDay;
-    }
-
-    public int getEphemStartHour() {
-        return ephemStartHour;
-    }
-
-    public int getEphemStartMinute() {
-        return ephemStartMinute;
-    }
-
-    public int getEphemStopYear() {
-        return ephemStopYear;
-    }
-
-    public int getEphemStopMonth() {
-        return ephemStopMonth;
-    }
-
-    public int getEphemStopDay() {
-        return ephemStopDay;
-    }
-
-    public int getEphemStopHour() {
-        return ephemStopHour;
-    }
-
-    public int getEphemStopMinute() {
-        return ephemStopMinute;
-    }
-
+//    public int getEphemStartYear() {
+//        return ephemStartYear;
+//    }
+//
+//    public int getEphemStartMonth() {
+//        return ephemStartMonth;
+//    }
+//
+//    public int getEphemStartDay() {
+//        return ephemStartDay;
+//    }
+//
+//    public int getEphemStartHour() {
+//        return ephemStartHour;
+//    }
+//
+//    public int getEphemStartMinute() {
+//        return ephemStartMinute;
+//    }
+//
+//    public int getEphemStopYear() {
+//        return ephemStopYear;
+//    }
+//
+//    public int getEphemStopMonth() {
+//        return ephemStopMonth;
+//    }
+//
+//    public int getEphemStopDay() {
+//        return ephemStopDay;
+//    }
+//
+//    public int getEphemStopHour() {
+//        return ephemStopHour;
+//    }
+//
+//    public int getEphemStopMinute() {
+//        return ephemStopMinute;
+//    }
+//
     public StepSize getEphemStepSize() {
         return ephemStepSize;
     }
@@ -422,46 +350,46 @@ public class SecondaryBody extends PrimaryBody {
         return velocityVector;
     }
 
-    public void setEphemStartYear(int ephemStartYear) {
-        this.ephemStartYear = ephemStartYear;
-    }
-
-    public void setEphemStartMonth(int ephemStartMonth) {
-        this.ephemStartMonth = ephemStartMonth;
-    }
-
-    public void setEphemStartDay(int ephemStartDay) {
-        this.ephemStartDay = ephemStartDay;
-    }
-
-    public void setEphemStartHour(int ephemStartHour) {
-        this.ephemStartHour = ephemStartHour;
-    }
-
-    public void setEphemStartMinute(int ephemStartMinute) {
-        this.ephemStartMinute = ephemStartMinute;
-    }
-
-    public void setEphemStopYear(int ephemStopYear) {
-        this.ephemStopYear = ephemStopYear;
-    }
-
-    public void setEphemStopMonth(int ephemStopMonth) {
-        this.ephemStopMonth = ephemStopMonth;
-    }
-
-    public void setEphemStopDay(int ephemStopDay) {
-        this.ephemStopDay = ephemStopDay;
-    }
-
-    public void setEphemStopHour(int ephemStopHour) {
-        this.ephemStopHour = ephemStopHour;
-    }
-
-    public void setEphemStopMinute(int ephemStopMinute) {
-        this.ephemStopMinute = ephemStopMinute;
-    }
-
+//    public void setEphemStartYear(int ephemStartYear) {
+//        this.ephemStartYear = ephemStartYear;
+//    }
+//
+//    public void setEphemStartMonth(int ephemStartMonth) {
+//        this.ephemStartMonth = ephemStartMonth;
+//    }
+//
+//    public void setEphemStartDay(int ephemStartDay) {
+//        this.ephemStartDay = ephemStartDay;
+//    }
+//
+//    public void setEphemStartHour(int ephemStartHour) {
+//        this.ephemStartHour = ephemStartHour;
+//    }
+//
+//    public void setEphemStartMinute(int ephemStartMinute) {
+//        this.ephemStartMinute = ephemStartMinute;
+//    }
+//
+//    public void setEphemStopYear(int ephemStopYear) {
+//        this.ephemStopYear = ephemStopYear;
+//    }
+//
+//    public void setEphemStopMonth(int ephemStopMonth) {
+//        this.ephemStopMonth = ephemStopMonth;
+//    }
+//
+//    public void setEphemStopDay(int ephemStopDay) {
+//        this.ephemStopDay = ephemStopDay;
+//    }
+//
+//    public void setEphemStopHour(int ephemStopHour) {
+//        this.ephemStopHour = ephemStopHour;
+//    }
+//
+//    public void setEphemStopMinute(int ephemStopMinute) {
+//        this.ephemStopMinute = ephemStopMinute;
+//    }
+//
     public void setEphemStepSize(StepSize ephemStepSize) {
         this.ephemStepSize = ephemStepSize;
     }

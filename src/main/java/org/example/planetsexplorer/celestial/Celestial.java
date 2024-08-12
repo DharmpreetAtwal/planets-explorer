@@ -33,15 +33,21 @@ public class Celestial {
     }
 
     private void initializeUIMouseEvents() {
-        this.labelName.setOnMouseClicked(e ->{
-            Point3D shapePos = this.shape.localToScene(Point3D.ZERO);
+        this.labelName.setOnMouseClicked(e -> {
+            if(PlanetViewer.selectedCelestial instanceof SecondaryBody selectedBody &&
+                    PlanetViewer.copyEphemeris && this instanceof SecondaryBody clickedBody) {
+                selectedBody.copyEphemerisDateRange(clickedBody);
+                PlanetViewer.copyEphemeris = false;
+            } else {
+                Point3D shapePos = this.shape.localToScene(Point3D.ZERO);
 
-            PlanetsCamera.updateTranslate(shapePos.getX(), shapePos.getY());
-            PlanetsCamera.updatePivot(shapePos);
+                PlanetsCamera.updateTranslate(shapePos.getX(), shapePos.getY());
+                PlanetsCamera.updatePivot(shapePos);
 
-            PlanetViewer.setSelectedCelestial(this);
-            PlanetsCamera.updateEphemeris(false);
-            PlanetsCamera.updateCameraUI();
+                PlanetViewer.setSelectedCelestial(this);
+                PlanetsCamera.updateEphemeris(false);
+                PlanetsCamera.updateCameraUI();
+            }
         });
     }
 
