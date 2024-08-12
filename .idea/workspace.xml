@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Query Ephemeris button now calls setEphemeris on the children of the selectedCelestial&#10;- Added HorizonSystem.getSpacecraftStart/StopTimestamp&#10;- Broke up initializeEphemStartStop into initializeEphemeris/initializeStartStop&#10;- SecondaryBody.setEphemeris now takes LocalDateTime as parameter&#10;- Added querySpacecraftTab to PlanetViewer&#10;- Created Spacecraft class">
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Replaced ephem Attribute variables with LocalDateTime dateStart/Stop&#10;- Added button to copy the ephemeris date range of another SecondaryBody">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Celestial.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Celestial.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" afterDir="false" />
@@ -126,7 +127,8 @@
       <workItem from="1722277634335" duration="7160000" />
       <workItem from="1722288983738" duration="444000" />
       <workItem from="1722290751320" duration="10541000" />
-      <workItem from="1722448938942" duration="44166000" />
+      <workItem from="1722448938942" duration="44543000" />
+      <workItem from="1723486780760" duration="3286000" />
     </task>
     <task id="LOCAL-00001" summary="- Removed unneeded files">
       <option name="closed" value="true" />
@@ -384,14 +386,21 @@
       <option name="project" value="LOCAL" />
       <updated>1723228888904</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="- Replaced ephem Attribute variables with LocalDateTime dateStart/Stop&#10;- Added button to copy the ephemeris date range of another SecondaryBody">
+      <option name="closed" value="true" />
+      <created>1723474005279</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1723474005279</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="- Changed orbitRing so that it is now a Path of lines, instead of an Ellipse" />
     <MESSAGE value="- Changed orbitRing to be a Group of Line, instead of a Path of LineTo" />
     <MESSAGE value="- Made camera static&#10;- Orbit ring segments that are further away from the camera than the primaryBody are hidden" />
     <MESSAGE value="- Small adjustments to updateUIPosition&#10;- Removed unused methods from SecondaryBody&#10;- Removed shapeRadius from Celestial&#10;- Added second viewer stage" />
@@ -416,6 +425,7 @@
     <MESSAGE value="- Removed bodiesNameID, lookup  replaced with HashMaps idNameMap, idDesignationMap, idAliasMap&#10;- Made Main.sceneRoot, Main.rootScene3D, Main.sun, removed unneeded paramters from Moon.createMoon, Planet.createPlanet&#10;- Added deleteMoon, deletePlanet using String dbID&#10;- Added Tabs to PlanetViewer (selectedCelestial, queryCelestial)&#10;- User can now query Celestials using checkboxes" />
     <MESSAGE value="- Added reverse lookup HashMaps HorizonSystem.nameIdMap/ HorizonSystem.designationIdMap&#10;- Removed Moon.getRadiusKM, Moon.getSiderealOrbitDays, added Moon.idRadiusMap, Moon.idOrbitDaysMap lookup HashMaps" />
     <MESSAGE value="- Query Ephemeris button now calls setEphemeris on the children of the selectedCelestial&#10;- Added HorizonSystem.getSpacecraftStart/StopTimestamp&#10;- Broke up initializeEphemStartStop into initializeEphemeris/initializeStartStop&#10;- SecondaryBody.setEphemeris now takes LocalDateTime as parameter&#10;- Added querySpacecraftTab to PlanetViewer&#10;- Created Spacecraft class" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Query Ephemeris button now calls setEphemeris on the children of the selectedCelestial&#10;- Added HorizonSystem.getSpacecraftStart/StopTimestamp&#10;- Broke up initializeEphemStartStop into initializeEphemeris/initializeStartStop&#10;- SecondaryBody.setEphemeris now takes LocalDateTime as parameter&#10;- Added querySpacecraftTab to PlanetViewer&#10;- Created Spacecraft class" />
+    <MESSAGE value="- Replaced ephem Attribute variables with LocalDateTime dateStart/Stop&#10;- Added button to copy the ephemeris date range of another SecondaryBody" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Replaced ephem Attribute variables with LocalDateTime dateStart/Stop&#10;- Added button to copy the ephemeris date range of another SecondaryBody" />
   </component>
 </project>

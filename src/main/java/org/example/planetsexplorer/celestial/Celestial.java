@@ -34,10 +34,19 @@ public class Celestial {
 
     private void initializeUIMouseEvents() {
         this.labelName.setOnMouseClicked(e -> {
-            if(PlanetViewer.selectedCelestial instanceof SecondaryBody selectedBody &&
-                    PlanetViewer.copyEphemeris && this instanceof SecondaryBody clickedBody) {
+            if(PlanetViewer.selectedCelestial instanceof SecondaryBody selectedBody
+                    && PlanetViewer.copyEphemeris
+                    && this instanceof SecondaryBody clickedBody) {
                 selectedBody.copyEphemerisDateRange(clickedBody);
                 PlanetViewer.copyEphemeris = false;
+            } else if(this instanceof PrimaryBody primaryBody
+                    && PlanetViewer.selectedCelestial instanceof SecondaryBody secondaryBody
+                    && PlanetViewer.selectPrimary) {
+                secondaryBody.setPrimaryBody(primaryBody);
+                secondaryBody.getPrimaryBody().getSecondaryBodies().remove(secondaryBody);
+                primaryBody.addSecondaryBody(secondaryBody);
+                secondaryBody.initializeEphemeris();
+                PlanetViewer.selectPrimary = false;
             } else {
                 Point3D shapePos = this.shape.localToScene(Point3D.ZERO);
 

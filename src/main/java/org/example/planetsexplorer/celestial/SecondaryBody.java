@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import static org.example.planetsexplorer.HorizonSystem.pixelKmScale;
 
 public class SecondaryBody extends PrimaryBody {
-    private final PrimaryBody primaryBody;
+    private PrimaryBody primaryBody;
 
     private float orbitDistance;
     private final float orbitPeriodYear;
@@ -282,46 +282,6 @@ public class SecondaryBody extends PrimaryBody {
         return obliquityToOrbitDeg;
     }
 
-//    public int getEphemStartYear() {
-//        return ephemStartYear;
-//    }
-//
-//    public int getEphemStartMonth() {
-//        return ephemStartMonth;
-//    }
-//
-//    public int getEphemStartDay() {
-//        return ephemStartDay;
-//    }
-//
-//    public int getEphemStartHour() {
-//        return ephemStartHour;
-//    }
-//
-//    public int getEphemStartMinute() {
-//        return ephemStartMinute;
-//    }
-//
-//    public int getEphemStopYear() {
-//        return ephemStopYear;
-//    }
-//
-//    public int getEphemStopMonth() {
-//        return ephemStopMonth;
-//    }
-//
-//    public int getEphemStopDay() {
-//        return ephemStopDay;
-//    }
-//
-//    public int getEphemStopHour() {
-//        return ephemStopHour;
-//    }
-//
-//    public int getEphemStopMinute() {
-//        return ephemStopMinute;
-//    }
-//
     public StepSize getEphemStepSize() {
         return ephemStepSize;
     }
@@ -350,47 +310,11 @@ public class SecondaryBody extends PrimaryBody {
         return velocityVector;
     }
 
-//    public void setEphemStartYear(int ephemStartYear) {
-//        this.ephemStartYear = ephemStartYear;
-//    }
-//
-//    public void setEphemStartMonth(int ephemStartMonth) {
-//        this.ephemStartMonth = ephemStartMonth;
-//    }
-//
-//    public void setEphemStartDay(int ephemStartDay) {
-//        this.ephemStartDay = ephemStartDay;
-//    }
-//
-//    public void setEphemStartHour(int ephemStartHour) {
-//        this.ephemStartHour = ephemStartHour;
-//    }
-//
-//    public void setEphemStartMinute(int ephemStartMinute) {
-//        this.ephemStartMinute = ephemStartMinute;
-//    }
-//
-//    public void setEphemStopYear(int ephemStopYear) {
-//        this.ephemStopYear = ephemStopYear;
-//    }
-//
-//    public void setEphemStopMonth(int ephemStopMonth) {
-//        this.ephemStopMonth = ephemStopMonth;
-//    }
-//
-//    public void setEphemStopDay(int ephemStopDay) {
-//        this.ephemStopDay = ephemStopDay;
-//    }
-//
-//    public void setEphemStopHour(int ephemStopHour) {
-//        this.ephemStopHour = ephemStopHour;
-//    }
-//
-//    public void setEphemStopMinute(int ephemStopMinute) {
-//        this.ephemStopMinute = ephemStopMinute;
-//    }
-//
     public void setEphemStepSize(StepSize ephemStepSize) {
         this.ephemStepSize = ephemStepSize;
+    }
+
+    public void setPrimaryBody(PrimaryBody primaryBody) {
+        this.primaryBody = primaryBody;
     }
 }

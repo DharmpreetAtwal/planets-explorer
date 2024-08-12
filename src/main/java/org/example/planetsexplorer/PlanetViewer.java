@@ -17,6 +17,7 @@ import java.util.List;
 public class PlanetViewer {
     public static Celestial selectedCelestial = null;
     public static boolean copyEphemeris = false;
+    public static boolean selectPrimary = false;
 
     private final static Tab selectedCelestialTab = new Tab("Selected Celestial");
 
@@ -52,6 +53,7 @@ public class PlanetViewer {
 
     private final static Button btnQueryEphem = new Button("Query Ephemeris");
     private final static Button btnCopyEphem = new Button("Copy Ephemeris");
+    private final static Button btnSelectPrimary = new Button("Select Primary");
 
     private final static CheckBox checkEphemFrozen = new CheckBox("Freeze Selected Ephemeris");
     private final static CheckBox checkDisableOrbitSelected = new CheckBox("Disable Selected Celestial Orbit Ring ");
@@ -73,9 +75,11 @@ public class PlanetViewer {
         viewerGridRoot.getChildren().add(lblSecondaryBodies);
 
         // VISUAL SEPARATION BETWEEN PRIMARY/SEC CHARS
-
         GridPane.setConstraints(lblPrimaryBody, 0, 3);
         viewerGridRoot.getChildren().add(lblPrimaryBody);
+
+        GridPane.setConstraints(btnSelectPrimary, 1, 3);
+        viewerGridRoot.getChildren().add(btnSelectPrimary);
 
         GridPane.setConstraints(lblOrbitDistance, 0, 4);
         viewerGridRoot.getChildren().add(lblOrbitDistance);
@@ -287,6 +291,11 @@ public class PlanetViewer {
             if(selectedCelestial instanceof SecondaryBody)
                 copyEphemeris = true;
         });
+
+        btnSelectPrimary.setOnMouseClicked(e ->{
+            if(selectedCelestial instanceof Spacecraft)
+                selectPrimary = true;
+        });
     }
 
     private static void initializeCheckboxes() {
@@ -306,6 +315,7 @@ public class PlanetViewer {
 
         lblName.setText("Celestial Name: " + celestial.getName());
         lblDbID.setText("DB ID: " + celestial.getDbID());
+        btnSelectPrimary.setVisible(selectedCelestial instanceof Spacecraft);
 
         if(celestial instanceof PrimaryBody primaryBody) {
             lblSecondaryBodies.setText("Secondary Bodies: " + primaryBody.getSecondaryBodies().size());
@@ -337,6 +347,7 @@ public class PlanetViewer {
             checkEphemFrozen.setSelected(secondaryBody.isEphemFrozen());
             checkDisableOrbitSelected.setSelected(!secondaryBody.getOrbitRing().isVisible());
         }
+
     }
 
     public static boolean queryEphemInputCheck() {
