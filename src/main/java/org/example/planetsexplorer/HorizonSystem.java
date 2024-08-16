@@ -14,22 +14,99 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class HorizonSystem {
-    public static final int pixelKmScale = 100;
-    public static int ephemerisIndex = 0;
-    public static HashMap<String, String> idNameMap = new HashMap<>(100);
-    public static HashMap<String, String> nameIdMap = new HashMap<>(100);
-    public static HashMap<String, String> idDesignationMap = new HashMap<>(100);
-    public static HashMap<String, String> designationIdMap = new HashMap<>(100);
-    public static HashMap<String, String> idAliasMap = new HashMap<>(100);
+/**
+ * A static helper class that handles the back-end HTTP requests to NASA's system data and
+ * ephemeris computation service, Horizon System. Read about the system and it's API here:
+ * <a href="https://ssd.jpl.nasa.gov/horizons/">...</a>
+ *
+ * <p> This class can can execute HTTP requests which return a JSONObject that contains
+ * data about a celestial's physical parameters, or it's ephemeris path.
+ *
+ * <p>  The database is incomplete. Some celestial objects don't have a recorded radius or
+ * obliquity
+ *
+ * @author Dharmpreet Atwal
+ */
+public final class HorizonSystem {
+    /**
+     * Don't let this class be instantiated
+     */
+    private HorizonSystem() {}
 
+    /**
+     * A global counter that controls which part of the ephemeris data is displayed
+     */
+    public static int ephemerisIndex = 0;
+
+    /**
+     * A constant that determines the scale of a distances or radius
+     */
+    public static final int pixelKmScale = 100;
+
+    /**
+     * A lookup table that stores the mapping between a celestial's database id and name
+     */
+    private static final HashMap<String, String> idNameMap = new HashMap<>(100);
+
+    /**
+     * A reverse lookup table of idNameMap
+     * @see HorizonSystem#idNameMap
+     */
+    private static final HashMap<String, String> nameIdMap = new HashMap<>(100);
+
+    /**
+     * A lookup table that stores the mapping between a celestial's database id and IAU designation
+     */
+    private static final HashMap<String, String> idDesignationMap = new HashMap<>(100);
+
+    /**
+     * A reverse lookup table of idDesignationMap
+     * @see HorizonSystem#idDesignationMap
+     */
+    private static final HashMap<String, String> designationIdMap = new HashMap<>(100);
+
+    /**
+     * A lookup table that stores the mapping between a celestial's database id and alias
+     */
+    private static final HashMap<String, String> idAliasMap = new HashMap<>(100);
+
+    /**
+     * Performs a GET request to the HorizonSystem database.
+     *
+     * @param urlDatabase The URL for the HTTP request
+     * @return A {@link StringBuilder} representation of a {@link JSONObject}
+     * @throws IOException if there was an error connecting to the database or executing the GET request
+     */
+    private static StringBuilder executeGet(String urlDatabase) throws IOException {
+        StringBuilder result = new StringBuilder();
+        URL url = new URL(urlDatabase);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            for(char letter; (letter = (char)reader.read()) != (char)-1;)
+                result.append(letter);
+        }
+
+        return result;
+    }
+
+    /**
+     * Queries the database to get the object data of a celestial. Converts the StringBuilder
+     * representation into a JSONObject, parses the result attribute, and extracts the
+     * relevant information.
+     *
+     * <p> The database is incomplete and may not contain the needed information. In this case, a
+     * default value is assigned.
+     *
+     * @param id The database id of the celestial
+     * @return A {@link JSONObject} containing {@code siderealOrbitDays}, {@code siderealDayHr},
+     * {@code obliquityToOrbitDeg} {@code meanRadKM}
+     */
     public static JSONObject getBody(String id) {
         String urlQuery = "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='" + id +
                 "'&OBJ_DATA='" + "YES" +
@@ -70,6 +147,19 @@ public class HorizonSystem {
         }
     }
 
+    /**
+     * Queries the database to get the ephemeris position of the target celestial relative to a center
+     * celestial.
+     *
+     * @param id The database id of the target celestial
+     * @param centerId The database id of the celestial from which the position of the target is calculated
+     * @param startTime The date-timestamp start of the ephemeris range in format: "YYYY-MM-DD HH:MM"
+     * @param stopTime The date-timestamp stop of the ephemeris range in format: "YYYY-MM-DD HH:MM"
+     * @param stepSize The time-based increment in between each sequential point in the ephemeris data
+     * @return An {@code ArrayList<JSONObject>} where each JSONObject contains the x, y, z componenets of the
+     * displacement vector, and the vx, vy, vz components of the velocity
+     * @throws Exception if the returned data doesn't contain any of the required components
+     */
     public static ArrayList<JSONObject> getEphemeris(String id, String centerId, String startTime, String stopTime, StepSize stepSize) throws Exception {
         String urlQuery = "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='" + id +
                 "'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&VEC_TABLE='2'&CENTER='@"+  centerId +
@@ -77,9 +167,6 @@ public class HorizonSystem {
                 "&START_TIME='" + startTime +
                 "'&STOP_TIME='" + stopTime +
                 "'&STEP_SIZE='" + stepSize.toString() + "'";
-        System.out.println(urlQuery);
-        System.out.println(startTime);
-        System.out.println(stopTime);
         String ephemStrJSON = executeGet(urlQuery).toString();
 
         try {
@@ -102,9 +189,25 @@ public class HorizonSystem {
         }
     }
 
-    public static void initializeNameIDLookup() throws Exception {
+    /**
+     * Queries the database to get the id, name, designation, and alias of every recorded body in the
+     * database. Stores these values in static lookup tables.
+     *
+     * <p> After initializing the lookup tables, this method calls {@code Moon.initializeMoonInfo()},
+     * which initializes the Moon specific lookup tables.
+     *
+     * @see HorizonSystem#idNameMap
+     * @see HorizonSystem#idDesignationMap
+     * @see HorizonSystem#idAliasMap
+     */
+    public static void initializeNameIDLookup() {
         String urlQuery = "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27*%27";
-        String bodyNameIDJSON = executeGet(urlQuery).toString();
+        String bodyNameIDJSON = null;
+        try {
+            bodyNameIDJSON = executeGet(urlQuery).toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         try {
             JSONObject bodyNameID = new JSONObject(bodyNameIDJSON);
@@ -137,6 +240,13 @@ public class HorizonSystem {
         Moon.initializeMoonInfo();
     }
 
+    /**
+     * A private helper method that removes unnecessary spaces. Helps to ensure consistent spaces in strings
+     * used as keys in the lookup tables.
+     *
+     * @param str The string to remove unnecessary from
+     * @return The string with the extra spaces removed.
+     */
     private static String removeSpaces(String str) {
         String result = str.replaceAll("\\s\\s+", "");
         result = result.replaceAll("^\\s+", "");
@@ -144,9 +254,23 @@ public class HorizonSystem {
         return result;
     }
 
-    private static ArrayList<JSONObject> extractVectorsCSV(String strCSV) throws IOException, CsvException {
+    /**
+     * A helper method that extracts the displacement and velocity components stored in the String
+     * representation of a CSV file.
+     * @param strCSV The String representation of a CSV file.
+     * @return An {@code ArrayList<JSONObject>} where each JSONObject contains the x, y, z components of the
+     * displacement vector, and the vx, vy, vz components of the velocity
+     */
+    private static ArrayList<JSONObject> extractVectorsCSV(String strCSV) {
         CSVReader reader = new CSVReader(new StringReader(strCSV));
-        List<String[]> rows = reader.readAll();
+        List<String[]> rows = null;
+
+        try {
+            rows = reader.readAll();
+        } catch (IOException | CsvException e) {
+            throw new RuntimeException(e);
+        }
+
         ArrayList<JSONObject> ephemData = new ArrayList<>();
 
         for(String[] row: rows) {
@@ -185,58 +309,18 @@ public class HorizonSystem {
         return ephemData;
     }
 
-    private static ArrayList<JSONObject> extractCSV(String strCSV) throws IOException, CsvException {
-        CSVReader reader = new CSVReader(new StringReader(strCSV));
-        List<String[]> rows = reader.readAll();
-        ArrayList<JSONObject> ephemData = new ArrayList<>();
-
-        for (String[] row : rows) {
-            String qr = "";
-            String ma = "";
-            String in = "";
-
-            int i =0;
-            for (String cell : row) {
-                if(i==3) qr = cell;
-                if(i==4) in = cell;
-                if(i==9) ma = cell;
-                i++;
-            }
-
-            if(!qr.isEmpty() && !ma.isEmpty()) {
-                JSONObject data = new JSONObject();
-                data.put("qr", Float.parseFloat(qr));
-                data.put("ma", Float.parseFloat(ma));
-                data.put("in", Float.parseFloat(in));
-                ephemData.add(data);
-            }
-        }
-
-        return ephemData;
-    }
-
-    private static StringBuilder executeGet(String urlDatabase) throws Exception  {
-        System.out.println(urlDatabase);
-        StringBuilder results = new StringBuilder();
-        URL url = new URL(urlDatabase);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(connection.getInputStream()))
-        ) {
-            for(char letter; (letter = (char)reader.read()) != (char)-1;) {
-                results.append(letter);
-            }
-        }
-
-        return results;
-    }
-
+    /**
+     * A method that queries the database for the oldest point in time for the ephemeris position of
+     * a given spacecraft. The returned timestamp has 5 min extra onto the actual start time.
+     * @param dbID The database id of the spacecraft
+     * @return A date-timestamp of format "YYYY-MM-DD HH:MM"
+     */
     public static String getSpacecraftStartTimestamp(String dbID) {
         String timestamp = "";
         try {
-            StringBuilder resultJSON = executeGet("https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27" + dbID +"%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&CENTER=%27@399%27&START_TIME=%271000-01-01%27");
+            StringBuilder resultJSON = executeGet(
+                    "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27" +
+                    dbID +"%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&CENTER=%27@399%27&START_TIME=%271000-01-01%27");
             JSONObject startTimeJSON = new JSONObject(resultJSON.toString());
             String result = startTimeJSON.getString("result");
 
@@ -258,6 +342,13 @@ public class HorizonSystem {
         return timestamp;
     }
 
+    /**
+     * A method that queries the database for the furthest point in time for the ephemeris position of
+     * a given spacecraft. The returned timestamp has 5 min less than actual stop time.
+     * @param dbID The database id of the spacecraft
+     * @param startTime The oldest point in time for ephemeris data of the given spacecraft
+     * @return A date-timestamp of format "YYYY-MM-DD HH:MM"
+     */
     public static String getSpacecraftStopTimestamp(String dbID, String startTime) {
         String timestamp = "";
         try {
@@ -283,6 +374,12 @@ public class HorizonSystem {
         return timestamp;
     }
 
+    /**
+     * A helper method that adds minutes onto the String representation of a timestamp
+     * @param timeString The timestamp to be altered.
+     * @param minutes The amount of minutes to be added
+     * @return A new timestamp with the minutes added on of format HH:mm:ss
+     */
     private static String addMinutes(String timeString, int minutes) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         LocalTime localTime = LocalTime.parse(timeString, formatter);
@@ -377,5 +474,21 @@ public class HorizonSystem {
             System.err.println("Found 'string', but no ending value");
             return null;
         }
+    }
+
+    public static String idToName(String id) {
+        return idNameMap.get(id);
+    }
+
+    public static Set<String> getIdNameMapKeySet() {
+        return idNameMap.keySet();
+    }
+
+    public static String nameToID(String name) {
+        return nameIdMap.get(name);
+    }
+
+    public static String designationToId(String designation) {
+        return designationIdMap.get(designation);
     }
 }

@@ -26,10 +26,10 @@ public class Moon extends  SecondaryBody {
     }
 
     public static Moon createMoon(String moonID, String planetID)  {
-        Planet planet = Planet.getPlanetByName(HorizonSystem.idNameMap.get(planetID));
+        Planet planet = Planet.getPlanetByName(HorizonSystem.idToName(planetID));
         JSONObject moonJSON = HorizonSystem.getBody(moonID);
 
-        Moon moon = new Moon(HorizonSystem.idNameMap.get(moonID),
+        Moon moon = new Moon(HorizonSystem.idToName(moonID),
                 moonID,
                 moonJSON.getFloat("meanRadKM") / pixelKmScale,
                 planet,
@@ -67,7 +67,7 @@ public class Moon extends  SecondaryBody {
                     try { radius = Float.parseFloat(element[11]) / 2; }
                     catch (NumberFormatException e) { continue; }
 
-                    String id = HorizonSystem.nameIdMap.get(element[1]);
+                    String id = HorizonSystem.nameToID(element[1]);
                     idOrbitDaysMap.put(id, element[9]);
                     idRadiusMap.put(id, String.valueOf(radius));
                 } else if(element.length == 12) {
@@ -82,9 +82,9 @@ public class Moon extends  SecondaryBody {
 
                     // If element[1] is a NAME
                     String id;
-                    if(!numbersMatcher.find()) { id = HorizonSystem.nameIdMap.get(element[1]); }
+                    if(!numbersMatcher.find()) { id = HorizonSystem.nameToID(element[1]); }
                     // If element[1] is a DESIGNATION
-                    else { id = HorizonSystem.designationIdMap.get(element[1].substring(2)); }
+                    else { id = HorizonSystem.designationToId(element[1].substring(2)); }
 
                     idOrbitDaysMap.put(id, element[8]);
                     idRadiusMap.put(id, String.valueOf(radius));

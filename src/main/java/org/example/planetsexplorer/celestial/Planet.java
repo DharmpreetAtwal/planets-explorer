@@ -24,7 +24,7 @@ public class Planet extends SecondaryBody {
         }
 
         Planet newPlanet = new Planet(
-                HorizonSystem.idNameMap.get(planetID),
+                HorizonSystem.idToName(planetID),
                 planetID,
                 planetJSON.getFloat("meanRadKM") / HorizonSystem.pixelKmScale,
                 Main.sun,

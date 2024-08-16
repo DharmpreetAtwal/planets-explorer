@@ -147,7 +147,7 @@ public class PlanetViewer {
         queryCelestialTab.setClosable(false);
         for(int i=199; i<=999; i=i+100) {
             int rowIndex = ((i / 100) - 1) * 2;
-            CheckBox planetCheckBox = new CheckBox(i + " " + HorizonSystem.idNameMap.get(String.valueOf(i)));
+            CheckBox planetCheckBox = new CheckBox(i + " " + HorizonSystem.idToName(String.valueOf(i)));
             GridPane.setConstraints(planetCheckBox, 0, rowIndex);
             queryCelestialGridPane.getChildren().add(planetCheckBox);
 
@@ -160,7 +160,7 @@ public class PlanetViewer {
         int row = 0;
         int col=0;
 
-        List<String> sortedKeys = new ArrayList<>(HorizonSystem.idNameMap.keySet());
+        List<String> sortedKeys = new ArrayList<>(HorizonSystem.getIdNameMapKeySet());
         Collections.sort(sortedKeys);
 
         for(String id: sortedKeys) {
@@ -172,7 +172,7 @@ public class PlanetViewer {
                 spacecraftCheckbox.selectedProperty().addListener(e-> {
                     System.out.println(id);
                     if(spacecraftCheckbox.isSelected())
-                        Spacecraft.createSpacecraft(HorizonSystem.idNameMap.get(id), id);
+                        Spacecraft.createSpacecraft(HorizonSystem.idToName(id), id);
                     else Spacecraft.deleteSpacecraft(id);
                 });
 
@@ -201,7 +201,7 @@ public class PlanetViewer {
         int row = 0;
         int col = 0;
         int moonID = planetID - 98;
-        String moonName = HorizonSystem.idNameMap.get(String.valueOf(moonID));
+        String moonName = HorizonSystem.idToName(String.valueOf(moonID));
 
         while(moonName != null) {
             CheckBox moonCheckbox = new CheckBox(String.valueOf(moonID));
@@ -216,7 +216,7 @@ public class PlanetViewer {
             if(col == 8) { col = 0; row++; }
             moonID++;
             col++; // Col should only be updated at the end to give the indentation
-            moonName = HorizonSystem.idNameMap.get(String.valueOf(moonID));
+            moonName = HorizonSystem.idToName(String.valueOf(moonID));
         }
 
         planetCheckbox.setOnMouseClicked(e -> {
