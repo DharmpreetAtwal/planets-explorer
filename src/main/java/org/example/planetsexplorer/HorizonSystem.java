@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  * data about a celestial's physical parameters, or it's ephemeris path.
  *
  * <p>  The database is incomplete. Some celestial objects don't have a recorded radius or
- * obliquity
+ * obliquity to orbit
  *
  * @author Dharmpreet Atwal
  */
@@ -200,9 +200,9 @@ public final class HorizonSystem {
      * @see HorizonSystem#idDesignationMap
      * @see HorizonSystem#idAliasMap
      */
-    public static void initializeNameIDLookup() {
+    public static void initializeLookupTables() {
         String urlQuery = "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27*%27";
-        String bodyNameIDJSON = null;
+        String bodyNameIDJSON;
         try {
             bodyNameIDJSON = executeGet(urlQuery).toString();
         } catch (IOException e) {
@@ -241,7 +241,7 @@ public final class HorizonSystem {
     }
 
     /**
-     * A private helper method that removes unnecessary spaces. Helps to ensure consistent spaces in strings
+     * A helper method that removes unnecessary spaces. Helps to ensure consistent spaces in strings
      * used as keys in the lookup tables.
      *
      * @param str The string to remove unnecessary from
@@ -258,8 +258,8 @@ public final class HorizonSystem {
      * A helper method that extracts the displacement and velocity components stored in the String
      * representation of a CSV file.
      * @param strCSV The String representation of a CSV file.
-     * @return An {@code ArrayList<JSONObject>} where each JSONObject contains the x, y, z components of the
-     * displacement vector, and the vx, vy, vz components of the velocity
+     * @return An {@link ArrayList<JSONObject>} where each JSONObject contains the x, y, z components of the
+     * displacement vector, and the vx, vy, vz components of the velocity ta a given time.
      */
     private static ArrayList<JSONObject> extractVectorsCSV(String strCSV) {
         CSVReader reader = new CSVReader(new StringReader(strCSV));
@@ -310,8 +310,8 @@ public final class HorizonSystem {
     }
 
     /**
-     * A method that queries the database for the oldest point in time for the ephemeris position of
-     * a given spacecraft. The returned timestamp has 5 min extra onto the actual start time.
+     * Queries the database for the oldest point in time for the ephemeris position of
+     * a given spacecraft. The returned timestamp has 5 min extra added onto the actual start time.
      * @param dbID The database id of the spacecraft
      * @return A date-timestamp of format "YYYY-MM-DD HH:MM"
      */
@@ -343,7 +343,7 @@ public final class HorizonSystem {
     }
 
     /**
-     * A method that queries the database for the furthest point in time for the ephemeris position of
+     * Queries the database for the furthest point in time for the ephemeris position of
      * a given spacecraft. The returned timestamp has 5 min less than actual stop time.
      * @param dbID The database id of the spacecraft
      * @param startTime The oldest point in time for ephemeris data of the given spacecraft
@@ -387,6 +387,14 @@ public final class HorizonSystem {
         return newTime.format(formatter);
     }
 
+    /**
+     * A helper method that parses a string for the pattern that contains the radius of the celestial.
+     * If no radius is found, this method checks if the radius is recorded in Moon radius lookup table.
+     * If this id is not in the lookup table, this method returns 1km as the default.
+     * @param result The String that contains the radius
+     * @param id The id of the celestial
+     * @return The radius of the celestial in String format
+     */
     private static String extractVolMeanRadiusKM(String result, String id) {
         // This pattern is meant to match 'mean radius, km   =  1.11'
         // or 'Mean Radius (km) =  1.11'
@@ -394,7 +402,6 @@ public final class HorizonSystem {
         Matcher matcher = radiusPattern.matcher(result);
 
         if(matcher.find()) {
-//            System.out.println(matcher.group());
             return extractLastNumber(matcher.group());
         } else {
             String radius = Moon.idRadiusMap.get(id);
@@ -406,6 +413,16 @@ public final class HorizonSystem {
         }
     }
 
+    /**
+     * A helper method that parses a string for the pattern that contains the sidereal orbit period.
+     * Since the database stores the sidereal orbit period in both years and days, 2 separate patterns
+     * are checked. If no sidereal orbit period is found, this method checks if the sidereal orbit period
+     * is recorded in Moon's lookup table. If this id is not in the lookup table, this method returns a
+     * default value of 0.
+     * @param result The String that contains the sidereal orbit period
+     * @param id The id of the celestial
+     * @return The sidereal orbit period of the celestial in String format
+     */
     private static String extractSiderealOrbPeriod(String result, String id) {
         // This regex matches Sidereal orb. per.    =  0.2408467 y
         // or Sidereal orb. per., y =   0.61519726
@@ -435,13 +452,18 @@ public final class HorizonSystem {
         }
     }
 
+    /**
+     * A helper method that parses a string for the pattern that contains the sidereal day.
+     * If no sidereal day period is found, this method returns a default value of 0.
+     * @param result The String that contains the sidereal day period
+     * @return The sidereal day period of the celestial in String format
+     */
     private static String extractSiderealDayPeriod(String result) {
         // Matches rot. rate (rad/s)= 0.00   Rot. Rate (rad/s)= -0.00, rot. rate, rad/s =  0.00
         Pattern sideDayPattern = Pattern.compile("rot. rat(e|,|e,) \\(?rad/s\\)?\\s*=\\s*-?\\d*\\.?\\d+", Pattern.CASE_INSENSITIVE);
         Matcher matcher = sideDayPattern.matcher(result);
 
         if(matcher.find()) {
-//            System.out.println(matcher.group());
             return extractLastNumber(matcher.group());
         } else {
             System.err.println("Could not find sidereal day");
@@ -449,13 +471,17 @@ public final class HorizonSystem {
         }
     }
 
+    /**
+     * A helper method that parses a string for the pattern that contains the obliquity
+     * to orbit. If no obliquity to orbit is found, this method returns a default value of 0.
+     * @param result The String that contains the obliquity to orbit
+     * @return The obliquity to orbit of the celestial in String format
+     */
     private static String extractObliquityToOrbit(String result) {
         Pattern obliquityOrbitPattern = Pattern.compile("Obliquity to orbit(, deg|\\[1])?\\s*=\\s*\\d*\\.?[\\d' +/-]*\\.\\d*", Pattern.CASE_INSENSITIVE);
         Matcher matcher = obliquityOrbitPattern.matcher(result);
 
         if(matcher.find()) {
-//            System.out.println(matcher.group());
-//            System.out.println(extractLastNumber(matcher.group()));
             return extractLastNumber(matcher.group());
         } else {
             System.err.println("Could not find Obliquity to orbit");
@@ -463,6 +489,12 @@ public final class HorizonSystem {
         }
     }
 
+    /**
+     * A helper method that extracts the ending numerical value in a string. This method
+     * splices anything out that isn't a digit, a decimal '.', or a negative sign '-'.
+     * @param strEndNumber The String that contains the value to be extracted
+     * @return A string representation of a float that can be converted to a float.
+     */
     private static String extractLastNumber(String strEndNumber) {
         Pattern radiusValue = Pattern.compile("-?\\d*\\.?\\d+");
         Matcher radiusMatcher = radiusValue.matcher(strEndNumber);
@@ -476,18 +508,40 @@ public final class HorizonSystem {
         }
     }
 
+    /**
+     * Returns the name of a celestial given its database id
+     * @param id The database id of the celestial.
+     * @return The name of the celestial.
+     * @see HorizonSystem#idNameMap
+     */
     public static String idToName(String id) {
         return idNameMap.get(id);
     }
 
+    /**
+     * Returns the keySet of the id-name lookup table
+     * @return The keySet of the id-name lookup table
+     * @see HorizonSystem#idNameMap
+     */
     public static Set<String> getIdNameMapKeySet() {
         return idNameMap.keySet();
     }
 
+    /**
+     * Returns the id of a celestial given its name.
+     * @param name The name of the celestial.
+     * @return The id of the celestial.
+     * @see HorizonSystem#nameIdMap
+     */
     public static String nameToID(String name) {
         return nameIdMap.get(name);
     }
 
+    /**
+     * Returns the id of a celestial given it's designation.
+     * @param designation The designation of the celestial.
+     * @return The id of the celestial.
+     */
     public static String designationToId(String designation) {
         return designationIdMap.get(designation);
     }

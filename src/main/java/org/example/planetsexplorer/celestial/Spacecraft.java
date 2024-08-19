@@ -92,8 +92,8 @@ public class Spacecraft extends SecondaryBody {
     }
 
     public void changePrimaryBody(PrimaryBody primaryBody) {
-        this.getPrimaryBody().getSecondaryBodies().remove(this);
-        primaryBody.getSecondaryBodies().add(this);
-
+        this.getPrimaryBody().removeSecondaryBody(this);
+        this.getPrimaryBody().addSecondaryBody(this);
+        this.setPrimaryBody(primaryBody);
     }
 }

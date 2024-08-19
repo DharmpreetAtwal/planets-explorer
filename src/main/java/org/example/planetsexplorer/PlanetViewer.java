@@ -318,7 +318,7 @@ public class PlanetViewer {
         btnSelectPrimary.setVisible(selectedCelestial instanceof Spacecraft);
 
         if(celestial instanceof PrimaryBody primaryBody) {
-            lblSecondaryBodies.setText("Secondary Bodies: " + primaryBody.getSecondaryBodies().size());
+            lblSecondaryBodies.setText("Secondary Bodies: " + primaryBody.getSecondaryBodies().length);
         }
 
         if(celestial instanceof SecondaryBody secondaryBody) {

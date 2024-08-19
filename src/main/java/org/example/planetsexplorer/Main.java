@@ -16,7 +16,7 @@ public class Main extends Application {
     public static Sun sun;
 
     public void start(Stage stage) throws Exception {
-        HorizonSystem.initializeNameIDLookup();
+        HorizonSystem.initializeLookupTables();
         SubScene scene3D = new SubScene(rootScene3D, 600, 600, true, null);
         scene3D.setFill(Color.ALICEBLUE);
         sceneRoot.getChildren().add(scene3D);
