@@ -301,7 +301,7 @@ public class PlanetViewer {
     private static void initializeCheckboxes() {
         checkEphemFrozen.selectedProperty().addListener(e -> {
             if(selectedCelestial instanceof SecondaryBody secBody)
-                secBody.setEphemFrozen(checkEphemFrozen.isSelected());
+                secBody.setEphemerisFrozen(checkEphemFrozen.isSelected());
         });
 
         checkDisableOrbitSelected.selectedProperty().addListener(e -> {
@@ -343,8 +343,8 @@ public class PlanetViewer {
             hourEphemStop.setValue(secondaryBody.getDateStop().getHour());
             minEphemStop.setValue(secondaryBody.getDateStop().getMinute());
 
-            stepEphem.setValue(secondaryBody.getEphemStepSize());
-            checkEphemFrozen.setSelected(secondaryBody.isEphemFrozen());
+            stepEphem.setValue(secondaryBody.getEphemerisStepSize());
+            checkEphemFrozen.setSelected(secondaryBody.isEphemerisFrozen());
             checkDisableOrbitSelected.setSelected(!secondaryBody.getOrbitRing().isVisible());
         }
 

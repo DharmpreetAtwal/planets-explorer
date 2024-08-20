@@ -90,10 +90,10 @@ public class PlanetsCamera {
 
         // Moving all celestials if they are SecondaryBody and not frozen
         for(Celestial celestial: Celestial.celestialArrayList) {
-            if(celestial instanceof SecondaryBody secBody && !secBody.getEphemData().isEmpty()) {
-                if(!secBody.isEphemFrozen())
-                    secBody.setEphemIndex(HorizonSystem.ephemerisIndex);
-                secBody.updateEphemPosition(true);
+            if(celestial instanceof SecondaryBody secBody && !secBody.getEphemerisData().isEmpty()) {
+                if(!secBody.isEphemerisFrozen())
+                    secBody.setEphemerisIndex(HorizonSystem.ephemerisIndex);
+                secBody.updateEphemerisPosition(true);
             }
         }
 
@@ -126,19 +126,19 @@ public class PlanetsCamera {
         if(celestial instanceof SecondaryBody body) {
             body.getOrbitRing().getChildren().clear();
 
-            int totalSegments = body.getEphemData().size();
+            int totalSegments = body.getEphemerisData().size();
             int midSegment = totalSegments / 2;
-            int originalIndex = body.getEphemIndex();
+            int originalIndex = body.getEphemerisIndex();
 
             // Initialize the first point of the orbit ring
-            body.setEphemIndex(0);
-            body.updateEphemPosition(false);
+            body.setEphemerisIndex(0);
+            body.updateEphemerisPosition(false);
             Point2D currPointScreen = body.getScreenCoordinates();
             Point3D currPointScene = body.getSceneCoordinates();
 
             for(int i=1; i < totalSegments; i++) {
-                body.setEphemIndex(i);
-                body.updateEphemPosition(false);
+                body.setEphemerisIndex(i);
+                body.updateEphemerisPosition(false);
 
                 Point2D nextPointScreen = body.getScreenCoordinates();
                 Point3D cameraPointScene = PlanetsCamera.camera.localToScene(Point3D.ZERO);
@@ -180,8 +180,8 @@ public class PlanetsCamera {
                 currPointScene = nextPointScene;
             }
 
-            body.setEphemIndex(originalIndex);
-            body.updateEphemPosition(true);
+            body.setEphemerisIndex(originalIndex);
+            body.updateEphemerisPosition(true);
         }
     }
 

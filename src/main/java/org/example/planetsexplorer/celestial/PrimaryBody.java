@@ -19,9 +19,9 @@ public class PrimaryBody extends Celestial {
 
     /**
      * Constructs a {@code PrimaryBody} with an identical set of fields to {@code Celestial}
-     * @param name The unique title of the {@code PrimaryBody}.
-     * @param dbID The unique id of the {@code PrimaryBody}
-     * @param shapeRadius The radius of the {@code PrimaryBody}
+     * @param name The unique title.
+     * @param dbID The unique database id.
+     * @param shapeRadius The radius of the body's shape.
      */
     public PrimaryBody(String name, String dbID, float shapeRadius) {
         super(name, dbID, shapeRadius);

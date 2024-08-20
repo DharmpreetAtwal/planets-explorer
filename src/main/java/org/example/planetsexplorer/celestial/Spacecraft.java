@@ -29,25 +29,25 @@ public class Spacecraft extends SecondaryBody {
                 Integer.parseInt(endEphem.substring(12, 14)),
                 Integer.parseInt(endEphem.substring(15, 17))
         );
-        this.setEphemStepSize(StepSize.YEARS);
+        this.setEphemerisStepSize(StepSize.YEARS);
 
         if(dateStart.until(dateStop, ChronoUnit.HOURS) <= 3) {
-            this.setEphemStepSize(StepSize.MINUTES);
+            this.setEphemerisStepSize(StepSize.MINUTES);
         } else if(dateStart.until(dateStop, ChronoUnit.DAYS) <= 8) {
-            this.setEphemStepSize(StepSize.HOURS);
+            this.setEphemerisStepSize(StepSize.HOURS);
         } else if(dateStart.until(dateStop, ChronoUnit.MONTHS) <= 8) {
-            this.setEphemStepSize(StepSize.DAYS);
+            this.setEphemerisStepSize(StepSize.DAYS);
         } else if(dateStart.until(dateStop, ChronoUnit.YEARS) <= 8) {
-            this.setEphemStepSize(StepSize.MONTHS);
+            this.setEphemerisStepSize(StepSize.MONTHS);
         } else {
-            this.setEphemStepSize(StepSize.YEARS);
+            this.setEphemerisStepSize(StepSize.YEARS);
         }
 
         if(this.getPrimaryBody() instanceof SecondaryBody secBody)
-            secBody.setEphemeris(dateStart, dateStop, this.getEphemStepSize());
+            secBody.setEphemeris(dateStart, dateStop, this.getEphemerisStepSize());
 
         for(SecondaryBody secondaryBody: this.getPrimaryBody().getSecondaryBodies()) {
-            secondaryBody.setEphemeris(dateStart, dateStop, this.getEphemStepSize());
+            secondaryBody.setEphemeris(dateStart, dateStop, this.getEphemerisStepSize());
         }
     }
 

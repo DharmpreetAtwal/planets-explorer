@@ -66,9 +66,9 @@ public abstract class Celestial {
     /**
      * Constructs a {@code Celestial} given a unique name, database ID, and physical radius.
      *
-     * @param name The unique title of the {@code Celestial}.
-     * @param dbID The unique id of the {@code Celestial}
-     * @param shapeRadius The radius of the {@code Celestial}
+     * @param name The unique title.
+     * @param dbID The unique database id.
+     * @param shapeRadius The radius of the body's shape.
      */
     public Celestial(String name, String dbID, float shapeRadius) {
         this.name = name;
