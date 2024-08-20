@@ -25,7 +25,7 @@ public class Moon extends  SecondaryBody {
         moonArrayList.add(this);
     }
 
-    public static Moon createMoon(String moonID, String planetID)  {
+    public static void createMoon(String moonID, String planetID)  {
         Planet planet = Planet.getPlanetByName(HorizonSystem.idToName(planetID));
         JSONObject moonJSON = HorizonSystem.getBody(moonID);
 
@@ -38,7 +38,6 @@ public class Moon extends  SecondaryBody {
                 moonJSON.getFloat("obliquityToOrbitDeg"));
 
         SecondaryBody.addToStage(moon);
-        return moon;
     }
 
     public static void deleteMoon(String moonID) {

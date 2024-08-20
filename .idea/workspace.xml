@@ -7,16 +7,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Added docs to Celestial and PrimaryBody&#10;- Added PrimaryBody.removeSecondaryBody">
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Added docs to SecondaryBody&#10;- Refactored out initializeStartStop's orbitPeriodYear parameter&#10;- Renamed SecondaryBody's ephemeris fields&#10;- Simplified docs in Celestial and PrimaryBody">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetViewer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Celestial.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Celestial.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Orbital.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/PrimaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/PrimaryBody.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Spacecraft.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Spacecraft.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -136,7 +131,7 @@
       <workItem from="1722448938942" duration="44543000" />
       <workItem from="1723486780760" duration="3816000" />
       <workItem from="1723755703719" duration="9526000" />
-      <workItem from="1724101100716" duration="17594000" />
+      <workItem from="1724101100716" duration="19587000" />
     </task>
     <task id="LOCAL-00001" summary="- Removed unneeded files">
       <option name="closed" value="true" />
@@ -426,14 +421,21 @@
       <option name="project" value="LOCAL" />
       <updated>1724108427728</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="- Added docs to SecondaryBody&#10;- Refactored out initializeStartStop's orbitPeriodYear parameter&#10;- Renamed SecondaryBody's ephemeris fields&#10;- Simplified docs in Celestial and PrimaryBody">
+      <option name="closed" value="true" />
+      <created>1724189629103</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1724189629103</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="- Created basic functioning PlanetViewer that changes based on selectedCelestial&#10;- Moved selectedCelestial to PlanetViewer&#10;- Created getScreen/SceneCoordinates in Celestial" />
     <MESSAGE value="- Added ExecutorService to allow 2 HTTP requests to be run at the same time" />
     <MESSAGE value="- The default date range for a body's ephemeris data is now tied to its orbital period" />
     <MESSAGE value="- Ephem query now incorperates time stamp&#10;- Added Start/Stop/Step attributes to SecondaryBody&#10;- HorizonSystem now returns &quot;1&quot; for any body with no side real orbit period" />
@@ -458,6 +460,7 @@
     <MESSAGE value="- Added toggle button selectPrimary to change the PrimaryBody of a Spacecraft in PlanetViewer&#10;- Removed final on SecondaryBody.primaryBody&#10;- Removed Main.startGetThreads&#10;- Cleaned up commented code that wasn't deleted" />
     <MESSAGE value="- Added documentation to HorizonSystem&#10;- Removed unused extractCSV method from HorizonSystem" />
     <MESSAGE value="- Added docs to Celestial and PrimaryBody&#10;- Added PrimaryBody.removeSecondaryBody" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Added docs to Celestial and PrimaryBody&#10;- Added PrimaryBody.removeSecondaryBody" />
+    <MESSAGE value="- Added docs to SecondaryBody&#10;- Refactored out initializeStartStop's orbitPeriodYear parameter&#10;- Renamed SecondaryBody's ephemeris fields&#10;- Simplified docs in Celestial and PrimaryBody" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Added docs to SecondaryBody&#10;- Refactored out initializeStartStop's orbitPeriodYear parameter&#10;- Renamed SecondaryBody's ephemeris fields&#10;- Simplified docs in Celestial and PrimaryBody" />
   </component>
 </project>
