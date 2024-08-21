@@ -394,6 +394,7 @@ public final class HorizonSystem {
      * @param result The String that contains the radius
      * @param id The id of the celestial
      * @return The radius of the celestial in String format
+     * @see Moon#idToRadius(String) 
      */
     private static String extractVolMeanRadiusKM(String result, String id) {
         // This pattern is meant to match 'mean radius, km   =  1.11'
@@ -404,7 +405,7 @@ public final class HorizonSystem {
         if(matcher.find()) {
             return extractLastNumber(matcher.group());
         } else {
-            String radius = Moon.idRadiusMap.get(id);
+            String radius = Moon.idToRadius(id);
             if(radius == null) {
                 System.err.println("Could not find 'mean radius'");
                 return "1";
@@ -422,6 +423,7 @@ public final class HorizonSystem {
      * @param result The String that contains the sidereal orbit period
      * @param id The id of the celestial
      * @return The sidereal orbit period of the celestial in String format
+     * @see Moon#idToOrbitDays(String) 
      */
     private static String extractSiderealOrbPeriod(String result, String id) {
         // This regex matches Sidereal orb. per.    =  0.2408467 y
@@ -440,8 +442,8 @@ public final class HorizonSystem {
                 float lastNumber = Float.parseFloat(Objects.requireNonNull(extractLastNumber(matcher1.group())));
                 lastNumber = lastNumber / 365.25f;
                 return String.valueOf(lastNumber);
-            } else if(Moon.idOrbitDaysMap.containsKey(id)) {
-                float sidereal = Float.parseFloat(Moon.idOrbitDaysMap.get(id));
+            } else if(Moon.idToOrbitDays(id) != null) {
+                float sidereal = Float.parseFloat(Moon.idToOrbitDays(id));
                 sidereal = sidereal / 365.25f;
 
                 if(sidereal == 0) System.err.println("Could not find 'Sidereal Orb Period' " + id);

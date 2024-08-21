@@ -7,11 +7,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Added docs to SecondaryBody&#10;- Refactored out initializeStartStop's orbitPeriodYear parameter&#10;- Renamed SecondaryBody's ephemeris fields&#10;- Simplified docs in Celestial and PrimaryBody">
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Added docs to Planet&#10;- createPlanet/Moon now return void">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Orbital.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Spacecraft.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Spacecraft.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Sun.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Sun.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,7 +134,7 @@
       <workItem from="1722448938942" duration="44543000" />
       <workItem from="1723486780760" duration="3816000" />
       <workItem from="1723755703719" duration="9526000" />
-      <workItem from="1724101100716" duration="19587000" />
+      <workItem from="1724101100716" duration="25815000" />
     </task>
     <task id="LOCAL-00001" summary="- Removed unneeded files">
       <option name="closed" value="true" />
@@ -429,14 +432,21 @@
       <option name="project" value="LOCAL" />
       <updated>1724189629103</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="- Added docs to Planet&#10;- createPlanet/Moon now return void">
+      <option name="closed" value="true" />
+      <created>1724191732546</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1724191732546</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="- Added ExecutorService to allow 2 HTTP requests to be run at the same time" />
     <MESSAGE value="- The default date range for a body's ephemeris data is now tied to its orbital period" />
     <MESSAGE value="- Ephem query now incorperates time stamp&#10;- Added Start/Stop/Step attributes to SecondaryBody&#10;- HorizonSystem now returns &quot;1&quot; for any body with no side real orbit period" />
     <MESSAGE value="- Added updateOrbitRing parameter to handle issues around orbit ring&#10;- Added Date and Time input to PlanetViewer&#10;- User can now query their own ephemData" />
@@ -461,6 +471,7 @@
     <MESSAGE value="- Added documentation to HorizonSystem&#10;- Removed unused extractCSV method from HorizonSystem" />
     <MESSAGE value="- Added docs to Celestial and PrimaryBody&#10;- Added PrimaryBody.removeSecondaryBody" />
     <MESSAGE value="- Added docs to SecondaryBody&#10;- Refactored out initializeStartStop's orbitPeriodYear parameter&#10;- Renamed SecondaryBody's ephemeris fields&#10;- Simplified docs in Celestial and PrimaryBody" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Added docs to SecondaryBody&#10;- Refactored out initializeStartStop's orbitPeriodYear parameter&#10;- Renamed SecondaryBody's ephemeris fields&#10;- Simplified docs in Celestial and PrimaryBody" />
+    <MESSAGE value="- Added docs to Planet&#10;- createPlanet/Moon now return void" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Added docs to Planet&#10;- createPlanet/Moon now return void" />
   </component>
 </project>

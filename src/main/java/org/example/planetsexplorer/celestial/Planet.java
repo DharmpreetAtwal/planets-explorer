@@ -8,8 +8,8 @@ import java.util.ArrayList;
 
 /**
  * A {@code Planet} is a special type of {@link SecondaryBody} that orbits the {@link Sun}.
- * This class is functionally identical to {@code SecondaryBody}. It's main purpose is to
- * allow a {@code Planet} to be searched for by name, or deleted by ID.
+ * This class adds extra functionality to {@code SecondaryBody} by allowing a {@code Planet}
+ * to be searched for by name, or deleted by ID.
  *
  * @author Dharmpreet Atwal
  */

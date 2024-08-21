@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import java.time.LocalDateTime;
 
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 
@@ -211,17 +212,18 @@ public class SecondaryBody extends PrimaryBody {
         // No ephemeris for target "Pluto" after A.D. 2199-DEC-29 00:00:00.0000 TDB
         if(dateStart.getYear() >= 2198) dateStart = dateStart.withYear(2199);
 
-        if(days == 0 && months == 0 && years == 0 && hours <= 3) {
-            this.setEphemerisStepSize(StepSize.MINUTES);
-        } else if(days <= 8 && months == 0 && years == 0) {
-            this.setEphemerisStepSize(StepSize.HOURS);
-        } else if(months <= 8 && years == 0) {
-            this.setEphemerisStepSize(StepSize.DAYS);
-        } else if(years <= 8) {
-            this.setEphemerisStepSize(StepSize.MONTHS);
+        if(dateStart.until(dateStop, ChronoUnit.HOURS) <= 3) {
+            this.ephemerisStepSize = StepSize.MINUTES;
+        } else if(dateStart.until(dateStop, ChronoUnit.DAYS) <= 8) {
+            this.ephemerisStepSize = StepSize.HOURS;
+        } else if(dateStart.until(dateStop, ChronoUnit.MONTHS) <= 8) {
+            this.ephemerisStepSize = StepSize.DAYS;
+        } else if(dateStart.until(dateStop, ChronoUnit.YEARS) <= 8) {
+            this.ephemerisStepSize = StepSize.MONTHS;
         } else {
-            this.setEphemerisStepSize(StepSize.YEARS);
+            this.ephemerisStepSize = StepSize.YEARS;
         }
+
         this.initializeEphemeris();
     }
 
