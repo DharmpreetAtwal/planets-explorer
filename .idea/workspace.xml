@@ -127,7 +127,7 @@
       <workItem from="1723486780760" duration="3816000" />
       <workItem from="1723755703719" duration="9526000" />
       <workItem from="1724101100716" duration="25815000" />
-      <workItem from="1724866663302" duration="5233000" />
+      <workItem from="1724866663302" duration="5610000" />
     </task>
     <task id="LOCAL-00001" summary="- Removed unneeded files">
       <option name="closed" value="true" />
@@ -441,11 +441,30 @@
       <option name="project" value="LOCAL" />
       <updated>1724878043741</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="- Added docs to PlanetsCamera&#10;- PerspectiveCamera in PlanetsCamera is now private and hidden&#10;- Removed PlanetsCamera constructor, added initializeCamera&#10;- Removed updateZ parameter from PlanetsCamera.updateEphemeris&#10;- Added private static constants to PlanetsCamera">
+      <option name="closed" value="true" />
+      <created>1724878279080</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1724878279080</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="- Ephem query now incorperates time stamp&#10;- Added Start/Stop/Step attributes to SecondaryBody&#10;- HorizonSystem now returns &quot;1&quot; for any body with no side real orbit period" />
