@@ -282,7 +282,7 @@ public class PlanetViewer {
                         child.setEphemeris(dateTimeStart, dateTimeStop, stepEphem.getValue());
                 }
 
-                PlanetsCamera.updateEphemeris(false);
+                PlanetsCamera.updateEphemeris();
                 PlanetsCamera.updateCameraUI();
             }
         });

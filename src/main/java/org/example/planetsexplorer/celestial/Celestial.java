@@ -121,7 +121,7 @@ public abstract class Celestial {
                 PlanetsCamera.updatePivot(shapePos);
 
                 PlanetViewer.setSelectedCelestial(this);
-                PlanetsCamera.updateEphemeris(false);
+                PlanetsCamera.updateEphemeris();
                 PlanetsCamera.updateCameraUI();
             }
         });

@@ -22,9 +22,7 @@ public class Main extends Application {
         sceneRoot.getChildren().add(scene3D);
 
         Scene mainScene = new Scene(sceneRoot,600, 600);
-        PlanetsCamera camera = new PlanetsCamera(mainScene);
-        scene3D.setCamera(camera.getCamera());
-        rootScene3D.getChildren().add(camera.getCamera());
+        PlanetsCamera.initializeCamera(mainScene, scene3D, rootScene3D);
 
         JSONObject sunInfo = HorizonSystem.getBody("10");
         assert sunInfo != null;
