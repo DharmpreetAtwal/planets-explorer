@@ -20,7 +20,6 @@ public class PlanetViewer {
     public static boolean selectPrimary = false;
 
     private final static Tab selectedCelestialTab = new Tab("Selected Celestial");
-
     private final static GridPane queryCelestialGridPane = new GridPane();
     private final static Tab queryCelestialTab = new Tab("Query Celestial");
 
