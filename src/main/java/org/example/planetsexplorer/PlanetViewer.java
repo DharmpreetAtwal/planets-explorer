@@ -14,9 +14,29 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PlanetViewer {
+/**
+ * A separate window that contains UI elements for viewing the
+ * currently selected {@link Celestial}, querying new {@link Planet},
+ * {@link Moon}, {@link Spacecraft}, to display. This interface also
+ * enables the user to copy the ephemeris of one {@code Celestial} to
+ * another, and changing the {@link PrimaryBody} of a {@code Spacecraft},
+ * and toggling viewing options that reduce visual clutter.
+ */
+public final class PlanetViewer {
+    /**
+     * The {@code Celestial} currently selected by the user
+     */
     public static Celestial selectedCelestial = null;
+
+    /**
+     * {@code true} if copying a {@code Celestial} ephemeris is enabled
+     */
     public static boolean copyEphemeris = false;
+
+    /**
+     * {@code true} if selecting a new {@code PrimaryBody} for a
+     * {@code Spacecraft is enabled}
+     */
     public static boolean selectPrimary = false;
 
     private final static Tab selectedCelestialTab = new Tab("Selected Celestial");
@@ -58,6 +78,10 @@ public class PlanetViewer {
     private final static CheckBox checkDisableOrbitSelected = new CheckBox("Disable Selected Celestial Orbit Ring ");
     private final static CheckBox checkHideOrbitGlobal = new CheckBox("Hide Orbit Ring Behind Body");
 
+    /**
+     * Initializes the {@code GridPane} constraints and it's children.
+     * Only to be called once in {@link Main}
+     */
     public static void initializePlanetViewer() {
         GridPane viewerGridRoot = new GridPane();
         selectedCelestialTab.setContent(viewerGridRoot);
@@ -142,6 +166,7 @@ public class PlanetViewer {
         initializeButtons();
         initializeCheckboxes();
 
+        // Initialize querying Planets/Moons tab
         queryCelestialTab.setContent(queryCelestialGridPane);
         queryCelestialTab.setClosable(false);
         for(int i=199; i<=999; i=i+100) {
@@ -150,18 +175,19 @@ public class PlanetViewer {
             GridPane.setConstraints(planetCheckBox, 0, rowIndex);
             queryCelestialGridPane.getChildren().add(planetCheckBox);
 
-            initializeMoonQueryCheckbox(i, rowIndex, planetCheckBox);
+            initializeMoonQueryCheckbox(i, planetCheckBox, rowIndex);
         }
 
+        // Initialize querying Spacecraft tab
         querySpacecraftTab.setContent(querySpacecraftGridPane);
         querySpacecraftTab.setClosable(false);
         querySpacecraftGridPane.setVisible(false);
         int row = 0;
         int col=0;
 
+        // Only create checkbox for Celestials with '-' sign in their ID
         List<String> sortedKeys = new ArrayList<>(HorizonSystem.getIdNameMapKeySet());
         Collections.sort(sortedKeys);
-
         for(String id: sortedKeys) {
             if(id.contains("-")) {
                 CheckBox spacecraftCheckbox = new CheckBox(id);
@@ -187,7 +213,18 @@ public class PlanetViewer {
         viewerStage.show();
     }
 
-    private static void initializeMoonQueryCheckbox(int planetID, int rowIndex, CheckBox planetCheckbox) {
+    /**
+     * Initializes the set of {@link Moon} checkboxes that expand out
+     * after a given {@link Planet} is queried. Inserts a GridPane inside
+     * another GridPane where the nested GridPane's children are {@code Moon}
+     * checkboxes. {@code Moon} checkboxes are hidden if their {@code Planet}
+     * is not queried.
+     *
+     * @param planetID       The ID of the {@code Planet} these set of {@code Moon} orbits
+     * @param planetCheckbox The checkbox that will expand out the {@code moonCheckboxe} when enabled
+     * @param rowIndex       The row in which the {@code planetCheckbox} resides
+     */
+    private static void initializeMoonQueryCheckbox(int planetID, CheckBox planetCheckbox, int rowIndex) {
         GridPane moonGridPane = new GridPane();
         moonGridPane.setVisible(false);
         moonGridPane.setManaged(false);
@@ -241,6 +278,10 @@ public class PlanetViewer {
         });
     }
 
+    /**
+     * Initializes the values stored in the {@code ComboBox} for
+     * the ephemeris date range query.
+     */
     private static void initializeComboBoxes() {
         for(StepSize step: StepSize.values()) {
             stepEphem.getItems().add(step);
@@ -257,9 +298,12 @@ public class PlanetViewer {
         }
     }
 
+    /**
+     * Initializes the click events for all the buttons in {@code PlanetViewer}
+     */
     private static void initializeButtons() {
         btnQueryEphem.setOnMouseClicked(e -> {
-            if(selectedCelestial instanceof SecondaryBody secBody && queryEphemInputCheck()) {
+            if(selectedCelestial instanceof SecondaryBody secBody && queryEphemerisInputCheck()) {
                 LocalDate dateStart = dateEphemStart.getValue();
                 LocalDateTime dateTimeStart = LocalDateTime.of(
                         dateStart.getYear(), dateStart.getMonth().getValue(), dateStart.getDayOfMonth(),
@@ -309,6 +353,11 @@ public class PlanetViewer {
         });
     }
 
+    /**
+     * Changes the {@code selectedCelestial} and updates the
+     * {@code selectedCelestialTab}
+     * @param celestial The new {@code selectedCelestial}
+     */
     public static void setSelectedCelestial(Celestial celestial) {
         selectedCelestial = celestial;
 
@@ -349,22 +398,41 @@ public class PlanetViewer {
 
     }
 
-    public static boolean queryEphemInputCheck() {
+    /**
+     * Input check for the date-time range in the ephemeris query. Ensures
+     * {@code dateStart} is before {@code dateStop}, and limit is not exceeded.
+     *
+     * <p> The {@link HorizonSystem} API imposes a max of {@code 90024} rows
+     * a single ephemeris query can return. Each extra unit of {@link StepSize}
+     * produces 4 extra rows, so {@code 90024 = 22506 * 4}. A single ephemeris
+     * query cannot exceed 22506 rows.
+     *
+     * @return {@code true} if the date-time range for a query is valid
+     */
+    private static boolean queryEphemerisInputCheck() {
         // Max limit per ephem query of 90024 rows
         // Each extra minute produces 4 extra rows, 90024 = 22506 * 4
-        // No need for years case, already default
-        ChronoUnit units = ChronoUnit.YEARS;
+        ChronoUnit units = null;
         switch (stepEphem.getValue()) {
             case MINUTES -> units = ChronoUnit.MINUTES;
             case HOURS -> units = ChronoUnit.HOURS;
             case DAYS -> units = ChronoUnit.DAYS;
             case MONTHS -> units = ChronoUnit.MONTHS;
+            case YEARS -> units = ChronoUnit.YEARS;
         }
 
         long diff = getUnitDiff(units);
         return diff > 0 && diff <= 22505;
     }
 
+    /**
+     * Retuns the number of {@link StepSize} between {@code dateStart} and
+     * {@code dateStop}.
+     *
+     * @param units The units the difference should be measured in
+     * @return The difference in {@link StepSize} between {@code dateStart}
+     * and {@code dateStop}.
+     */
     private static long getUnitDiff(ChronoUnit units) {
         LocalDateTime startDateTime = LocalDateTime.of(
                 dateEphemStart.getValue().getYear(),

@@ -204,7 +204,7 @@ public final class PlanetsCamera {
 
     /**
      * Updates the 2D UI elements associated with a given {@code Celestial}
-     * @param celestial
+     * @param celestial The {@code Celestial} whose UI elements are to be updated.
      */
     private static void updateCelestialUI(Celestial celestial) {
         Point2D celestialPoint = celestial.getScreenCoordinates();
@@ -283,8 +283,8 @@ public final class PlanetsCamera {
     }
 
     /**
-     * Helper method that returns the fractional mix of two colors
-     * @param start The dominant colour
+     * Returns the fractional mix of two colors
+     * @param start The starting colour
      * @param end The color being mixed in
      * @param ratio The fractional mix of the two colors
      * @return The mix of start and end colors
@@ -296,6 +296,12 @@ public final class PlanetsCamera {
         return new Color(r, g, b, 1.0);
     }
 
+    /**
+     * Updates the X/Y translation of the camera. The Z zoom should
+     * be handled independently of X/Y.
+     * @param x The X translate of the camera
+     * @param y The Y translate of the camera
+     */
     public static void updateTranslate(double x, double y) {
         translate.setX(x);
         translate.setY(y);
