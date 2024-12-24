@@ -2,6 +2,8 @@ package org.example.planetsexplorer;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import org.example.planetsexplorer.celestial.CelestialInfoFacade;
+import org.example.planetsexplorer.celestial.EphemerisCoordinateFacade;
 import org.example.planetsexplorer.celestial.Moon;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -107,7 +109,7 @@ public final class HorizonSystem {
      * @return A {@link JSONObject} containing {@code siderealOrbitDays}, {@code siderealDayHr},
      * {@code obliquityToOrbitDeg} {@code meanRadKM}
      */
-    public static JSONObject getBody(String id) {
+    public static CelestialInfoFacade getBody(String id) {
         String urlQuery = "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='" + id +
                 "'&OBJ_DATA='" + "YES" +
                 "'&MAKE_EPHEM='" + "NO" + "'";
@@ -122,25 +124,26 @@ public final class HorizonSystem {
             JSONObject planetJSON = new JSONObject(planetStrJSON);
             String resultStr = (String) planetJSON.get("result");
 
-            JSONObject planetInfo = new JSONObject();
             String siderealPeriod = extractSiderealOrbPeriod(resultStr, id);
-            planetInfo.put("siderealOrbitDays", Float.parseFloat(siderealPeriod));
 
             String siderealDayPeriod = extractSiderealDayPeriod(resultStr);
+            float siderealDayHr;
             if(!siderealDayPeriod.equals("0")) {
                 float siderealDayRadSec = Float.parseFloat(siderealDayPeriod);
                 float siderealDaySec = (float) ((2*Math.PI) / siderealDayRadSec);
-                float siderealDayHr = (siderealDaySec / 60) / 60;
-                planetInfo.put("siderealDayHr", siderealDayHr);
-            } else { planetInfo.put("siderealDayHr", 0); }
+                siderealDayHr = (siderealDaySec / 60) / 60;
+            } else { siderealDayHr = 0; }
 
             String obliquityToOrbit = extractObliquityToOrbit(resultStr);
-            planetInfo.put("obliquityToOrbitDeg", Float.parseFloat(obliquityToOrbit));
-
             String meanRadKM = extractVolMeanRadiusKM(resultStr, id);
-            planetInfo.put("meanRadKM", Float.parseFloat(meanRadKM));
 
-            return planetInfo;
+            return new CelestialInfoFacade(
+                    Float.parseFloat(siderealPeriod),
+                    siderealDayHr,
+                    Float.parseFloat(obliquityToOrbit),
+                    Float.parseFloat(meanRadKM)
+            );
+
         } catch (JSONException err) {
             System.err.println(err);
             return null;
@@ -160,7 +163,7 @@ public final class HorizonSystem {
      * displacement vector, and the vx, vy, vz components of the velocity
      * @throws Exception if the returned data doesn't contain any of the required components
      */
-    public static ArrayList<JSONObject> getEphemeris(String id, String centerId, String startTime, String stopTime, StepSize stepSize) throws Exception {
+    public static ArrayList<EphemerisCoordinateFacade> getEphemeris(String id, String centerId, String startTime, String stopTime, StepSize stepSize) throws Exception {
         String urlQuery = "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='" + id +
                 "'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&VEC_TABLE='2'&CENTER='@"+  centerId +
                 "'&CSV_FORMAT='YES'" +
@@ -261,7 +264,7 @@ public final class HorizonSystem {
      * @return An {@link ArrayList<JSONObject>} where each JSONObject contains the x, y, z components of the
      * displacement vector, and the vx, vy, vz components of the velocity ta a given time.
      */
-    private static ArrayList<JSONObject> extractVectorsCSV(String strCSV) {
+    private static ArrayList<EphemerisCoordinateFacade> extractVectorsCSV(String strCSV) {
         CSVReader reader = new CSVReader(new StringReader(strCSV));
         List<String[]> rows = null;
 
@@ -271,7 +274,7 @@ public final class HorizonSystem {
             throw new RuntimeException(e);
         }
 
-        ArrayList<JSONObject> ephemData = new ArrayList<>();
+        ArrayList<EphemerisCoordinateFacade> ephemData = new ArrayList<>();
 
         for(String[] row: rows) {
             String x = "";
@@ -294,13 +297,15 @@ public final class HorizonSystem {
             }
 
             if(!x.isEmpty() && !y.isEmpty() && !z.isEmpty() && !vx.isEmpty() && !vy.isEmpty() && !vz.isEmpty()) {
-                JSONObject data = new JSONObject();
-                data.put("x", Float.parseFloat(x));
-                data.put("y", Float.parseFloat(y));
-                data.put("z", Float.parseFloat(z));
-                data.put("vx", Float.parseFloat(vx));
-                data.put("vy", Float.parseFloat(vy));
-                data.put("vz", Float.parseFloat(vz));
+                EphemerisCoordinateFacade data =
+                        new EphemerisCoordinateFacade(x, y, z, vx, vy, vz
+                );
+//                data.put("x", Float.parseFloat(x));
+//                data.put("y", Float.parseFloat(y));
+//                data.put("z", Float.parseFloat(z));
+//                data.put("vx", Float.parseFloat(vx));
+//                data.put("vy", Float.parseFloat(vy));
+//                data.put("vz", Float.parseFloat(vz));
 
                 ephemData.add(data);
             }

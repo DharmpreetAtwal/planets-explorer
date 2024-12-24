@@ -7,6 +7,7 @@ import javafx.scene.SubScene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import org.example.planetsexplorer.celestial.CelestialInfoFacade;
 import org.example.planetsexplorer.celestial.Sun;
 import org.json.JSONObject;
 
@@ -24,9 +25,10 @@ public class Main extends Application {
         Scene mainScene = new Scene(sceneRoot,600, 600);
         PlanetsCamera.initializeCamera(mainScene, scene3D, rootScene3D);
 
-        JSONObject sunInfo = HorizonSystem.getBody("10");
-        assert sunInfo != null;
-        sun = new Sun(sunInfo.getFloat("meanRadKM") / HorizonSystem.pixelKmScale, "10");
+//        JSONObject sunInfo = HorizonSystem.getBody("10");
+        CelestialInfoFacade celestInfo = HorizonSystem.getBody("10");
+        assert celestInfo != null;
+        sun = new Sun(celestInfo.getMeanRadKM(), "10");
         rootScene3D.getChildren().add(sun.getShape());
         sceneRoot.getChildren().add(sun.getGroupUI());
 

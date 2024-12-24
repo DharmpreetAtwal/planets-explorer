@@ -61,15 +61,15 @@ public class Moon extends  SecondaryBody {
      */
     public static void createMoon(String moonID, String planetID)  {
         Planet planet = Planet.getPlanetByName(HorizonSystem.idToName(planetID));
-        JSONObject moonJSON = HorizonSystem.getBody(moonID);
-
+        CelestialInfoFacade moonInfo = HorizonSystem.getBody(moonID);
+        assert moonInfo != null;
         Moon moon = new Moon(HorizonSystem.idToName(moonID),
                 moonID,
-                moonJSON.getFloat("meanRadKM") / pixelKmScale,
+                moonInfo.getMeanRadKM(),
                 planet,
-                moonJSON.getFloat("siderealOrbitDays"),
-                moonJSON.getFloat("siderealDayHr"),
-                moonJSON.getFloat("obliquityToOrbitDeg"));
+                moonInfo.getSiderealOrbitDays(),
+                moonInfo.getSiderealDayHr(),
+                moonInfo.getObliquityToOrbitDeg());
 
         SecondaryBody.addToStage(moon);
     }

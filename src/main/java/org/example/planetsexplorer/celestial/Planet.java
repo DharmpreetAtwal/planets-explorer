@@ -43,20 +43,21 @@ public class Planet extends SecondaryBody {
      * @param planetID The ID of the planet to be added.
      */
     public static void createPlanet(String planetID) {
-        JSONObject planetJSON;
+        CelestialInfoFacade planetInfo;
         try {
-            planetJSON = HorizonSystem.getBody(planetID);
+            planetInfo = HorizonSystem.getBody(planetID);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
+        assert planetInfo != null;
         Planet newPlanet = new Planet(
                 HorizonSystem.idToName(planetID),
                 planetID,
-                planetJSON.getFloat("meanRadKM") / HorizonSystem.pixelKmScale,
-                planetJSON.getFloat("siderealOrbitDays"),
-                planetJSON.getFloat("siderealDayHr"),
-                planetJSON.getFloat("obliquityToOrbitDeg"));
+                planetInfo.getMeanRadKM(),
+                planetInfo.getSiderealOrbitDays(),
+                planetInfo.getSiderealDayHr(),
+                planetInfo.getObliquityToOrbitDeg());
 
         SecondaryBody.addToStage(newPlanet);
     }

@@ -7,10 +7,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Testing github config">
+    <list default="true" id="a425f499-12d9-4ac3-9c9e-243946d7ac59" name="Changes" comment="- Added docs to PlanetViewer and PlanetsCamera">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/CelestialInfoFacade.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/EphemerisCoordinateFacade.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/PlanetsCamera.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Sun.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Sun.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/HorizonSystem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Moon.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/Planet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/planetsexplorer/celestial/SecondaryBody.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -132,7 +137,10 @@
       <workItem from="1723755703719" duration="9526000" />
       <workItem from="1724101100716" duration="25815000" />
       <workItem from="1724866663302" duration="5799000" />
-      <workItem from="1725050187405" duration="318000" />
+      <workItem from="1725050187405" duration="3272000" />
+      <workItem from="1729883619333" duration="970000" />
+      <workItem from="1731599116210" duration="45000" />
+      <workItem from="1735053983227" duration="2860000" />
     </task>
     <task id="LOCAL-00001" summary="- Removed unneeded files">
       <option name="closed" value="true" />
@@ -470,7 +478,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724878552304</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="- Added docs to PlanetViewer and PlanetsCamera">
+      <option name="closed" value="true" />
+      <created>1725053448459</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1725053448459</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -488,7 +504,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="- Added updateOrbitRing parameter to handle issues around orbit ring&#10;- Added Date and Time input to PlanetViewer&#10;- User can now query their own ephemData" />
     <MESSAGE value="- Added input error checking into Ephem Query&#10;- Changed SecondaryBody.setEphemeris parameters to (LocalDate dateStart, Integer hourStart, Integer minStart,  LocalDate dateStop, Integer hourStop, Integer minStop, StepSize ephemStepSize)&#10;- Fixed StepSize.MINUTES now &quot;1 min&quot;" />
     <MESSAGE value="- Added Z zoom transform" />
     <MESSAGE value="- Cleaned up code, refactored out functions" />
@@ -513,7 +528,8 @@
     <MESSAGE value="- Added docs to Planet&#10;- createPlanet/Moon now return void" />
     <MESSAGE value="- Added docs to PlanetsCamera&#10;- PerspectiveCamera in PlanetsCamera is now private and hidden&#10;- Removed PlanetsCamera constructor, added initializeCamera&#10;- Removed updateZ parameter from PlanetsCamera.updateEphemeris&#10;- Added private static constants to PlanetsCamera" />
     <MESSAGE value="- Testing github config" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Testing github config" />
+    <MESSAGE value="- Added docs to PlanetViewer and PlanetsCamera" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Added docs to PlanetViewer and PlanetsCamera" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -70,7 +70,7 @@ public class SecondaryBody extends PrimaryBody {
      * {@code PrimaryBody} {@code (x, y, z)}, and its instantaneous velocity components
      * {@code (vx, vy, vz)}
      */
-    private ArrayList<JSONObject> ephemerisData = new ArrayList<>();
+    private ArrayList<EphemerisCoordinateFacade> ephemerisData = new ArrayList<>();
 
     /**
      * A value to check if updates to this body's displayed ephemeris are disabled or not.
@@ -281,7 +281,7 @@ public class SecondaryBody extends PrimaryBody {
      * @param ephemerisStepSize The time-based increment between two sequential ephemeris points
      */
     public void setEphemeris(LocalDateTime dateStart, LocalDateTime dateStop, StepSize ephemerisStepSize) {
-        ArrayList<JSONObject> ephemeris;
+        ArrayList<EphemerisCoordinateFacade> ephemeris;
 
         this.dateStart = dateStart;
         this.dateStop = dateStop;
@@ -340,12 +340,12 @@ public class SecondaryBody extends PrimaryBody {
     public void updateEphemerisPosition(boolean updateConnectionLine) {
         if(!this.getEphemerisData().isEmpty()) {
             int newIndex = this.ephemerisIndex % this.getEphemerisData().size();
-            JSONObject data = this.getEphemerisData().get(newIndex);
+            EphemerisCoordinateFacade data = this.getEphemerisData().get(newIndex);
 
             if(this.primaryBody != null) {
-                float x = data.getFloat("x") / pixelKmScale;
-                float y = data.getFloat("y") / pixelKmScale;
-                float z = data.getFloat("z") / pixelKmScale;
+                float x = data.getX();
+                float y = data.getY();
+                float z = data.getZ();
 
                 Point3D primaryPoint = this.getPrimaryBody().getSceneCoordinates();
                 this.getShape().setTranslateX(x + primaryPoint.getX());
@@ -354,9 +354,9 @@ public class SecondaryBody extends PrimaryBody {
                 this.orbitDistance = (float) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
 
                 if(updateConnectionLine) {
-                    float vx = (float) (data.getFloat("vx") * this.getShape().getRadius() * 2);
-                    float vy = (float) (data.getFloat("vy") * this.getShape().getRadius() * 2);
-                    float vz = (float) (data.getFloat("vz") * this.getShape().getRadius() * 2);
+                    float vx = (float) (data.getVx() * this.getShape().getRadius() * 2);
+                    float vy = (float) (data.getVy() * this.getShape().getRadius() * 2);
+                    float vz = (float) (data.getVz() * this.getShape().getRadius() * 2);
 
                     Point3D startPos = this.getShape().localToScene(Point3D.ZERO);
                     Point3D primaryPos = this.primaryBody.getShape().localToScene(Point3D.ZERO);
@@ -424,11 +424,11 @@ public class SecondaryBody extends PrimaryBody {
         return orbitPeriodYear;
     }
 
-    public ArrayList<JSONObject> getEphemerisData() {
+    public ArrayList<EphemerisCoordinateFacade> getEphemerisData() {
         return ephemerisData;
     }
 
-    public void setEphemerisData(ArrayList<JSONObject> ephemerisData) {
+    public void setEphemerisData(ArrayList<EphemerisCoordinateFacade> ephemerisData) {
         this.ephemerisData = ephemerisData;
     }
 
