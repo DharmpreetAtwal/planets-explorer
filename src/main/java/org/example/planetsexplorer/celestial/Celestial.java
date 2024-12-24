@@ -87,34 +87,36 @@ public abstract class Celestial {
     /**
      * Initializes the actions taken when the UI elements are clicked on. Only
      * called at construction. The control flow of this method depends on what
-     * kind of {@code Celestial} is calling it, the type of {@link PlanetViewer#selectedCelestial},
+     * kind of {@code Celestial} this is, the type of {@link PlanetViewer#selectedCelestial},
      * and the values of {@link PlanetViewer#selectPrimary}, and {@link PlanetViewer#copyEphemeris}.
      */
     private void initializeUIMouseEvents() {
         this.labelName.setOnMouseClicked(e -> {
-
             // Decide whether to copy ephemeris, change the PrimaryBody, or to select a new Celestial
-            if(PlanetViewer.selectedCelestial instanceof SecondaryBody selectedBody
+            Celestial selected = PlanetViewer.selectedCelestial;
+
+            // Both this Celestial / selectedCelestial are SecondaryBody's, copyEphemeris is toggled
+            // Copy this Celestial's ephemeris data range to the selectedCelestial's
+            if(selected instanceof SecondaryBody selectedBody
                     && this instanceof SecondaryBody clickedBody
                     && PlanetViewer.copyEphemeris) {
-                // Both this Celestial / selectedCelestial are SecondaryBody's, copyEphemeris is toggled
-                // Copy this Celestial's ephemeris data range to the selectedCelestial's
-
                 selectedBody.copyEphemerisDateRange(clickedBody);
                 PlanetViewer.copyEphemeris = false;
-            } else if(PlanetViewer.selectedCelestial instanceof Spacecraft spacecraft
+
+            // This celestial is PrimaryBody, selectedCelestial is Spacecraft, selectPrimary is toggled
+            // Set spacecraft's primaryBody to be this celestial
+            } else if(selected instanceof Spacecraft spacecraft
                     && this instanceof PrimaryBody clickedBody
                     && PlanetViewer.selectPrimary) {
-                // This celestial is PrimaryBody, selectedCelestial is Spacecraft, selectPrimary is toggled
-                // Set spacecraft's primaryBody to be this celestial
-
                 spacecraft.changePrimaryBody(clickedBody);
                 clickedBody.addSecondaryBody(spacecraft);
                 spacecraft.initializeEphemeris();
 
                 PlanetViewer.selectPrimary = false;
+
+            // If no flags set, or an invalid selection for copy ephemeris / change primaryBody
+            // Move the camera to the Celestial's Position
             } else {
-                // If no flags set, or an invalid selection for copy ephemeris / change primaryBody
                 Point3D shapePos = this.shape.localToScene(Point3D.ZERO);
 
                 PlanetsCamera.updateTranslate(shapePos.getX(), shapePos.getY());

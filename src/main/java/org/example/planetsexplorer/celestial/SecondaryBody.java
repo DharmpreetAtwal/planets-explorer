@@ -211,20 +211,27 @@ public class SecondaryBody extends PrimaryBody {
 
         // No ephemeris for target "Pluto" after A.D. 2199-DEC-29 00:00:00.0000 TDB
         if(dateStart.getYear() >= 2198) dateStart = dateStart.withYear(2199);
+        initializeStepSize(dateStart, dateStop);
+        this.initializeEphemeris();
+    }
 
-        if(dateStart.until(dateStop, ChronoUnit.HOURS) <= 3) {
+    /**
+     * Determines the default step size given a start and stop datetime
+     * @param start A LocalDateTime start
+     * @param stop A LocalDateTime stop
+     */
+    public void initializeStepSize(LocalDateTime start, LocalDateTime stop) {
+        if(start.until(stop, ChronoUnit.HOURS) <= 3) {
             this.ephemerisStepSize = StepSize.MINUTES;
-        } else if(dateStart.until(dateStop, ChronoUnit.DAYS) <= 8) {
+        } else if(start.until(stop, ChronoUnit.DAYS) <= 8) {
             this.ephemerisStepSize = StepSize.HOURS;
-        } else if(dateStart.until(dateStop, ChronoUnit.MONTHS) <= 8) {
+        } else if(start.until(stop, ChronoUnit.MONTHS) <= 8) {
             this.ephemerisStepSize = StepSize.DAYS;
-        } else if(dateStart.until(dateStop, ChronoUnit.YEARS) <= 8) {
+        } else if(start.until(stop, ChronoUnit.YEARS) <= 8) {
             this.ephemerisStepSize = StepSize.MONTHS;
         } else {
             this.ephemerisStepSize = StepSize.YEARS;
         }
-
-        this.initializeEphemeris();
     }
 
     /**

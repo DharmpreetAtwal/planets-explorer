@@ -47,22 +47,8 @@ public class Spacecraft extends SecondaryBody {
                 Integer.parseInt(endEphem.substring(12, 14)),
                 Integer.parseInt(endEphem.substring(15, 17))
         );
+        this.initializeStepSize(dateStart, dateStop);
 
-        // TODO: This logic is identical to the logic in SecondaryBody.initializeStartStop()
-        // TODO: Create an overloaded SecondaryBody.initializeStartStop(dateStart, dateStop)
-        if(dateStart.until(dateStop, ChronoUnit.HOURS) <= 3) {
-            this.setEphemerisStepSize(StepSize.MINUTES);
-        } else if(dateStart.until(dateStop, ChronoUnit.DAYS) <= 8) {
-            this.setEphemerisStepSize(StepSize.HOURS);
-        } else if(dateStart.until(dateStop, ChronoUnit.MONTHS) <= 8) {
-            this.setEphemerisStepSize(StepSize.DAYS);
-        } else if(dateStart.until(dateStop, ChronoUnit.YEARS) <= 8) {
-            this.setEphemerisStepSize(StepSize.MONTHS);
-        } else {
-            this.setEphemerisStepSize(StepSize.YEARS);
-        }
-
-        // TODO: use copyEphemeris method, spacecraft should explicitly call setEphemeris on itself
         // Copy the ephemeris date range of this Spacecraft onto it's primaryBody
         if(this.getPrimaryBody() instanceof SecondaryBody secBody)
             secBody.setEphemeris(dateStart, dateStop, this.getEphemerisStepSize());
