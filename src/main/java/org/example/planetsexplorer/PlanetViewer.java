@@ -78,6 +78,9 @@ public final class PlanetViewer {
     private final static CheckBox checkDisableOrbitSelected = new CheckBox("Disable Selected Celestial Orbit Ring ");
     private final static CheckBox checkHideOrbitGlobal = new CheckBox("Hide Orbit Ring Behind Body");
 
+    private static String checkboxStyle;
+    private static String gridpaneStyle;
+
     /**
      * Initializes the {@code GridPane} constraints and it's children.
      * Only to be called once in {@link Main}
@@ -165,6 +168,7 @@ public final class PlanetViewer {
         initializeComboBoxes();
         initializeButtons();
         initializeCheckboxes();
+        applyAstronomyTheme();
 
         // Initialize querying Planets/Moons tab
         queryCelestialTab.setContent(queryCelestialGridPane);
@@ -172,6 +176,8 @@ public final class PlanetViewer {
         for(int i=199; i<=999; i=i+100) {
             int rowIndex = ((i / 100) - 1) * 2;
             CheckBox planetCheckBox = new CheckBox(i + " " + HorizonSystem.idToName(String.valueOf(i)));
+            planetCheckBox.setStyle(checkboxStyle);
+
             GridPane.setConstraints(planetCheckBox, 0, rowIndex);
             queryCelestialGridPane.getChildren().add(planetCheckBox);
 
@@ -191,6 +197,7 @@ public final class PlanetViewer {
         for(String id: sortedKeys) {
             if(id.contains("-")) {
                 CheckBox spacecraftCheckbox = new CheckBox(id);
+                spacecraftCheckbox.setStyle(checkboxStyle);
                 GridPane.setConstraints(spacecraftCheckbox, col, row);
                 querySpacecraftGridPane.getChildren().add(spacecraftCheckbox);
 
@@ -241,6 +248,7 @@ public final class PlanetViewer {
 
         while(moonName != null) {
             CheckBox moonCheckbox = new CheckBox(String.valueOf(moonID));
+            moonCheckbox.setStyle(checkboxStyle);
             GridPane.setConstraints(moonCheckbox, col, row);
             moonGridPane.getChildren().add(moonCheckbox);
 
@@ -455,5 +463,76 @@ public final class PlanetViewer {
 
     public static boolean isHideOrbitGlobalSelected() {
         return checkHideOrbitGlobal.isSelected();
+    }
+
+    /**
+     * Applies astronomy-themed styling to all UI components
+     */
+    private static void applyAstronomyTheme() {
+        String labelStyle = "-fx-text-fill: #e0f2fe; -fx-font-size: 14; -fx-font-family: 'Consolas', monospace;";
+        String controlStyle = "-fx-control-inner-background: rgba(15, 23, 42, 0.9); " +
+                "-fx-text-fill: #e0f2fe; " +
+                "-fx-font-family: 'Consolas', monospace; " +
+                "-fx-font-size: 14; " +
+                "-fx-border-color: #06b6d4; " +
+                "-fx-border-width: 1; " +
+                "-fx-focus-color: #0891b2; " +
+                "-fx-faint-focus-color: rgba(6, 182, 212, 0.1);";
+        String buttonStyle = "-fx-background-color: rgba(6, 182, 212, 0.2); " +
+                "-fx-text-fill: #e0f2fe; " +
+                "-fx-font-family: 'Consolas', monospace; " +
+                "-fx-font-size: 14; " +
+                "-fx-border-color: #06b6d4; " +
+                "-fx-border-width: 1.5; " +
+                "-fx-padding: 6 12; " +
+                "-fx-cursor: hand; ";
+        checkboxStyle = "-fx-text-fill: #e0f2fe; " +
+                "-fx-font-family: 'Consolas', monospace; " +
+                "-fx-font-size: 14;";
+        gridpaneStyle = "-fx-background-color: rgba(15, 23, 42, 0.8); -fx-padding: 10; -fx-hgap: 10; -fx-vgap: 10; -fx-text-fill: #e0f2fe;";
+        String tabpaneStyle = "-fx-background-color: rgba(15, 23, 42, 0.8);";
+        String tabStyle = "-fx-text-fill: #e0f2fe; " +
+                "-fx-font-family: 'Consolas', monospace; " +
+                "-fx-padding: 8 15;";
+
+        // Apply to labels
+        lblName.setStyle(labelStyle);
+        lblDbID.setStyle(labelStyle);
+        lblSecondaryBodies.setStyle(labelStyle);
+        lblPrimaryBody.setStyle(labelStyle);
+        lblOrbitDistance.setStyle(labelStyle);
+        lblOrbitPeriodYear.setStyle(labelStyle);
+        lblSideRealDayHr.setStyle(labelStyle);
+        lblObliquityToOrbit.setStyle(labelStyle);
+        lblRadius.setStyle(labelStyle);
+
+        // Apply to DatePickers
+        dateEphemStart.setStyle(controlStyle);
+        dateEphemStop.setStyle(controlStyle);
+
+        // Apply to ComboBoxes
+        hourEphemStart.setStyle(controlStyle);
+        minEphemStart.setStyle(controlStyle);
+        hourEphemStop.setStyle(controlStyle);
+        minEphemStop.setStyle(controlStyle);
+        stepEphem.setStyle(controlStyle);
+
+        // Apply to Buttons
+        btnQueryEphem.setStyle(buttonStyle);
+        btnCopyEphem.setStyle(buttonStyle);
+        btnSelectPrimary.setStyle(buttonStyle);
+
+        // Apply to CheckBoxes
+        checkEphemFrozen.setStyle(checkboxStyle);
+        checkDisableOrbitSelected.setStyle(checkboxStyle);
+        checkHideOrbitGlobal.setStyle(checkboxStyle);
+
+        // Apply to GridPanes and TabPane
+        queryCelestialGridPane.setStyle(gridpaneStyle);
+        querySpacecraftGridPane.setStyle(gridpaneStyle);
+        tabPane.setStyle(tabpaneStyle);
+        selectedCelestialTab.setStyle(tabStyle);
+        queryCelestialTab.setStyle(tabStyle);
+        querySpacecraftTab.setStyle(tabStyle);
     }
 }

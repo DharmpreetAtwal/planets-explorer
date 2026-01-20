@@ -19,7 +19,7 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         HorizonSystem.initializeLookupTables();
         SubScene scene3D = new SubScene(rootScene3D, 600, 600, true, null);
-        scene3D.setFill(Color.ALICEBLUE);
+        scene3D.setFill(Color.BLACK);
         sceneRoot.getChildren().add(scene3D);
 
         Scene mainScene = new Scene(sceneRoot,600, 600);
