@@ -51,7 +51,7 @@ public abstract class Celestial {
      *
      * @see Celestial#shape
      */
-    private static final int shapeDivisions = 2;
+    private static final int shapeDivisions = 20;
 
     /**
      * The Group node that contains all the 2D UI elements associated with this {@code Celestial}

@@ -75,6 +75,12 @@ public final class PlanetsCamera {
     private static final int maxFarClip = 2000000;
 
     /**
+     * The minimum near clip distance to prevent objects from disappearing
+     * when very close to the camera.
+     */
+    private static final double minNearClip = 0.1;
+
+    /**
      * The increment used in any rotation transformations.
      */
     private static final int angleIncrement = 10;
@@ -105,6 +111,7 @@ public final class PlanetsCamera {
         initializeKeyEvents(mainScene);
         camera.setFarClip(maxFarClip);
         camera.getTransforms().addAll(rotateX, rotateY, rotateZ, translate);
+        updateNearClip();
 
         scene3D.setCamera(camera);
         rootScene3D.getChildren().add(camera);
@@ -125,10 +132,22 @@ public final class PlanetsCamera {
                 case A -> rotateY.setAngle(rotateY.getAngle() + angleIncrement);
                 case D -> rotateY.setAngle(rotateY.getAngle() - angleIncrement);
 
-                case Q -> translate.setZ(translate.getZ() + maxZoomIncrement);
-                case E -> translate.setZ(translate.getZ() - maxZoomIncrement);
-                case Z -> translate.setZ(translate.getZ() + minZoomIncrement);
-                case X -> translate.setZ(translate.getZ() - minZoomIncrement);
+                case Q -> {
+                    translate.setZ(translate.getZ() + maxZoomIncrement);
+                    updateNearClip();
+                }
+                case E -> {
+                    translate.setZ(translate.getZ() - maxZoomIncrement);
+                    updateNearClip();
+                }
+                case Z -> {
+                    translate.setZ(translate.getZ() + minZoomIncrement);
+                    updateNearClip();
+                }
+                case X -> {
+                    translate.setZ(translate.getZ() - minZoomIncrement);
+                    updateNearClip();
+                }
 
                 case C -> PlanetViewer.selectedCelestial = null;
 
@@ -138,6 +157,7 @@ public final class PlanetsCamera {
                     if(PlanetViewer.selectedCelestial != null) {
                         Point3D point = PlanetViewer.selectedCelestial.getSceneCoordinates();
                         translate.setZ(point.getZ() - PlanetViewer.selectedCelestial.getShape().getRadius()*5);
+                        updateNearClip();
                     }
                 }
 
@@ -189,6 +209,7 @@ public final class PlanetsCamera {
             updateTranslate(pos.getX(),pos.getY());
             updatePivot(PlanetViewer.selectedCelestial.getShape().localToScene(Point3D.ZERO));
             translate.setZ(pos.getZ() - diffZ);
+            updateNearClip();
         }
     }
 
@@ -319,5 +340,17 @@ public final class PlanetsCamera {
         rotateZ.setPivotX(pivot.getX());
         rotateZ.setPivotY(pivot.getY());
         rotateZ.setPivotZ(pivot.getZ());
+    }
+
+    /**
+     * Dynamically updates the camera's near clip plane based on the current zoom level.
+     * This prevents objects from flickering or disappearing when zoomed in close and rotating.
+     * The near clip is set to a small fraction of the camera's Z distance, with a minimum value
+     * to ensure stability.
+     */
+    private static void updateNearClip() {
+        // Calculate near clip as 0.1% of the distance from camera, with a minimum value
+        double nearClip = Math.max(minNearClip, Math.abs(translate.getZ()) * 0.001);
+        camera.setNearClip(nearClip);
     }
 }
