@@ -2,6 +2,9 @@ package org.example.planetsexplorer.celestial;
 
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Cylinder;
@@ -167,10 +170,18 @@ public class SecondaryBody extends PrimaryBody {
         this.getShape().getTransforms().addAll(this.tiltRotation);
 
         this.primaryConnection.setRadius(shapeRadius / 3);
-        this.primaryConnection.setMaterial(new PhongMaterial(Color.BLUE));
+        PhongMaterial primaryConnectionMaterial = new PhongMaterial();
+        primaryConnectionMaterial.setDiffuseColor(Color.BLACK);
+        primaryConnectionMaterial.setSpecularColor(Color.BLACK);
+        primaryConnectionMaterial.setSelfIlluminationMap(createColorImage(Color.BLUE));
+        this.primaryConnection.setMaterial(primaryConnectionMaterial);
 
         this.velocityVector.setRadius(shapeRadius / 4);
-        this.velocityVector.setMaterial(new PhongMaterial(Color.PURPLE));
+        PhongMaterial velocityVectorMaterial = new PhongMaterial();
+        velocityVectorMaterial.setDiffuseColor(Color.BLACK);
+        velocityVectorMaterial.setSpecularColor(Color.BLACK);
+        velocityVectorMaterial.setSelfIlluminationMap(createColorImage(Color.PURPLE));
+        this.velocityVector.setMaterial(velocityVectorMaterial);
     }
 
     /**
@@ -497,5 +508,18 @@ public class SecondaryBody extends PrimaryBody {
 
     public LocalDateTime getDateStop() {
         return dateStop;
+    }
+
+    /**
+     * Creates a 1x1 pixel image of the specified color for use as a self-illumination map.
+     * This allows the material to appear unaffected by lighting.
+     * @param color The color for the self-illumination
+     * @return A 1x1 Image with the specified color
+     */
+    private static Image createColorImage(Color color) {
+        WritableImage image = new WritableImage(1, 1);
+        PixelWriter writer = image.getPixelWriter();
+        writer.setColor(0, 0, color);
+        return image;
     }
 }
