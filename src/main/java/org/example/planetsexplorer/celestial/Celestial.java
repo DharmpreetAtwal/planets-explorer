@@ -5,6 +5,8 @@ import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Sphere;
+import javafx.scene.transform.Translate;
+
 import org.example.planetsexplorer.PlanetViewer;
 import org.example.planetsexplorer.PlanetsCamera;
 
@@ -76,7 +78,19 @@ public abstract class Celestial {
         this.shape = new Sphere(shapeRadius, shapeDivisions);
 
         this.labelName.setText(name + " " + dbID);
-        this.labelName.setStyle("-fx-background-color: white; -fx-border-color: black;");
+        this.labelName.setStyle(
+            "-fx-background-color: rgba(15, 23, 42, 0.85);" +
+            "-fx-text-fill: #e0f2fe;" +
+            "-fx-font-family: 'Consolas', monospace;" +
+            "-fx-font-size: 14;" +
+            "-fx-font-weight: bold;" +
+            "-fx-border-color: #06b6d4;" +
+            "-fx-border-width: 1.5;" +
+            "-fx-padding: 6 10;" +
+            "-fx-border-radius: 4;" +
+            "-fx-background-radius: 4;" +
+            "-fx-effect: dropshadow(gaussian, rgba(6, 182, 212, 0.4), 8, 0, 0, 2);"
+        );
         this.groupUI.getChildren().add(this.labelName);
         this.groupUI.setOpacity(0.5);
         initializeUIMouseEvents();
@@ -160,5 +174,13 @@ public abstract class Celestial {
 
     public String getDbID() {
         return dbID;
+    }
+
+    public double getLabelWidth() {
+        return labelName.getWidth();
+    }
+
+    public double getLabelHeight() {
+        return labelName.getHeight();
     }
 }

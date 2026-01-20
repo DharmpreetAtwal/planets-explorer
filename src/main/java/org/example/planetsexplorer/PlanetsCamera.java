@@ -229,8 +229,8 @@ public final class PlanetsCamera {
      */
     private static void updateCelestialUI(Celestial celestial) {
         Point2D celestialPoint = celestial.getScreenCoordinates();
-        celestial.getGroupUI().setTranslateX(celestialPoint.getX());
-        celestial.getGroupUI().setTranslateY(celestialPoint.getY());
+        celestial.getGroupUI().setTranslateX(celestialPoint.getX() - (celestial.getLabelWidth() / 2));
+        celestial.getGroupUI().setTranslateY(celestialPoint.getY() - (celestial.getLabelHeight() / 2));
     }
 
     /**
