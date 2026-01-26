@@ -209,7 +209,7 @@ public final class PlanetViewer {
                 });
 
                 row++;
-                if(row % 30 == 0) { row = 0; col++; }
+                if(row % 15 == 0) { row = 0; col++; }
             }
         }
 
